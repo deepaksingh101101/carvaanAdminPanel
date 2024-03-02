@@ -37,7 +37,7 @@ const AdminDetails = () => {
 
   const generateActionButtons = (row) => (
     <div>
-      <Link to={`/adminProfile/${row.sno}`}>
+      <Link to={`/adminProfile/${row.id}`}>
         <button className="btn btn-primary mx-2">
           <i className="ti-eye"></i>
         </button>
@@ -97,8 +97,12 @@ const AdminDetails = () => {
       is_super_admin: row.is_super_admin ? 'Yes' : 'No', // Convert boolean to string representation
       created_by: row.created_by ? row.created_by.name : 'Unknown', // Check if created_by exists
       sno: index + 1, // Assigning serial numbers
+      id:row.id,
       action: generateActionButtons(row),
-    })),
+      
+    }
+    
+    )),
   };
 
   return (

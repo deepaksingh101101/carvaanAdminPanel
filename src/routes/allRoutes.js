@@ -162,7 +162,7 @@ const userRoutes = [
   { path: "/adminDetails", component: <AdminDetails /> },
   { path: "/createAdmin", component: <CreateAdmin /> },
   { path: "/editAdmin/:sno", component: <EditAdminDetail/> },
-  { path: "/adminProfile/:sno", component: <AdminProfile /> },
+  { path: "/adminProfile/:id", component: <AdminProfile /> },
   { path: "/adminProfile", component: <AdminProfile /> },
   
 
