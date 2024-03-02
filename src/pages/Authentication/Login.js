@@ -87,9 +87,8 @@ const [showToast, setShowToast] = useState(false)
         }
   
       } catch (error) {
-
-        console.log(error.response)
-        setMessage(error.response.data.message)
+        // console.log(error.response)
+        setMessage(error.response.data?error.response.data.message:"Something went's Wrong")
         dispatch(SomethingAlertTrue());
         setTimeout(() => {
           dispatch(SomethingAlertFalse());
