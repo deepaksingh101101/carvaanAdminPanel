@@ -30,7 +30,7 @@ const Authmiddleware = (props) => {
 
   const Layout = getLayout(layoutType);
 
-  if (localStorage.getItem("authUser")) {
+  if (!localStorage.getItem("authUser")) {
     return (
       <Navigate to={{ pathname: "/login", state: { from: props.location } }} />
     );

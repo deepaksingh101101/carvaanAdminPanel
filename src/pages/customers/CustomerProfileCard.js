@@ -84,10 +84,10 @@ const CustomerProfileCard = ({admin,role}) => {
                                     <hr />
                                     <Row>
                                         <Col sm="3">
-                                            <p className="mb-0">Mobile</p>
+                                            <p className="mb-0">Is SuperAdmin</p>
                                         </Col>
                                         <Col sm="9">
-                                            <p className="text-muted mb-0">(+91) {admin.mobile}</p>
+                                            <p className="text-muted mb-0"> {admin.is_super_admin?"Yes":"No"}</p>
                                         </Col>
                                     </Row>
                                    {

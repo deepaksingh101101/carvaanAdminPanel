@@ -18,6 +18,7 @@ import {CarvaanReducers} from "./auth/user_admin_data/reducer.js"
 import {ManageReducers} from "./auth/user_admin_data/reducer.js"
 import {BlogReducers} from "./auth/user_admin_data/reducer.js"
 import {FaqReducers} from "./auth/user_admin_data/reducer.js"
+import {alertReducer} from "./components/reducer"
 
 //Calendar
 // import calendar from "./calendar/reducer"
@@ -37,7 +38,8 @@ const rootReducer = combineReducers({
   CarvaanReducers,
   ManageReducers,
   BlogReducers,
-  FaqReducers
+  FaqReducers,
+  alertReducer,
 })
 
 export default rootReducer

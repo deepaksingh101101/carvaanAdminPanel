@@ -63,16 +63,19 @@ const UserProfile = props => {
     }
   });
 
-  document.title = "Profile | Veltrix - React Admin & Dashboard Template";
-  const admin={
-        name:"Admin",
-        email:"admin@themesbrand.com",
-        password:"123456",
-        age:"45",
-        mobile:"32427329582",
+  document.title = "Profile | Carvaan - React Admin & Dashboard Template";
+  // const admin={
+  //       name:"Deepak",
+  //       email:"admin@themesbrand.comm",
+  //       password:"123456",
+  //       age:"45",
+  //       mobile:"32427329582",
 
-  }
+  // }
+  // const admin=localStorage.getItem("authUser").admin;
 
+
+const admin=JSON.parse(localStorage.getItem("authUser")).admin
   // Pass this in place af admin when user logged in
   const { user } = useSelector(state => ({
     user: state.Account.user,
@@ -156,7 +159,6 @@ const UserProfile = props => {
       </div> */}
 
       
-
       <CustomerProfileCard admin={admin} role="Admin"/>
 
       

@@ -2,13 +2,12 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from "react";
 import * as url from "../../helpers/url_helper"
 import {postFakeLogin} from '../../helpers/fakebackend_helper'
-
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Row, Col, CardBody, Card, Container, Label, Form, FormFeedback, Input } from "reactstrap";
 
 // Redux
 import { connect, useSelector, useDispatch } from "react-redux";
-import { Link } from 'react-router-dom';
 import withRouter from 'components/Common/withRouter';
 // import useNavigate from 'react-router-dom'
 // Formik validation
@@ -20,14 +19,20 @@ import { loginUser, apiError } from "../../store/actions";
 
 // import images
 import logoSm from "../../assets/images/logo-sm.png";
+import Alert from 'components/alert/Alert';
+import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 
 const Login = props => {
   const dispatch = useDispatch();
   const [userLogin, setUserLogin] = useState([]);
+  const [message, setMessage] = useState("Something went's wrong")
 const [showWrongCredentials, setShowWrongCredentials] = useState(false)
   const { user } = useSelector(state => ({
     user: state.Account.user,
   }));
+  const navigate=useNavigate();
+
+const [showToast, setShowToast] = useState(false)
 
   useEffect(() => {
     if (user && user) {
@@ -36,15 +41,22 @@ const [showWrongCredentials, setShowWrongCredentials] = useState(false)
         password: user.password
       });
     }
+
   }, [user]);
+
+
+
+  const isOpen = useSelector(state => state.alertReducer.isOpen);
+  // console.log(isOpen)
+ 
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
 
     initialValues: {
-      email: userLogin.email || "abc@gmail.com" || '',
-      password: userLogin.password || "abc" || '',
+      email: userLogin.email || "" || '',
+      password: userLogin.password || "" || '',
     },
     validationSchema: Yup.object({
       email: Yup.string().required("Please Enter Your User Name"),
@@ -52,20 +64,38 @@ const [showWrongCredentials, setShowWrongCredentials] = useState(false)
     }),
     onSubmit: async (values) => {
       // dispatch(loginUser(values));
+      console.log(values)
       try {
+        
         const res=await postFakeLogin(values)
         if(res.accessToken && res.refreshToken){
           console.log(res)
-          localStorage.setItem('userAuth', JSON.stringify(res));
-         
+          localStorage.setItem('authUser', JSON.stringify(res));
+          // store user data to state 
+      dispatch(loginUser(JSON.parse(localStorage.getItem("authUser"))));
+      navigate(`/`)
+
         }
         else{
-          
+          setMessage("Incorrect Email or Password")
+        dispatch(SomethingAlertTrue());
+        setTimeout(() => {
+          dispatch(SomethingAlertFalse());
+          setMessage("Something went's wrong")
+        }, 2000);
+
         }
-       
   
       } catch (error) {
-        console.error("Error:");
+
+        console.log(error.response)
+        setMessage(error.response.data.message)
+        dispatch(SomethingAlertTrue());
+        setTimeout(() => {
+          dispatch(SomethingAlertFalse());
+          setMessage("Something went's wrong")
+        }, 2000);
+
       }
       
     }
@@ -159,6 +189,7 @@ const [showWrongCredentials, setShowWrongCredentials] = useState(false)
                         <div className="col-sm-6  text-end">
                           <button className="btn btn-primary w-md waves-effect waves-light" type="submit">Log In</button>
                         </div>
+                       
                       </div>
 
                       <div className="mt-2 mb-0 row">
@@ -190,6 +221,9 @@ const [showWrongCredentials, setShowWrongCredentials] = useState(false)
             </Col>
           </Row>
         </Container>
+      </div>
+      <div className=" position-absolute  " style={{top:"0",right:"0"}}>
+     {isOpen &&  <Alert  message={message} type="error" />}
       </div>
     </React.Fragment>
   );

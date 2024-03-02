@@ -1,8 +1,20 @@
 //REGISTER
-export const POST_FAKE_REGISTER = "/post-fake-register"
+export const POST_FAKE_REGISTER = "/admins/create"
 
 //LOGIN
 export const POST_FAKE_LOGIN = "/admins/validate"
+
+// Get ALl Admin
+export const GET_ALL_ADMIN = "/admins"
+
+
+
+
+
+
+
+
+// export const POST_FAKE_LOGIN = "/auth/login"
 export const POST_FAKE_JWT_LOGIN = "/post-jwt-login"
 export const POST_FAKE_PASSWORD_FORGET = "/fake-forget-pwd"
 export const POST_FAKE_JWT_PASSWORD_FORGET = "/jwt-forget-pwd"

@@ -20,6 +20,24 @@ const postFakeRegister = (data) => post(url.POST_FAKE_REGISTER, data)
 // Login Method
 const postFakeLogin = data => post(url.POST_FAKE_LOGIN, data)
 
+
+// get All admins
+const getAllAdmins = data => get(url.GET_ALL_ADMIN, data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // postForgetPwd
 const postFakeForgetPwd = data => post(url.POST_FAKE_PASSWORD_FORGET, data)
 
@@ -92,4 +110,5 @@ export {
   postJwtLogin,
   postJwtForgetPwd,
   postJwtProfile,
+  getAllAdmins,
 }

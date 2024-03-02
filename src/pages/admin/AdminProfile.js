@@ -11,13 +11,10 @@ import CustomerProfileCard from "pages/customers/CustomerProfileCard";
 
 const AdminProfile = props => {
   const {adminData} = useSelector((state) => state.AdminReducers);
-  
-
-  const { sno } = useParams();
-
 
   const admin = adminData.find((admin) =>admin.sno == sno);
   
+
   if (!admin) {
     return <div>Admin not found</div>;
   }
