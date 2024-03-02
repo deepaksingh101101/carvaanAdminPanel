@@ -5,7 +5,7 @@ import { getAllAdmins } from "helpers/fakebackend_helper"; // Assuming you have 
 import CustomerProfileCard from "pages/customers/CustomerProfileCard";
 
 const AdminProfile = () => {
-  const [admin, setAdmin] = useState(null);
+  const [admin, setAdmin] = useState();
   const { id } = useParams();
 
   useEffect(() => {
@@ -27,6 +27,7 @@ const AdminProfile = () => {
     return <div>Admin not found</div>;
   }
 
+  console.log(admin)
   return (
     <React.Fragment>
       <CustomerProfileCard admin={admin} role="Admin" />

@@ -59,6 +59,11 @@ const CustomerProfileCard = ({admin,role}) => {
      <hr />
      </> 
 )}
+
+
+  
+    
+
                                    
                                     {
                                         role==="Customer" &&(
@@ -90,6 +95,36 @@ const CustomerProfileCard = ({admin,role}) => {
                                             <p className="text-muted mb-0"> {admin.is_super_admin?"Yes":"No"}</p>
                                         </Col>
                                     </Row>
+                                    <hr />
+                                    <Row>
+        <Col sm="3">
+            <p className="mb-0">Created By</p>
+        </Col>
+        <Col sm="9">
+        <p className="text-muted mb-0">{admin.created_by && admin.created_by.name !== '' ? admin.created_by.name : "Unknown"}</p>
+        </Col>
+    </Row>
+    <hr />
+    <hr />
+                                    <Row>
+        <Col sm="3">
+            <p className="mb-0">Created At</p>
+        </Col>
+        <Col sm="9">
+            <p className="text-muted mb-0">{admin.created_at ? admin.created_at : "Not Available"}</p>
+        </Col>
+    </Row>
+    <hr />
+    <hr />
+                                    <Row>
+        <Col sm="3">
+            <p className="mb-0">Updated At</p>
+        </Col>
+        <Col sm="9">
+            <p className="text-muted mb-0">{admin.updated_at ? admin.updated_at : "Not Updated Yet"}</p>
+        </Col>
+    </Row>
+    <hr />
                                    {
                                     role==="Customer" &&(
                                         <>
