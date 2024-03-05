@@ -7,11 +7,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { popAdmin, setAdminData } from 'store/auth/user_admin_data/actions';
 import { deleteAdmin, getAllAdmins } from 'helpers/fakebackend_helper';
 import Loader from 'components/loader/Loader';
+import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
+import Alert from 'components/alert/Alert';
 
 const AdminDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loader, setLoader] = useState(true)
+
+  const [message, setMessage] = useState("Something went's wrong")
+
+
+  const isOpen = useSelector(state => state.alertReducer.isOpen);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -34,11 +41,20 @@ const AdminDetails = () => {
   }, []);
 
   const handleRemoveAdmin = async (id) => {
-    console.log(id)
-   let res= await deleteAdmin(id)
-   dispatch(popAdmin(id));
 
+   try {
+    let res= await deleteAdmin(id)
+   dispatch(popAdmin(id));
    console.log(res)
+   } catch (error) {
+    setMessage(error.response.data.message?error.response.data.message:"Something's went's wrong")
+  
+    dispatch(SomethingAlertTrue())
+    setTimeout(() => {
+      dispatch(SomethingAlertFalse());
+      setMessage("Something went's wrong")
+    }, 2000);
+   }
     
   };
 
@@ -157,7 +173,11 @@ const AdminDetails = () => {
               </Card>
             </Col>
           </Row>
+         
         </div>
+      </div>
+      <div  className=" position-fixed  " style={{top:"0px",right:"0",zIndex:"9999"}}>
+     {  <Alert message={message} type="error" />}
       </div>
     </React.Fragment>
   );
