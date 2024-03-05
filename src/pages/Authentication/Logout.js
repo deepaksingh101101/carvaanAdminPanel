@@ -12,6 +12,8 @@ const Logout = props => {
   const navigate = useNavigate();
   
   useEffect(() => {
+    localStorage.clear();
+    navigate('/login')
     dispatch(logoutUser(navigate));
   }, [dispatch,navigate]);
 
