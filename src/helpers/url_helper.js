@@ -1,5 +1,7 @@
 //REGISTER
 export const POST_FAKE_REGISTER = "/admins/create"
+// export const PATCH_ADMIN_EDIT = `admins/:${id}`
+export const DELETE_ADMIN = `admins/:id`
 
 //LOGIN
 export const POST_FAKE_LOGIN = "/admins/validate"

@@ -77,6 +77,7 @@ const [showToast, setShowToast] = useState(false)
 
         }
         else{
+          
           setMessage("Incorrect Email or Password")
         dispatch(SomethingAlertTrue());
         setTimeout(() => {
@@ -88,6 +89,7 @@ const [showToast, setShowToast] = useState(false)
   
       } catch (error) {
         // console.log(error.response)
+        
         setMessage(error.response.data?error.response.data.message:"Something went's Wrong")
         dispatch(SomethingAlertTrue());
         setTimeout(() => {

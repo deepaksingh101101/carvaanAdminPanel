@@ -5,7 +5,7 @@ import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { popAdmin, setAdminData } from 'store/auth/user_admin_data/actions';
-import { getAllAdmins } from 'helpers/fakebackend_helper';
+import { deleteAdmin, getAllAdmins } from 'helpers/fakebackend_helper';
 
 const AdminDetails = () => {
   const dispatch = useDispatch();
@@ -27,13 +27,17 @@ const AdminDetails = () => {
     fetchData();
   }, []);
 
-  const handleRemoveAdmin = (sno) => {
-    dispatch(popAdmin(sno));
+  const handleRemoveAdmin = async (id) => {
+    console.log(id)
+   let res= await deleteAdmin(id)
+   console.log(res)
+    dispatch(popAdmin(id));
   };
 
-  const handleEdit = (sno) => {
-    navigate(`/editAdmin/${sno}`);
-  };
+  // const handleEdit = (id) => {
+
+  //   navigate(`/editAdmin/${id}`);
+  // };
 
   const generateActionButtons = (row) => (
     <div>
@@ -42,12 +46,14 @@ const AdminDetails = () => {
           <i className="ti-eye"></i>
         </button>
       </Link>
-      <button className="btn btn-danger mx-2" onClick={() => handleRemoveAdmin(row.sno)}>
+      <button className="btn btn-danger mx-2" onClick={() => handleRemoveAdmin(row.id)}>
         <i className="ti-trash"></i>
       </button>
-      <button className="btn btn-info mx-2" onClick={() => handleEdit(row.sno)}>
+        <Link to={`/editAdmin/${row.id}`} >
+      <button className="btn btn-info mx-2" >
         <i className="ti-pencil-alt"></i>
       </button>
+      </Link>
     </div>
   );
 

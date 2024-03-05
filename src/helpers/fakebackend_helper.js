@@ -1,5 +1,5 @@
 import axios from "axios"
-import { post, del, get, put } from "./api_helper"
+import { post, del, get, put, patch } from "./api_helper"
 import * as url from "./url_helper"
 
 // Gets the logged in user data from local session
@@ -17,25 +17,26 @@ const isUserAuthenticated = () => {
 // Register Method
 const postFakeRegister = (data) => post(url.POST_FAKE_REGISTER, data)
 
+// Edit Admin
+// const patchAdminEdit = (newData,id) => patch(url.PATCH_ADMIN_EDIT, newData)
+ const patchAdminEdit = (newData, id) => {
+  const url = `admins/${id}`; // Construct the URL with the id parameter
+  return patch(url, newData);
+};
+
+// Delete Admin
+// const deleteAdmin = (data) => del(url.DELETE_ADMIN, data)
+const deleteAdmin = (id) => {
+  const url = `admins/${id}`; // Construct the URL with the id parameter
+  return del(url);
+};
+
 // Login Method
 const postFakeLogin = data => post(url.POST_FAKE_LOGIN, data)
 
 
 // get All admins
 const getAllAdmins = data => get(url.GET_ALL_ADMIN, data)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // postForgetPwd
@@ -111,4 +112,6 @@ export {
   postJwtForgetPwd,
   postJwtProfile,
   getAllAdmins,
+  patchAdminEdit,
+  deleteAdmin,
 }

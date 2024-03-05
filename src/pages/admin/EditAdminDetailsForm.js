@@ -4,37 +4,53 @@ import { Row, Form, Input, FormFeedback, Col, Card, Label, CardBody, CardTitle, 
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { pushAdmin, updateAdmin } from 'store/auth/user_admin_data/actions';
-import { postFakeRegister } from '../../helpers/fakebackend_helper';
+import { pushAdmin, setAdminData, updateAdmin } from 'store/auth/user_admin_data/actions';
+import { getAllAdmins, patchAdminEdit, postFakeRegister } from '../../helpers/fakebackend_helper';
 
 // Form validation
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Alert from 'components/alert/Alert';
+import { PATCH_ADMIN_EDIT } from 'helpers/url_helper';
 const EditAdminDetailForm = ({ type }) => {
   const [is_super_admin, setIs_super_admin] = useState(false);
+  const [adminState, setAdminState] = useState();
+
   const toggleAdminPost = () => {
     setIs_super_admin(!is_super_admin);
   };
+
   const [adminCreate, setAdminCreate] = useState([]);
   const dispatch = useDispatch();
-  const { sno } = useParams();
-  let { adminData } = useSelector((state) => state.AdminReducers);
-  const admin = adminData.find((admin) => admin.sno == sno);
+
+    const { id } = useParams();
+
+
+    useEffect(() => {
+      const fetchData = async () => {
+       
+        try {
+          if(type==="Edit"){
+          let adminData = await getAllAdmins(); 
+          dispatch(setAdminData(adminData))
+          const foundAdmin = adminData.find((admin) => admin.id == id); // Find admin by id
+          setAdminState(foundAdmin);
+            validation.setFieldValue("name",foundAdmin.name)
+            validation.setFieldValue("email",foundAdmin.email)
+            validation.setFieldValue("is_super_admin",foundAdmin.is_super_admin)
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData(); // Call the fetchData function
+    }, [id]); // Add id as a dependency for useEffect
+  
+
 
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (admin) {
-  //     setName(admin.name || '');
-  //     setEmail(admin.email || '');
-  //     setMobile(admin.mobile || '');
-  //     setProfile(admin.profile || '');
-  //     setPassword(admin.password || '');
-  //     setIs_super_admin(admin.is_super_admin || false);
-  //   }
-  // }, [admin]);
 
  
 
@@ -55,14 +71,29 @@ const EditAdminDetailForm = ({ type }) => {
     onSubmit: async (values) => {
     const created_by = JSON.parse(localStorage.getItem("authUser")).admin.id;
 
+    const isValidAdmin=JSON.parse(localStorage.getItem("authUser")).admin.is_super_admin
+      console.log(isValidAdmin)
+    if(!isValidAdmin){
+      console.log("Not Authenticated")
+      return;
+    }
+    else{
       const newData = {
         ...values,
         created_by: created_by,
       };
+
       console.log(newData)
 
       try {
-        const res = await postFakeRegister(newData);
+
+        if(type==="Edit"){
+          const res = await patchAdminEdit(newData,id);
+          console.log(res)
+        }
+        else{
+          const res = await postFakeRegister(newData);
+        }
 
         navigate('/adminDetails')
         // const newAdmin = {
@@ -88,7 +119,10 @@ const EditAdminDetailForm = ({ type }) => {
       } catch (error) {
         console.log(error.response);
       }
-    },
+
+    }
+
+        },
   });
 
 
@@ -99,10 +133,8 @@ const EditAdminDetailForm = ({ type }) => {
       const randomIndex = Math.floor(Math.random() * charset.length);
       password += charset[randomIndex];
     }
-    // Set the generated password to the password field value
     validation.setFieldValue('password', password); // Update this line to set password directly
 
-//  validation.values.password=password;
   };
 
   return (
@@ -243,7 +275,7 @@ const EditAdminDetailForm = ({ type }) => {
       </div>
       <div className=" position-absolute  " style={{top:"0",right:"0"}}>
 
-<Alert message="ehbcjer" type="error" />
+{/* <Alert message="ehbcjer" type="error" /> */}
 </div>
     </React.Fragment>
   );

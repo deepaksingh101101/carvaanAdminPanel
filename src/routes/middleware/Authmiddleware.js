@@ -29,7 +29,7 @@ const Authmiddleware = (props) => {
   };
 
   const Layout = getLayout(layoutType);
-
+// Not removed from middle ware
   if (!localStorage.getItem("authUser")) {
     return (
       <Navigate to={{ pathname: "/login", state: { from: props.location } }} />

@@ -6,7 +6,7 @@ import axios from "axios"
 
 //apply base url for axios
 // const API_URL = "https://8495-103-16-69-135.ngrok-free.app"
-const API_URL = "https://e55c-103-16-69-133.ngrok-free.app"
+const API_URL = "http://35.200.249.150:3000/"
 
 const axiosApi = axios.create({
   baseURL: API_URL,
@@ -49,6 +49,11 @@ export async function post(url, data, config = {}) {
 export async function put(url, data, config = {}) {
   return axiosApi
     .put(url, { ...data }, { ...config })
+    .then(response => response.data)
+}
+export async function patch(url, data, config = {}) {
+  return axiosApi
+    .patch(url, { ...data }, { ...config })
     .then(response => response.data)
 }
 
