@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Row, Col, Card, CardBody, CardImg, CardTitle, CardSubtitle, CardText, Button, } from "reactstrap";
 
 //Import Breadcrumb
 import Breadcrumb from "../../components/Common/Breadcrumb";
+import Loader from "components/loader/Loader";
 
 // import avatar from "../../assets/images/users/user-4.jpg";
 
 const CustomerProfileCard = ({admin,role}) => {
+
+    const [loader, setLoader] = useState(false)
+
     return (
 
         <React.Fragment>
@@ -16,7 +20,8 @@ const CustomerProfileCard = ({admin,role}) => {
                     <Breadcrumb link={role==="Admin"?"/adminDetails":"/customerDetails"} maintitle="Carvaan" title={`${role}s`} breadcrumbItem={`${role} Profile` } />
 
                     <Row>
-                        <Col className="d-flex w-100">
+                        {loader && <Loader/>}
+                        {!loader && <Col className="d-flex w-100">
                             <Card className="w-30 mx-2 d-flex align-items-center">
                                 <CardImg
                                     style={{ width: '70%' }}
@@ -152,7 +157,7 @@ const CustomerProfileCard = ({admin,role}) => {
                                    }
                                 </CardBody>
                             </Card>
-                        </Col>
+                        </Col>}
                     </Row>
                 </div>
             </div>

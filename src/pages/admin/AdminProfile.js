@@ -30,6 +30,7 @@ const AdminProfile = () => {
   console.log(admin)
   return (
     <React.Fragment>
+      
       <CustomerProfileCard admin={admin} role="Admin" />
     </React.Fragment>
   );

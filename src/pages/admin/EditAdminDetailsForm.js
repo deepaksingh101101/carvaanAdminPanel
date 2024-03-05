@@ -12,23 +12,30 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Alert from 'components/alert/Alert';
 import { PATCH_ADMIN_EDIT } from 'helpers/url_helper';
+import Loader from 'components/loader/Loader';
+import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 const EditAdminDetailForm = ({ type }) => {
   const [is_super_admin, setIs_super_admin] = useState(false);
   const [adminState, setAdminState] = useState();
+  const isOpen = useSelector(state => state.alertReducer.isOpen);
+  const [message, setMessage] = useState("Something went's wrong")
 
   const toggleAdminPost = () => {
     setIs_super_admin(!is_super_admin);
   };
 
+
+  const [loader, setLoader] = useState(false)
   const [adminCreate, setAdminCreate] = useState([]);
   const dispatch = useDispatch();
+  const isValidAdmin=JSON.parse(localStorage.getItem("authUser")).admin.is_super_admin
 
     const { id } = useParams();
 
 
     useEffect(() => {
       const fetchData = async () => {
-       
+
         try {
           if(type==="Edit"){
           let adminData = await getAllAdmins(); 
@@ -69,30 +76,27 @@ const EditAdminDetailForm = ({ type }) => {
       is_super_admin: Yup.boolean(),
     }),
     onSubmit: async (values) => {
+      setLoader(true)
     const created_by = JSON.parse(localStorage.getItem("authUser")).admin.id;
 
     const isValidAdmin=JSON.parse(localStorage.getItem("authUser")).admin.is_super_admin
-      console.log(isValidAdmin)
-    if(!isValidAdmin){
-      console.log("Not Authenticated")
-      return;
-    }
-    else{
+    if(isValidAdmin){
       const newData = {
         ...values,
         created_by: created_by,
       };
 
-      console.log(newData)
-
+     
       try {
 
         if(type==="Edit"){
           const res = await patchAdminEdit(newData,id);
           console.log(res)
+          setLoader(false)
         }
         else{
           const res = await postFakeRegister(newData);
+          setLoader(false)
         }
 
         navigate('/adminDetails')
@@ -117,8 +121,28 @@ const EditAdminDetailForm = ({ type }) => {
 
         console.log(res);
       } catch (error) {
+        setMessage(error.response.data?error.response.data.message:"Something went's Wrong")
+        dispatch(SomethingAlertTrue());
+        setTimeout(() => {
+          dispatch(SomethingAlertFalse());
+          setMessage("Something went's wrong")
+        }, 2000);
         console.log(error.response);
       }
+    }
+    else{
+
+      setLoader(false)
+      setMessage("Action allowed to super Admins only:)")
+        dispatch(SomethingAlertTrue());
+        setTimeout(() => {
+          dispatch(SomethingAlertFalse());
+          setMessage("Something went's wrong")
+        }, 10000);
+      console.log("Not Authenticated")
+      return;
+
+      
 
     }
 
@@ -127,14 +151,17 @@ const EditAdminDetailForm = ({ type }) => {
 
 
   const generatePassword = () => {
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
-    let password = '';
-    for (let i = 0; i < 12; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      password += charset[randomIndex];
+    if(isValidAdmin){
+      const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
+      let password = '';
+      for (let i = 0; i < 8; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+      }
+      validation.setFieldValue('password', password); // Update this line to set password directly  
     }
-    validation.setFieldValue('password', password); // Update this line to set password directly
 
+   
   };
 
   return (
@@ -144,8 +171,9 @@ const EditAdminDetailForm = ({ type }) => {
           <Breadcrumbs link="/adminDetails" maintitle="Carvaan" title="Admin" breadcrumbItem={`${type} Admin`} />
           <Row>
             <Col className="col-12">
-              <Card>
-                <CardBody>
+              <Card style={{height:"80vh"}} >
+                {loader && <Loader/>}
+                {!loader && <CardBody>
                   <CardTitle className="h4">{`${type} Admin`}</CardTitle>
                   <Form
                     onSubmit={(e) => {
@@ -165,6 +193,7 @@ const EditAdminDetailForm = ({ type }) => {
                             className="form-control"
                             placeholder="Enter your name"
                             required
+                            disabled={!isValidAdmin}
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
                             value={validation.values.name || ''}
@@ -179,16 +208,18 @@ const EditAdminDetailForm = ({ type }) => {
                             Email
                           </label>
                           <Input
-                            type="email"
-                            id="email"
-                            className="form-control"
-                            placeholder="Enter email"
-                            required
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.email || ''}
-                            invalid={validation.touched.email && validation.errors.email ? true : false}
-                          />
+  type="email"
+  id="email"
+  className="form-control"
+  placeholder="Enter email"
+  required
+  disabled={!isValidAdmin} // Corrected syntax
+  onChange={validation.handleChange}
+  onBlur={validation.handleBlur}
+  value={validation.values.email || ''}
+  invalid={validation.touched.email && validation.errors.email ? true : false}
+/>
+
                           {validation.touched.email && validation.errors.email ? (
                             <FormFeedback type="invalid">{validation.errors.email}</FormFeedback>
                           ) : null}
@@ -203,6 +234,7 @@ const EditAdminDetailForm = ({ type }) => {
   name="is_super_admin"
   role="switch"
   id="is_super_admin"
+  disabled={!isValidAdmin}
   onChange={(event) => {
     validation.handleChange(event); // Pass event to handleChange
     toggleAdminPost();
@@ -244,6 +276,7 @@ const EditAdminDetailForm = ({ type }) => {
                               placeholder="Enter password"
                               required
                               name="password"
+                              disabled={!isValidAdmin}
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
                               value={validation.values.password || ''}
@@ -258,12 +291,13 @@ const EditAdminDetailForm = ({ type }) => {
                           </div>
                         </div>
                       </div>
-                      <button type="submit" className="mt-1 btn btn-success">
+                      <button type="submit" disabled={!isValidAdmin} className="mt-1 btn btn-success">
                         {type === 'Edit' ? 'Update Admin' : 'Create Admin'}
                       </button>
                     </div>
                   </Form>
-                </CardBody>
+                </CardBody>}
+                
               </Card>
             </Col>
           
@@ -275,8 +309,10 @@ const EditAdminDetailForm = ({ type }) => {
       </div>
       <div className=" position-absolute  " style={{top:"0",right:"0"}}>
 
-{/* <Alert message="ehbcjer" type="error" /> */}
 </div>
+<div className=" position-absolute  " style={{top:"0",right:"0"}}>
+     {isOpen &&  <Alert  message={message} type="error" />}
+      </div>
     </React.Fragment>
   );
 };

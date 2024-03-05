@@ -13,7 +13,7 @@ export const AdminReducers = (state ={
     case POP_ADMIN:
       return {
         ...state,
-        adminData: state.adminData.filter((admin) => admin.sno !== action.payload),
+        adminData: state.adminData.filter((admin) => admin.id !== action.payload),
       };
       case UPDATE_ADMIN:
         console.log(state.adminData)

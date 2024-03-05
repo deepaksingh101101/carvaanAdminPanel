@@ -6,10 +6,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { popAdmin, setAdminData } from 'store/auth/user_admin_data/actions';
 import { deleteAdmin, getAllAdmins } from 'helpers/fakebackend_helper';
+import Loader from 'components/loader/Loader';
 
 const AdminDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(true)
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
@@ -18,20 +21,25 @@ const AdminDetails = () => {
     try {
       let adminData = await getAllAdmins();
       dispatch(setAdminData(adminData));
+      setLoader(false)
     } catch (error) {
       console.error("Error fetching data:", error);
+      setLoader(false)
     }
   };
 
   useEffect(() => {
+    setLoader(true)
     fetchData();
   }, []);
 
   const handleRemoveAdmin = async (id) => {
     console.log(id)
    let res= await deleteAdmin(id)
+   dispatch(popAdmin(id));
+
    console.log(res)
-    dispatch(popAdmin(id));
+    
   };
 
   // const handleEdit = (id) => {
@@ -118,9 +126,9 @@ const AdminDetails = () => {
           <Breadcrumbs link="/adminDetails" maintitle="Carvaan" title="Admin" breadcrumbItem="Admin Details" />
           <Row>
             <Col className="col-12">
-              <Card>
-                <CardBody>
-                  <div className='d-flex justify-content-between'>
+              <Card style={{minHeight:"80vh"}} >
+                <CardBody style={{minHeight:"80vh"}}>
+                  <div  className='d-flex justify-content-between'>
                     <CardTitle className="h4">Admin Details</CardTitle>
                     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className=' '>
                       <DropdownToggle className='' style={{ paddingLeft: "45px", paddingRight: "45px" }} caret>
@@ -134,7 +142,17 @@ const AdminDetails = () => {
                       </DropdownMenu>
                     </Dropdown>
                   </div>
-                  <MDBDataTable responsive bordered data={data} />
+                  {loader && <Loader/>}
+
+                  {!loader && 
+                  
+                  <div style={{minHeight:"80vh"}}  >
+                  <MDBDataTable responsive bordered data={data} /> 
+                  </div>
+                  
+                  }
+                  
+
                 </CardBody>
               </Card>
             </Col>

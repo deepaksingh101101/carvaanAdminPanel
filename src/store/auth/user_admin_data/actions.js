@@ -11,9 +11,9 @@ export const pushAdmin = (admin) => ({
   payload: admin,
 });
 
-export const popAdmin = (sno) => ({
+export const popAdmin = (id) => ({
   type: POP_ADMIN,
-  payload: sno,
+  payload: id,
 });
 
 export const updateAdmin = (admin) => ({

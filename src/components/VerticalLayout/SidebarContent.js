@@ -158,7 +158,6 @@ const SidebarContent = props => {
             <li>
               <Link to="/admin" className="waves-effect">
                 <i className="fas fa-user"></i>
-                {/* <span className="badge rounded-pill bg-primary float-end">1</span> */}
                 <span>{props.t("Admin")}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
