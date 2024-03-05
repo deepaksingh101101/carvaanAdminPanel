@@ -149,6 +149,17 @@ import FaqCreate from "pages/faq/FaqCreate";
 import FaqEdit from "pages/faq/FaqEdit";
 import ViewFaq from "pages/faq/ViewFaq";
 
+const superAdminRoutes=[
+     // Admin
+  { path: "/adminDetails", component: <AdminDetails /> },
+  { path: "/createAdmin", component: <CreateAdmin /> },
+  { path: "/editAdmin/:id", component: <EditAdminDetail/> },
+  { path: "/adminProfile/:id", component: <AdminProfile /> },
+  { path: "/adminProfile", component: <AdminProfile /> },
+  
+]
+
+
 const userRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -159,11 +170,11 @@ const userRoutes = [
   { path: "/profile", component: <UserProfile /> },
 
   // Admin
-  { path: "/adminDetails", component: <AdminDetails /> },
-  { path: "/createAdmin", component: <CreateAdmin /> },
-  { path: "/editAdmin/:id", component: <EditAdminDetail/> },
-  { path: "/adminProfile/:id", component: <AdminProfile /> },
-  { path: "/adminProfile", component: <AdminProfile /> },
+  // { path: "/adminDetails", component: <AdminDetails /> },
+  // { path: "/createAdmin", component: <CreateAdmin /> },
+  // { path: "/editAdmin/:id", component: <EditAdminDetail/> },
+  // { path: "/adminProfile/:id", component: <AdminProfile /> },
+  // { path: "/adminProfile", component: <AdminProfile /> },
   
 
   // Admin
@@ -295,9 +306,8 @@ const authRoutes = [
 
   { path: "/pages-maintenance", component: <PagesMaintenance /> },
   { path: "/pages-comingsoon", component: <PagesComingsoon /> },
-  { path: "/pages-404", component: <Pages404 /> },
+  { path: "*", component: <Pages404 /> },
   { path: "/pages-500", component: <Pages500 /> },
-
   // Authentication Inner
   { path: "/pages-login", component: <Login1 /> },
   { path: "/pages-login-2", component: <Login2 /> },
@@ -316,4 +326,4 @@ const authRoutes = [
   { path: "/auth-two-step-verification-2", component: <TwostepVerification2 /> },
 ];
 
-export { userRoutes, authRoutes };
+export { userRoutes, authRoutes ,superAdminRoutes};

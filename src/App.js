@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import { connect } from "react-redux";
 
 // Import Routes all
-import { userRoutes, authRoutes } from "./routes/allRoutes";
+import { userRoutes, authRoutes, superAdminRoutes } from "./routes/allRoutes";
 
 // Import all middleware
 import Authmiddleware from "./routes/middleware/Authmiddleware";
@@ -14,6 +14,7 @@ import NonAuthLayout from "./components/NonAuthLayout";
 
 // Import scss
 import "./assets/scss/theme.scss";
+import ValidSuperAdmin from 'routes/ValidSuperAdmin';
 
 // Import Firebase Configuration file
 // import { initFirebaseBackend } from "./helpers/firebase_helper"
@@ -64,6 +65,22 @@ const App = () => {
                 <Authmiddleware>
                   {route.component}
                 </Authmiddleware>}
+              key={idx}
+              exact={true}
+            />
+          ))}
+        </Route>
+
+
+
+        <Route>
+          {superAdminRoutes.map((route, idx) => (
+            <Route
+              path={route.path}
+              element={
+                <ValidSuperAdmin>
+                  {route.component}
+                </ValidSuperAdmin>}
               key={idx}
               exact={true}
             />

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 
 // //Import Scrollbar
 import SimpleBar from "simplebar-react";
@@ -140,6 +140,19 @@ const SidebarContent = props => {
     }
   }
 
+  const [isSuperAdmin, setisSuperAdmin] = useState(false)
+  useEffect(() => {
+    // Retrieve the data from localStorage
+    const authUserData = JSON.parse(localStorage.getItem("authUser"));
+  
+    // Check if the user is a super admin
+    if (authUserData && authUserData.admin && authUserData.admin.is_super_admin) {
+      setisSuperAdmin(true);
+    }
+  }, []);
+  
+ 
+
   return (
     <React.Fragment>
       <SimpleBar style={{ maxHeight: "100%" }} ref={ref}>
@@ -155,7 +168,7 @@ const SidebarContent = props => {
               </Link>
             </li>
             {/* -------Admin------- */}
-            <li>
+          { isSuperAdmin && (<li>
               <Link to="/admin" className="waves-effect">
                 <i className="fas fa-user"></i>
                 <span>{props.t("Admin")}</span>
@@ -168,7 +181,7 @@ const SidebarContent = props => {
                   <Link to="/createAdmin"><i className="fas fa-user-plus"></i>{props.t("Create Admin")}</Link>
                 </li>
                 </ul>
-            </li>
+            </li>)}
             {/* -------Trips------- */}
             <li>
               <Link to="/trips" className="waves-effect">

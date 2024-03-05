@@ -2,13 +2,10 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import VerticalLayout from "components/VerticalLayout";
-// import HorizontalLayout from "components/HorizontalLayout";
+import { layoutTypes } from "../constants/layout";
 
-//constants
-import { layoutTypes } from "../../constants/layout";
 
-  const Authmiddleware = (props) => {
-
+const ValidSuperAdmin = ({ children }) => {
   const { layoutType } = useSelector(state => ({
     layoutType: state.Layout.layoutType,
   }));
@@ -27,22 +24,20 @@ import { layoutTypes } from "../../constants/layout";
     }
     return Layout;
   };
-
   const Layout = getLayout(layoutType);
-// Not removed from middle ware
-  if (!localStorage.getItem("authUser")) {
-    return (
-      <Navigate to={{ pathname: "/login", state: { from: props.location } }} />
-    );
+
+  const authUserData = JSON.parse(localStorage.getItem("authUser"));
+  
+
+  if (!authUserData || !authUserData.admin || !authUserData.admin.is_super_admin) {
+    return <Navigate to="/" />;
   }
 
-  return (
-    <React.Fragment>
-      <Layout>{props.children}</Layout>
-    </React.Fragment>);
+  console.log("User is a super admin, allowing access...");
+  // Render child components if the user is a super admin
+  return <React.Fragment>
+   <Layout> {children}</Layout>
+    </React.Fragment>;
 };
 
-export default Authmiddleware;
-
-
-
+export default ValidSuperAdmin;
