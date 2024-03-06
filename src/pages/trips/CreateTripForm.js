@@ -52,12 +52,16 @@ const CreateTripForm = ({ type }) => {
 
   const navigate = useNavigate();
 
+  
+  const [middlePointsSize, setMiddlePointsSize] = useState(8)
+  const [top_facilities_size, setTop_facilities_size] = useState(6)
+  const [packing_guide_size, setPacking_guide_size] = useState(8)
+  
+  
+  
+  
+  
   const [tripCreate, setTripCreate] = useState([]);
-
-const [middlePointsSize, setMiddlePointsSize] = useState(8)
-const [top_facilities_size, setTop_facilities_size] = useState(6)
-
-const [packing_guide_size, setPacking_guide_size] = useState(8)
 const [middle_points_array, setMiddle_points_array] = useState([])
 const [inclusive_array, setInclusive_array] = useState([])
 const [exclusive_array, setExclusive_array] = useState([])
@@ -92,6 +96,24 @@ const dummyMiddlePoints = [
   "Point M5",
   // Add more dummy middle points as needed
 ];
+
+
+// const [companyOptions, setcompanyOptions] = useState(initialState)
+// const [endPoints, setEndPoints] = useState(initialState)
+// const [startPoints, setStartPoints] = useState(initialState)
+// const [dummyMiddlePoints, setDummyMiddlePoints] = useState(initialState)
+
+const fetchOptions=()=>{
+  
+}
+
+useEffect(() => {
+fetchOptions()
+}, [])
+
+
+
+
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -117,19 +139,6 @@ const dummyMiddlePoints = [
       food_options: tripCreate.food_options|| [],
       itinerary:tripCreate.itinerary||[{}],
 
-
-//     total_seats: tripCreate.total_seats || "",
-//       no_of_meal: tripCreate.no_of_meal || "",
-//       accommodation: tripCreate.accommodation || "",//stay options
-//  offer_price:tripCreate.offer_price || "",
-//       overview:tripCreate.overview || "",
-//       full_address:tripCreate.full_address || "",
-//       top_facilities: tripCreate.top_facilities || [], // Array with default size or length of tripCreate.middle_points filled with empty strings
-//        packing_guide: tripCreate.packing_guide || [] ,
-//       pickup_location:tripCreate.pickup_location || "",
-//       drop_location:tripCreate.drop_location || "",
-//       pickup_time:tripCreate.pickup_time || "",
-//       drop_time:tripCreate.drop_time || "",
     },
     validationSchema: Yup.object({
       company_name: Yup.string().required("Please Enter The Company Name"),
@@ -156,6 +165,9 @@ const dummyMiddlePoints = [
 
 
     }),
+    onSubmit: async (values) => {
+      console.log(values)
+    }
 
   })
   
@@ -184,8 +196,6 @@ else {
 
    
   }
-
-
 const handleAddExclusion=(e)=>{
   e.preventDefault(validation.values.exclusion.length);
   console.log()
@@ -223,8 +233,6 @@ dispatch(SomethingAlertTrue());
 
 }  
  }
-
-
  const handleAddInclusion=(e)=>{
   e.preventDefault(validation.values.inclusion.length);
   console.log()
@@ -262,7 +270,6 @@ else{
  
 }
  }
-
  const handleAddTheme=(e)=>{
   e.preventDefault(validation.values.trip_themes.length);
   console.log()
@@ -300,8 +307,6 @@ else{
  
 }
  }
-
-
  const handleAddFoodOptions=(e)=>{
   e.preventDefault(validation.values.food_options.length);
   console.log()
@@ -339,110 +344,33 @@ else{
  
 }
  }
-
- 
  const handleDeleteTheme = (i) => {
   const newArray = [...themes_array]; // Create a copy of the array
   newArray.splice(i, 1); // Remove one element at index i
   setThemes_array(newArray); // Update the state with the new array
 }
-
-
  const handleDeleteInclusion = (i) => {
   const newArray = [...inclusive_array]; // Create a copy of the array
   newArray.splice(i, 1); // Remove one element at index i
   setInclusive_array(newArray); // Update the state with the new array
 }
-
 const handleDeleteExclusion = (i) => {
   const newArray = [...exclusive_array]; // Create a copy of the array
   newArray.splice(i, 1); // Remove one element at index i
   setExclusive_array(newArray); // Update the state with the new array
 }
-
-  const handleDeleteMiddlePoints = (i) => {
+const handleDeleteMiddlePoints = (i) => {
     const newArray = [...middle_points_array]; // Create a copy of the array
     newArray.splice(i, 1); // Remove one element at index i
     setMiddle_points_array(newArray); // Update the state with the new array
-  }
-  const handleDeleteFoodOptions = (i) => {
+}
+const handleDeleteFoodOptions = (i) => {
     const newArray = [...food_options_array]; // Create a copy of the array
     newArray.splice(i, 1); // Remove one element at index i
     setFood_options_array(newArray); // Update the state with the new array
-  }
+}
 
-  // useEffect(() => {
-  //   if (trip) {
-  //     setTripBanner(trip.tripBanner || '');
-  //     setTripImage1(trip.tripImage1 || '');
-  //     setTripImage2(trip.tripImage2 || '');
-  //     setTripImage3(trip.tripImage3 || '');
-  //     setHeadline(trip.headline || '');
-  //     setItinerary(trip.itinerary || '');
-  //     setFrom(trip.from || '');
-  //     setTo(trip.to || '');
-  //     setStartDate(trip.startDate || '');
-  //     setEndDate(trip.endDate || '');
-  //     setStartTime(trip.startTime || '');
-  //     setEndTime(trip.endTime || '');
-  //     setDuration(trip.duration || '');
-  //     setTotalSeats(trip.totalSeats || '');
-  //     setPrice(trip.price || '');
-  //     setAccommodation(trip.accommodation || '');
-  //     setTransportation(trip.transportation || '');
-  //     setTotalBreakfast(trip.totalBreakfast || '');
-  //     setTotalLunch(trip.totalLunch || '');
-  //     setTotalDinner(trip.totalDinner || '');
-  //     setSightSeeing(trip.sightSeeing || '');
-  //     setLocalGuide(trip.localGuide || '');
-  //     setThingsToCarry(trip.thingsToCarry || '');
-  //   //   setDetailedPdf(trip.detailedPdf || '');
-  //     setInclusion(trip.inclusion || '');
-  //     setExclusion(trip.exclusion || '');
-  //     setSelectedBanner(trip.selectedBanner || '');
-      
-  //   }
-  // }, [trip]);
-
-  // const handleAddTripClick = () => {
-  //   const newTrip = {
-  //     sno: type === "Edit" ? trip.sno : (tripData.length > 0 ? tripData[tripData.length - 1].sno + 1 : 1),
-  //     selectedBanner:selectedBanner,
-  //     tripImage1:tripImage1,
-  //     tripImage2:tripImage2,
-  //     tripImage3:tripImage3,
-  //     headline:headline,
-  //     itinerary:itinerary,
-  //     from:from,
-  //     to:to,
-  //     startDate:startDate,
-  //     endDate:endDate,
-  //     startTime:startTime,
-  //     endTime:endTime,
-  //     duration:duration,
-  //     totalSeats:totalSeats,
-  //     price:price,
-  //     accommodation:accommodation,
-  //     transportation:transportation,
-  //     totalBreakfast:totalBreakfast,
-  //     totalLunch:totalLunch,
-  //     totalDinner:totalDinner,
-  //     sightSeeing:sightSeeing,
-  //     localGuide:localGuide,
-  //     thingsToCarry:thingsToCarry,
-  //     inclusion:inclusion,
-  //     exclusion:exclusion
-  //   };
-
-  //   if (type === 'Create') {
-  //     dispatch(pushTrip(newTrip));
-  //   } else {
-  //     dispatch(updateTrip(newTrip));
-  //   }
-
-  //   navigate('/tripDetails');
-  // };
-
+// Removed use effect and copied t notepad
   const [selectedBanners, setSelectedBanners] = useState([]);
 
   const handleBannerDelete = (index) => {
@@ -456,19 +384,9 @@ const handleDeleteExclusion = (i) => {
     const updatedBanners = acceptedBanners.map(file => ({
       ...file,
       preview: URL.createObjectURL(file),
-      // formattedSize: formatBytes(file.size),
     }));
     setSelectedBanners([...selectedBanners, ...updatedBanners]);
   }
-
-  // function formatBytes(bytes, decimals = 2) {
-  //   if (bytes === 0) return "0 Bytes";
-  //   const k = 1024;
-  //   const dm = decimals < 0 ? 0 : decimals;
-  //   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  //   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  //   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-  // }
 
 
   return (
@@ -492,10 +410,6 @@ const handleDeleteExclusion = (i) => {
                   
                   <div data-repeater-list="group-a">
                     <div data-repeater-item className="row w-100">
-
-
-
-
  <div className="mb-3 col-lg-12">
       <label className="form-label" htmlFor="tripBanner">
         Banner Picture
@@ -532,14 +446,6 @@ const handleDeleteExclusion = (i) => {
                         src={selectedBanner.preview}
                       />
                     </Col>
-                    {/* <Col>
-                      <Link to="#" className="text-muted font-weight-bold">
-                        {selectedBanner.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{selectedBanner.formattedSize}</strong>
-                      </p>
-                    </Col> */}
                     <Col className=' ms-5 pe-2 col-3' >
                      <i onClick={()=>handleBannerDelete(index)} className='  fas fa-trash-alt text-danger' role="button" ></i>
                     </Col>
@@ -689,10 +595,6 @@ const handleDeleteExclusion = (i) => {
                           ) : null}
                       </div>
 
-
-
-
-
                        <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="duration">
                         Duration
@@ -755,46 +657,6 @@ const handleDeleteExclusion = (i) => {
                           ) : null}
                       </div>
 
-                      {/* <div className="mb-3 col-lg-4">
-                        <Label className="form-label" htmlFor="pickup_time">
-                          Pickup Time
-                        </Label>
-                        <Input
-                          type="time"
-                          id="pickup_time"
-                          name="pickup_time"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.pickup_time || ''}
-                          invalid={validation.touched.pickup_time && validation.errors.pickup_time ? true : false}
-                          className="form-control"
-                          required
-                        />
-                        {validation.touched.pickup_time && validation.errors.pickup_time ? (
-                            <FormFeedback type="invalid">{validation.errors.pickup_time}</FormFeedback>
-                          ) : null}
-                      </div>
-
-                      <div className="mb-3 col-lg-4">
-                        <Label className="form-label" htmlFor="drop_time">
-                          Drop Time
-                        </Label>
-                        <Input
-                          type="time"
-                          id="drop_time"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.drop_time || ''}
-                          invalid={validation.touched.drop_time && validation.errors.drop_time ? true : false}
-                        name='drop_time'
-                          className="form-control"
-                          required
-                        />
-                        {validation.touched.drop_time && validation.errors.drop_time ? (
-                            <FormFeedback type="invalid">{validation.errors.drop_time}</FormFeedback>
-                          ) : null}
-                      </div> */}
-
 <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="price_per_person">
                         Price Per Person
@@ -815,84 +677,6 @@ const handleDeleteExclusion = (i) => {
                             <FormFeedback type="invalid">{validation.errors.price_per_person}</FormFeedback>
                           ) : null}
                       </div>
-
-                     
-
-                      
-{/* 
-<div className="mb-3 col-lg-4">
-  <Label className="form-label" htmlFor="total_seats">
-    Total Number Of Seats
-  </Label>{" "}
-  <Input
-    type="number"
-    className="form-control"
-    name='total_seats'
-    onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.total_seats || ''}
-                          invalid={validation.touched.total_seats && validation.errors.total_seats ? true : false}
-                        id="total_seats"
-                        
-    required
-    placeholder='Total Seats'
-    min="1"  // Add this line to set the minimum value
-  />
-   {validation.touched.total_seats && validation.errors.total_seats ? (
-                            <FormFeedback type="invalid">{validation.errors.total_seats}</FormFeedback>
-                          ) : null}
-</div> */}
-
-
-
-
-
-
-
-{/* middle points as select box */}
-{/* <div className="mb-3 col-lg-4">
-      <Label className="form-label" htmlFor="middle_points">
-        Middle Points
-      </Label>
-      <div className='d-flex justify-content-between'>
-        <Input
-          type="select"
-          id="middle_points"
-          className="form-control"
-          placeholder="Middle Points"
-          onChange={validation.handleChange}
-          onBlur={validation.handleBlur}
-          value={validation.values.middle_points || ''}
-          multiple
-          invalid={validation.touched.middle_points && validation.errors.middle_points ? true : false}
-        >
-          {dummyMiddlePoints.map((middlePoint, index) => (
-            <option key={index} value={middlePoint}>
-              {middlePoint}
-            </option>
-          ))}
-        </Input>
-        <button onClick={handleAddMiddlePoints} type='button' className='btn btn-success mx-1'>Add</button>
-      </div>
-      {validation.touched.middle_points && validation.errors.middle_points ? (
-        <FormFeedback type="invalid">{validation.errors.middle_points}</FormFeedback>
-      ) : null}
-      <div className='d-flex flex-column'>
-        {middle_points_array.map((data, i) => (
-          <div className='d-flex justify-content-between mx-3' key={i}>
-            <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
-              {data}
-              <Badge className='mx-2 bg-transparent'>
-                <i onClick={(e)=>{handleDeleteMiddlePoints(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger"></i>
-              </Badge>
-            </h6>
-          </div>
-        ))}
-      </div>
-    </div> */}
-
-                     
-
 
                       <div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="room_occupancy">
@@ -970,107 +754,6 @@ const handleDeleteExclusion = (i) => {
     <FormFeedback type="invalid">{validation.errors.type_of_transportation}</FormFeedback>
   ) : null}
 </div>
-
-
-
-                      {/* <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="accommodation">
-    Accommodation
-  </label>
-  <select
-    id="accommodation"
-    value={accommodation}
-    onChange={(e) => setAccommodation(e.target.value)}
-    className="form-control"
-    required
-  >
-    <option value="">Select Accommodation</option>
-    <option value="3-star-hotel">3 Star Hotel</option>
-    <option value="4-star-hotel">4 Star Hotel</option>
-    <option value="5-star-hotel">5 Star Hotel</option>
-    <option value="3-star-resort">3 Star Resort</option>
-    <option value="4-star-resort">4 Star Resort</option>
-    <option value="5-star-resort">5 Star Resort</option>
-    <option value="3-star-hostel">3 Star Hostel</option>
-    <option value="4-star-hostel">4 Star Hostel</option>
-    <option value="5-star-hostel">5 Star Hostel</option>
-    <option value="3-star-campus">3 Star Campus</option>
-    <option value="4-star-campus">4 Star Campus</option>
-    <option value="5-star-campus">5 Star Campus</option>
-  </select>
-</div> */}
-
-
-{/* <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="transportation">
-    Transportation
-  </label>
-  <select
-    id="transportation"
-    value={transportation}
-    onChange={(e) => setTransportation(e.target.value)}
-    className="form-control"
-    required
-  >
-    <option value="">Select Transportation</option>
-    <option value="volvo">Volvo</option>
-    <option value="traveler">Traveler</option>
-    <option value="train">Train</option>
-    <option value="flight">Flight</option>
-    <option value="car">Car</option>
-  </select>
-</div> */}
-
-
-
-             
-
-
-
-{/* Meals */}
-                      {/* <div className="mb-3 col-lg-4">
-                        <label className="form-label" htmlFor="no_of_meal">
-                        Total Meals
-                        </label>
-                        <input
-                          type="number"
-                          id="no_of_meal"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.no_of_meal || ''}
-                          invalid={validation.touched.no_of_meal && validation.errors.no_of_meal ? true : false}
-                         className="form-control"
-                          placeholder="Enter Number of Meals"
-                          required
-                          min='0'
-                        />
-                        {validation.touched.no_of_meal && validation.errors.no_of_meal ? (
-    <FormFeedback type="invalid">{validation.errors.no_of_meal}</FormFeedback>
-  ) : null}
-                      </div> */}
-
-         
-
-
-
-
-                     
-                      {/* <div className="mb-3 col-lg-4">
-                        <label className="form-label" htmlFor="localGuide">
-                         Local Guide
-                        </label>
-                        <input
-                          type="text"
-                          id="localGuide"
-                          value={localGuide}
-                          onChange={(e) => setLocalGuide(e.target.value)}
-                          className="form-control"
-                          placeholder="Enter localGuide "
-                          required
-                        />
-                      </div> */}
-
-
 
 <div className="mb-3 col-lg-6">
                         <label className="form-label" htmlFor="company_overview">
@@ -1209,23 +892,6 @@ const handleDeleteExclusion = (i) => {
 </div>
 
 
-                      {/* <div className="mb-3 col-lg-4">
-                        <label className="form-label" htmlFor="itinerary">
-                          Detailed Itinerary
-                        </label>
-                        <textarea
-                          type="text"
-                          id="itinerary"
-                          value={itinerary}
-                          className="form-control"
-                          placeholder="Enter Detailed Itinerary "
-                          required
-                          onChange={(e) => setItinerary(e.target.value)}
-                          rows={4}
-                          style={{ resize: 'none' }}
-
-                        />
-                      </div> */}
 
 
 <div className="mb-3 col-lg-4">
@@ -1281,11 +947,6 @@ const handleDeleteExclusion = (i) => {
     ))}
   </div>
 </div>
-
-
-
-
-
 
 
 
@@ -1458,14 +1119,15 @@ const handleDeleteExclusion = (i) => {
 
                       </div>
 
+                      <button  type='submit' className="mt-1 btn btn-success">
+  {type === 'Edit' ? 'Update Trip' : 'Create Trip'}
+</button>
                     </div>
 
 
 
 
-                  <button type='submit' className="mt-1 btn btn-success">
-  {type === 'Edit' ? 'Update Trip' : 'Create Trip'}
-</button>
+                  
                   </div>
 
 </Form>

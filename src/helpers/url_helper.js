@@ -11,7 +11,17 @@ export const GET_ALL_ADMIN = "/admins"
 
 
 
+// Trip Page
 
+export const GET_ALL_MEALS = "/meal_types"
+export const GET_ALL_AGE_RANGES = "/age_ranges"
+export const GET_ALL_TRANSPORTATION = "/transportation_types"
+export const POST_TRIP_IMAGES = "/uploads/images"
+export const POST_TRIP_IMAGE = "/uploads/image"
+
+
+// export const GET_ALL_TRAVEL_AGENTS = "/travel_agents"
+// export const INSERT_TRAVEL_AGENT = "/travel_agents"
 
 
 
