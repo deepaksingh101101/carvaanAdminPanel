@@ -1,6 +1,7 @@
 // CreateCustomerForm.js
+import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import {Badge, Row, Col, Card, CardBody, CardTitle ,Container , Form} from 'reactstrap';
+import {FormFeedback,Badge, Row, Col, Card, CardBody, CardTitle ,Container , Form,Label, Input} from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,6 +12,8 @@ import Dropzone from "react-dropzone";
 // Form validation
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
+import Alert from 'components/alert/Alert';
 
 
 const CreateTripForm = ({ type }) => {
@@ -47,7 +50,6 @@ const CreateTripForm = ({ type }) => {
   const [thingsToCarry, setThingsToCarry] = useState('');
   const [tripBanner, setTripBanner] = useState(null);
 
-
   const navigate = useNavigate();
 
   const [tripCreate, setTripCreate] = useState([]);
@@ -59,48 +61,102 @@ const [packing_guide_size, setPacking_guide_size] = useState(8)
 const [middle_points_array, setMiddle_points_array] = useState([])
 const [inclusive_array, setInclusive_array] = useState([])
 const [exclusive_array, setExclusive_array] = useState([])
+const [themes_array, setThemes_array] = useState([])
+const [food_options_array, setFood_options_array] = useState([])
 
+const [message, setMessage] = useState("Something went's wrong")
+const isOpen = useSelector(state => state.alertReducer.isOpen);
+const companyOptions = [
+  "Company A",
+  "Company B",
+  "Company C",
+  "Company D",
+];
+const startPoints = [
+  "Point A",
+  "Point B",
+  "Point C",
+  "Point D",
+];
+const endPoints = [
+  "Point A",
+  "Point B",
+  "Point C",
+  "Point D",
+];
+const dummyMiddlePoints = [
+  "Point M1",
+  "Point M2",
+  "Point M3",
+  "Point M4",
+  "Point M5",
+  // Add more dummy middle points as needed
+];
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
       company_name: tripCreate.company_name || "",
-      company_overview: tripCreate.company_overview || "",
       trip_title:tripCreate.trip_title || "",
       start_point: tripCreate.start_point || "",
       end_point: tripCreate.end_point || "",
       middle_points: tripCreate.middle_points || []  ,
+      seats_left: tripCreate.seats_left || "",
+      duration: tripCreate.duration || "",
       start_date:tripCreate.start_date || "",
       end_date:tripCreate.end_date || "",
       price_per_person:tripCreate.price_per_person || "",
-// trips photo
-    // itineary
-    duration: tripCreate.duration || [],
-    exclusion: tripCreate.exclusion || [],
-    inclusion: tripCreate.inclusion || [], 
-    things_to_carry:tripCreate.things_to_carry || [],
-    seats_left: tripCreate.seats_left || "",
-    total_seats: tripCreate.total_seats || "",
+      company_overview: tripCreate.company_overview || "",
+      exclusion: tripCreate.exclusion || [],
+      inclusion: tripCreate.inclusion || [], 
       room_occupancy: tripCreate.room_occupancy || "",
-      no_of_meal: tripCreate.no_of_meal || "",
       age_range: tripCreate.age_range || [],
+      things_to_carry:tripCreate.things_to_carry || [],
+      themes: tripCreate.themes|| [],
       is_trip_captain: tripCreate.is_trip_captain || "",
-      accommodation: tripCreate.accommodation || "",//stay options
       type_of_transportation: tripCreate.type_of_transportation || "",
-      food_options: tripCreate.food_options|| "",
-      theme: tripCreate.theme|| "",
-      
-// fields from frontend
- offer_price:tripCreate.offer_price || "",
-      overview:tripCreate.overview || "",
-      full_address:tripCreate.full_address || "",
-      top_facilities: tripCreate.top_facilities || [], // Array with default size or length of tripCreate.middle_points filled with empty strings
-       packing_guide: tripCreate.packing_guide || [] ,
-       
-      pickup_location:tripCreate.pickup_location || "",
-      drop_location:tripCreate.drop_location || "",
-      pickup_time:tripCreate.pickup_time || "",
-      drop_time:tripCreate.drop_time || "",
-    }
+      food_options: tripCreate.food_options|| [],
+      itinerary:tripCreate.itinerary||[{}],
+
+
+//     total_seats: tripCreate.total_seats || "",
+//       no_of_meal: tripCreate.no_of_meal || "",
+//       accommodation: tripCreate.accommodation || "",//stay options
+//  offer_price:tripCreate.offer_price || "",
+//       overview:tripCreate.overview || "",
+//       full_address:tripCreate.full_address || "",
+//       top_facilities: tripCreate.top_facilities || [], // Array with default size or length of tripCreate.middle_points filled with empty strings
+//        packing_guide: tripCreate.packing_guide || [] ,
+//       pickup_location:tripCreate.pickup_location || "",
+//       drop_location:tripCreate.drop_location || "",
+//       pickup_time:tripCreate.pickup_time || "",
+//       drop_time:tripCreate.drop_time || "",
+    },
+    validationSchema: Yup.object({
+      company_name: Yup.string().required("Please Enter The Company Name"),
+      trip_title: Yup.string().required("Please Enter Trip Title"),
+      start_point: Yup.string().required("Please Enter Start Point"),
+      end_point: Yup.string().required("Please Enter End Point"),
+      middle_points: Yup.string(),
+      seats_left: Yup.number().required("Please Enter Remaining Seats"),
+      duration: Yup.string().required("Please Enter No of Days"),
+      start_date: Yup.date().required("Please Enter Start Date"),
+      end_date: Yup.date().required("Please Enter End Date"),
+      price_per_person: Yup.number().required("Please Enter Price Per Person"),
+      company_overview: Yup.string().required("Please Enter Company Overview"),
+      exclusion: Yup.string().required("Please Enter Exclusion"),
+      inclusion: Yup.string().required("Please Enter Inclusion"),
+      room_occupancy: Yup.string().required("Please Enter Room Occupancy"),
+      age_range: Yup.string().required("Please Enter Age Range"),
+      things_to_carry: Yup.string().required("Please Enter Things to Carry"),
+      themes: Yup.string(),
+      is_trip_captain: Yup.string().required("Please Select This Field"),
+      type_of_transportation: Yup.string().required("Please Select This Field"),
+      food_options: Yup.string().required("Please Select This Field"),
+      itinerary: Yup.string().required("Please Select This Field"),
+
+
+    }),
+
   })
   
 // add middle points
@@ -108,19 +164,28 @@ const [exclusive_array, setExclusive_array] = useState([])
    e.preventDefault(validation.values.middle_points.length);
    console.log()
 if(validation.values.middle_points.length==0){
-// show a error message  for not filling the field
+
 }
-else{
-  middle_points_array.push(
-    validation.values.middle_points
-   )
-   validation.setFieldValue('middle_points', ""); 
+else {
+  const middlePoint = validation.values.middle_points;
+  
+  if (!middle_points_array.includes(middlePoint)) {
+    middle_points_array.push(middlePoint);
+    validation.setFieldValue('middle_points', ""); 
+  } else {
+    setMessage("This middle points already included")
+    dispatch(SomethingAlertTrue());
+        setTimeout(() => {
+          dispatch(SomethingAlertFalse());
+          setMessage("Something went's wrong")
+        }, 2000);
+  }
 }
 
    
   }
 
-// add inclusion 
+
 const handleAddExclusion=(e)=>{
   e.preventDefault(validation.values.exclusion.length);
   console.log()
@@ -128,14 +193,38 @@ if(validation.values.exclusion.length==0){
 // show a error message  for not filling the field
 }
 else{
-  exclusive_array.push(
-   validation.values.exclusion
-  )
-  validation.setFieldValue('exclusion', ""); 
+
+  if(exclusive_array.length<8){
+    if(!exclusive_array.includes(validation.values.exclusion)){
+      exclusive_array.push(
+        validation.values.exclusion
+       )
+       validation.setFieldValue('exclusion', ""); 
+    }
+    else{
+      setMessage("This Exclusion already included")
+      dispatch(SomethingAlertTrue());
+      setTimeout(() => {
+        dispatch(SomethingAlertFalse());
+        setMessage("Something went's wrong")
+      }, 2000);
+    }
+  }
+  else{
+setMessage("Cannot Exceed more then 8")
+dispatch(SomethingAlertTrue());
+        setTimeout(() => {
+          dispatch(SomethingAlertFalse());
+          setMessage("Something went's wrong")
+        }, 2000);
+  }
+
+
+
 }  
  }
 
-// add  exclusion 
+
  const handleAddInclusion=(e)=>{
   e.preventDefault(validation.values.inclusion.length);
   console.log()
@@ -143,12 +232,121 @@ if(validation.values.inclusion.length==0){
 // show a error message  for not filling the field
 }
 else{
-  inclusive_array.push(
-   validation.values.inclusion
-  )
-  validation.setFieldValue('inclusion', ""); 
+
+if(inclusive_array.length<8){
+  if(!inclusive_array.includes(validation.values.inclusion)){
+    inclusive_array.push(
+      validation.values.inclusion
+     )
+     validation.setFieldValue('inclusion', ""); 
+  }
+  else{
+    setMessage("This Inclusion already included")
+    dispatch(SomethingAlertTrue());
+    setTimeout(() => {
+      dispatch(SomethingAlertFalse());
+      setMessage("Something went's wrong")
+    }, 2000);
+  }
+}
+else{
+  setMessage("Cannot Exceed more than 8")
+  dispatch(SomethingAlertTrue());
+  setTimeout(() => {
+    dispatch(SomethingAlertFalse());
+    setMessage("Something went's wrong")
+  }, 2000);
+}
+
+ 
+ 
 }
  }
+
+ const handleAddTheme=(e)=>{
+  e.preventDefault(validation.values.trip_themes.length);
+  console.log()
+if(validation.values.trip_themes.length==0){
+// show a error message  for not filling the field
+}
+else{
+
+if(themes_array.length<=50){
+  if(!themes_array.includes(validation.values.trip_themes)){
+    themes_array.push(
+      validation.values.trip_themes
+     )
+     validation.setFieldValue('trip_themes', ""); 
+  }
+  else{
+    setMessage("This Theme already included")
+    dispatch(SomethingAlertTrue());
+    setTimeout(() => {
+      dispatch(SomethingAlertFalse());
+      setMessage("Something went's wrong")
+    }, 2000);
+  }
+}
+else{
+  setMessage("Cannot Exceed more than 50")
+  dispatch(SomethingAlertTrue());
+  setTimeout(() => {
+    dispatch(SomethingAlertFalse());
+    setMessage("Something went's wrong")
+  }, 2000);
+}
+
+ 
+ 
+}
+ }
+
+
+ const handleAddFoodOptions=(e)=>{
+  e.preventDefault(validation.values.food_options.length);
+  console.log()
+if(validation.values.food_options.length==0){
+// show a error message  for not filling the field
+}
+else{
+
+if(food_options_array.length<=10){
+  if(!food_options_array.includes(validation.values.food_options)){
+    food_options_array.push(
+      validation.values.food_options
+     )
+     validation.setFieldValue('food_options', ""); 
+  }
+  else{
+    setMessage("This Food already included")
+    dispatch(SomethingAlertTrue());
+    setTimeout(() => {
+      dispatch(SomethingAlertFalse());
+      setMessage("Something went's wrong")
+    }, 2000);
+  }
+}
+else{
+  setMessage("Cannot Exceed more than 50")
+  dispatch(SomethingAlertTrue());
+  setTimeout(() => {
+    dispatch(SomethingAlertFalse());
+    setMessage("Something went's wrong")
+  }, 2000);
+}
+
+ 
+ 
+}
+ }
+
+ 
+ const handleDeleteTheme = (i) => {
+  const newArray = [...themes_array]; // Create a copy of the array
+  newArray.splice(i, 1); // Remove one element at index i
+  setThemes_array(newArray); // Update the state with the new array
+}
+
 
  const handleDeleteInclusion = (i) => {
   const newArray = [...inclusive_array]; // Create a copy of the array
@@ -167,10 +365,11 @@ const handleDeleteExclusion = (i) => {
     newArray.splice(i, 1); // Remove one element at index i
     setMiddle_points_array(newArray); // Update the state with the new array
   }
-  
-
-
-
+  const handleDeleteFoodOptions = (i) => {
+    const newArray = [...food_options_array]; // Create a copy of the array
+    newArray.splice(i, 1); // Remove one element at index i
+    setFood_options_array(newArray); // Update the state with the new array
+  }
 
   // useEffect(() => {
   //   if (trip) {
@@ -306,18 +505,20 @@ const handleDeleteExclusion = (i) => {
               <Card>
                 <CardBody>
                   <CardTitle className="h4">{`${type}`} Trip</CardTitle>
-                  <form
+                  <Form
                    onSubmit={(e) => {
                     e.preventDefault();
                     validation.handleSubmit();
+                    return false;
                   }}
-                  >
+                  action="#">
+                  
                   <div data-repeater-list="group-a">
                     <div data-repeater-item className="row w-100">
 
 
 {/* 
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
       <label className="form-label" htmlFor="tripBanner">
         Banner Picture 
       </label>{" "}
@@ -368,7 +569,7 @@ const handleDeleteExclusion = (i) => {
         </Form>
   </div>
 </div>
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
       <label className="form-label" htmlFor="tripImage1">
         Trip Image 1 
       </label>{" "}
@@ -419,7 +620,7 @@ const handleDeleteExclusion = (i) => {
         </Form>
   </div>
 </div>
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
       <label className="form-label" htmlFor="tripImage2">
         Trip Image 2 
       </label>{" "}
@@ -470,7 +671,7 @@ const handleDeleteExclusion = (i) => {
         </Form>
   </div>
 </div>
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
       <label className="form-label" htmlFor="tripImage3">
         Trip Image 1 
       </label>{" "}
@@ -522,33 +723,41 @@ const handleDeleteExclusion = (i) => {
   </div>
 </div> */}
 
-<div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="company_name">
-                          Company Name
-                        </label>
-                        <input
-                          type="text"
-                          id="company_name"
-                         className="form-control"
-                          required
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.company_name || ''}
-                          invalid={validation.touched.company_name && validation.errors.company_name ? true : false}
-                        
-                        />
-                        {validation.touched.company_name && validation.errors.company_name ? (
-                            <FormFeedback type="invalid">{validation.errors.company_name}</FormFeedback>
-                          ) : null}
-                      </div>
+<div className="mb-3 col-lg-4">
+      <Label className="form-label" htmlFor="company_name">
+        Company Name
+      </Label>
+      <Input
+        type="select"
+        id="company_name"
+        className="form-control"
+        name="company_name"
+        required
+        onChange={validation.handleChange}
+        onBlur={validation.handleBlur}
+        value={validation.values.company_name || ''}
+        invalid={validation.touched.company_name && validation.errors.company_name ? true : false}
+      >
+        <option value="">Select a company</option>
+        {companyOptions.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </Input>
+      {validation.touched.company_name && validation.errors.company_name ? (
+        <FormFeedback type="invalid">{validation.errors.company_name}</FormFeedback>
+      ) : null}
+    </div>
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="trip_title">
+                      <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="trip_title">
                         Trip Title
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="text"
                           id="trip_title"
+                          name='trip_title'
                            className="form-control"
                           placeholder="Enter Trip Title  "
                           required
@@ -568,59 +777,76 @@ const handleDeleteExclusion = (i) => {
                       
 
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="start_point">
-                          Start Point
-                        </label>
-                        <input
-                          type="text"
-                          id="start_point"
-                          className="form-control"
-                          placeholder="Start Point"
-                          required
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.start_point || ''}
-                          invalid={validation.touched.start_point && validation.errors.start_point ? true : false}
-                        
-                        />
-                         {validation.touched.start_point && validation.errors.start_point ? (
-                            <FormFeedback type="invalid">{validation.errors.start_point}</FormFeedback>
-                          ) : null}
-                      </div>
+                      <div className="mb-3 col-lg-4">
+      <Label className="form-label" htmlFor="start_point">
+        Start Point
+      </Label>
+      <Input
+        type="select"
+        id="start_point"
+        className="form-control"
+        placeholder="Start Point"
+        required
+        name="start_point"
+        onChange={validation.handleChange}
+        onBlur={validation.handleBlur}
+        value={validation.values.start_point || ''}
+        invalid={validation.touched.start_point && validation.errors.start_point ? true : false}
+      >
+        <option value="">Select a start point</option>
+        {startPoints.map((startPoint, index) => (
+          <option key={index} value={startPoint}>
+            {startPoint}
+          </option>
+        ))}
+      </Input>
+      {validation.touched.start_point && validation.errors.start_point ? (
+        <FormFeedback type="invalid">{validation.errors.start_point}</FormFeedback>
+      ) : null}
+    </div>
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="end_point">
-                          End Point
-                        </label>
-                        <input
-                          type="text"
-                          id="end_point"
-                          className="form-control"
-                          placeholder="End Point"
-                          required
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.end_point || ''}
-                          invalid={validation.touched.end_point && validation.errors.end_point ? true : false}
-                       
-                        />
-                         {validation.touched.end_point && validation.errors.end_point ? (
-                            <FormFeedback type="invalid">{validation.errors.end_point}</FormFeedback>
-                          ) : null}
-                      </div>
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="seats_left">
+
+    <div className="mb-3 col-lg-4">
+      <Label className="form-label" htmlFor="end_point">
+        End Point
+      </Label>
+      <Input
+        type="select"
+        id="end_point"
+        className="form-control"
+        placeholder="End Point"
+        name="end_point"
+        required
+        onChange={validation.handleChange}
+        onBlur={validation.handleBlur}
+        value={validation.values.end_point || ''}
+        invalid={validation.touched.end_point && validation.errors.end_point ? true : false}
+      >
+        <option value="">Select an end point</option>
+        {endPoints.map((endPoint, index) => (
+          <option key={index} value={endPoint}>
+            {endPoint}
+          </option>
+        ))}
+      </Input>
+      {validation.touched.end_point && validation.errors.end_point ? (
+        <FormFeedback type="invalid">{validation.errors.end_point}</FormFeedback>
+      ) : null}
+    </div>
+
+                      <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="seats_left">
                           Seats Left
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="number"
                           min={1}
                           id="seats_left"
                           className="form-control"
                           placeholder="Enter Seats Left"
                           required
+                          name='seats_left'
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.seats_left || ''}
@@ -636,13 +862,14 @@ const handleDeleteExclusion = (i) => {
 
 
 
-                       <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="duration">
+                       <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="duration">
                         Duration
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="text"
                           id="duration"  
+                          name="duration"  
                            className="form-control"
                           required
                           onChange={validation.handleChange}
@@ -656,13 +883,14 @@ const handleDeleteExclusion = (i) => {
                           ) : null}
                       </div>
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="start_date">
+                      <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="start_date">
                           Start Date
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="date"
                           id="start_date"
+                          name='start_date'
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.start_date || ''}
@@ -675,13 +903,14 @@ const handleDeleteExclusion = (i) => {
                           ) : null}
                       </div>
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="end_date">
+                      <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="end_date">
                           End Date
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="date"
                           id="end_date"
+                          name="end_date"
                          className="form-control"
                           required
                           onChange={validation.handleChange}
@@ -695,13 +924,14 @@ const handleDeleteExclusion = (i) => {
                           ) : null}
                       </div>
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="pickup_time">
+                      {/* <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="pickup_time">
                           Pickup Time
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="time"
                           id="pickup_time"
+                          name="pickup_time"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.pickup_time || ''}
@@ -714,27 +944,27 @@ const handleDeleteExclusion = (i) => {
                           ) : null}
                       </div>
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="drop_time">
+                      <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="drop_time">
                           Drop Time
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="time"
                           id="drop_time"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.drop_time || ''}
                           invalid={validation.touched.drop_time && validation.errors.drop_time ? true : false}
-                        
+                        name='drop_time'
                           className="form-control"
                           required
                         />
                         {validation.touched.drop_time && validation.errors.drop_time ? (
                             <FormFeedback type="invalid">{validation.errors.drop_time}</FormFeedback>
                           ) : null}
-                      </div>
+                      </div> */}
 
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
                         <label className="form-label" htmlFor="price_per_person">
                         Price Per Person
                         </label>
@@ -758,7 +988,7 @@ const handleDeleteExclusion = (i) => {
 
                       
 
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="total_seats">
     Total Number Of Seats
   </label>{" "}
@@ -780,162 +1010,57 @@ const handleDeleteExclusion = (i) => {
 </div>
 
 
-<div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="company_overview">
-                        Company Overview
-                        </label>
-                        <textarea
-                          type="text"
-                          id="company_overview"
-
-                          className="form-control"
-                          placeholder="Enter company Overview "
-                          required
-                          rows={4}
-                          style={{ resize: 'none' }}
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.company_overview || ''}
-                          invalid={validation.touched.company_overview && validation.errors.company_overview ? true : false}
-                       
-                        />{validation.touched.company_overview && validation.errors.company_overview ? (
-                          <FormFeedback type="invalid">{validation.errors.company_overview}</FormFeedback>
-                        ) : null}
-                      </div>
-
-
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="middle_points">
-                          Middle Points
-                        </label>
-                        <div className='d-flex justify-content-between ' >
-                        <input
-                          type="text"
-                          id="middle_points"
-                          className="form-control"
-                          placeholder="Middle Points"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.middle_points || ''}
-                         
-                          
-                          invalid={validation.touched.middle_points && validation.errors.middle_points ? true : false}
-                       
-                        />
-                        <button onClick={handleAddMiddlePoints} type='button' className='btn btn-success mx-1' >Add</button>
-                        </div>
-                         {validation.touched.middle_points && validation.errors.middle_points ? (
-                            <FormFeedback type="invalid">{validation.errors.middle_points}</FormFeedback>
-                          ) : null}
-
-
-  <div className='d-flex flex-column ' >
-  {middle_points_array.map((data, i) => (
-   <div className='d-flex justify-content-between mx-3' >
-     <h6 className='my-2 w-100 d-flex align-items-start justify-content-between ' key={i}>
-      {data}
-      <Badge className='mx-2 bg-transparent'>
-        <i onClick={(e)=>{handleDeleteMiddlePoints(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
-        </i>
-      </Badge>
-    </h6>
-   </div>
-  ))}
-  </div>
-
-
-                      </div>
 
 
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="inclusion">
-                        Inclusion
-                        </label>
-                        <div className='d-flex justify-content-between ' >
-                        <input
-                          type="text"
-                          id="inclusion"
-                          className="form-control"
-                          placeholder="Enter Inclusion"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.inclusion || ''}
-                         
-                          
-                          invalid={validation.touched.inclusion && validation.errors.inclusion ? true : false}
-                       
-                        />
-                        <button onClick={handleAddInclusion} type='button' className='btn btn-success mx-1' >Add</button>
-                        </div>
-                         {validation.touched.inclusion && validation.errors.inclusion ? (
-                            <FormFeedback type="invalid">{validation.errors.inclusion}</FormFeedback>
-                          ) : null}
 
 
-  <div className='d-flex flex-column ' >
-  {inclusive_array.map((data, i) => (
-   <div className='d-flex justify-content-between mx-3' >
-     <h6 className='my-2 w-100 d-flex align-items-start justify-content-between ' key={i}>
-      {data}
-      <Badge className='mx-2 bg-transparent'>
-        <i onClick={(e)=>{handleDeleteInclusion(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
-        </i>
-      </Badge>
-    </h6>
-   </div>
-  ))}
-  </div>
+{/* middle points as select box */}
+{/* <div className="mb-3 col-lg-4">
+      <Label className="form-label" htmlFor="middle_points">
+        Middle Points
+      </Label>
+      <div className='d-flex justify-content-between'>
+        <Input
+          type="select"
+          id="middle_points"
+          className="form-control"
+          placeholder="Middle Points"
+          onChange={validation.handleChange}
+          onBlur={validation.handleBlur}
+          value={validation.values.middle_points || ''}
+          multiple
+          invalid={validation.touched.middle_points && validation.errors.middle_points ? true : false}
+        >
+          {dummyMiddlePoints.map((middlePoint, index) => (
+            <option key={index} value={middlePoint}>
+              {middlePoint}
+            </option>
+          ))}
+        </Input>
+        <button onClick={handleAddMiddlePoints} type='button' className='btn btn-success mx-1'>Add</button>
+      </div>
+      {validation.touched.middle_points && validation.errors.middle_points ? (
+        <FormFeedback type="invalid">{validation.errors.middle_points}</FormFeedback>
+      ) : null}
+      <div className='d-flex flex-column'>
+        {middle_points_array.map((data, i) => (
+          <div className='d-flex justify-content-between mx-3' key={i}>
+            <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+              {data}
+              <Badge className='mx-2 bg-transparent'>
+                <i onClick={(e)=>{handleDeleteMiddlePoints(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger"></i>
+              </Badge>
+            </h6>
+          </div>
+        ))}
+      </div>
+    </div> */}
+
+                     
 
 
-                      </div>
-
-
-
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="exclusion">
-                        Exclusion
-                        </label>
-                        <div className='d-flex justify-content-between ' >
-                        <input
-                          type="text"
-                          id="exclusion"
-                          className="form-control"
-                          placeholder="Enter Exclusion"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.exclusion || ''}
-                         
-                          
-                          invalid={validation.touched.exclusion && validation.errors.exclusion ? true : false}
-                       
-                        />
-                        <button onClick={handleAddExclusion} type='button' className='btn btn-success mx-1' >Add</button>
-                        </div>
-                         {validation.touched.exclusion && validation.errors.exclusion ? (
-                            <FormFeedback type="invalid">{validation.errors.exclusion}</FormFeedback>
-                          ) : null}
-
-
-  <div className='d-flex flex-column ' >
-  {exclusive_array.map((data, i) => (
-   <div className='d-flex justify-content-between mx-3' >
-     <h6 className='my-2 w-100 d-flex align-items-start justify-content-between ' key={i}>
-      {data}
-      <Badge className='mx-2 bg-transparent'>
-        <i onClick={(e)=>{handleDeleteExclusion(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
-        </i>
-      </Badge>
-    </h6>
-   </div>
-  ))}
-  </div>
-
-
-                      </div>
-
-
-                      <div className="mb-3 col-lg-3">
+                      <div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="room_occupancy">
     Room Occupancy
   </label>
@@ -960,7 +1085,7 @@ const handleDeleteExclusion = (i) => {
 </div>
 
 
-                      {/* <div className="mb-3 col-lg-3">
+                      {/* <div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="accommodation">
     Accommodation
   </label>
@@ -988,7 +1113,7 @@ const handleDeleteExclusion = (i) => {
 </div> */}
 
 
-{/* <div className="mb-3 col-lg-3">
+{/* <div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="transportation">
     Transportation
   </label>
@@ -1009,29 +1134,9 @@ const handleDeleteExclusion = (i) => {
 </div> */}
 
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="no_of_meal">
-                        Total Meals
-                        </label>
-                        <input
-                          type="number"
-                          id="no_of_meal"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.no_of_meal || ''}
-                          invalid={validation.touched.no_of_meal && validation.errors.no_of_meal ? true : false}
-                         className="form-control"
-                          placeholder="Enter Number of Meals"
-                          required
-                          min='0'
-                        />
-                        {validation.touched.no_of_meal && validation.errors.no_of_meal ? (
-    <FormFeedback type="invalid">{validation.errors.no_of_meal}</FormFeedback>
-  ) : null}
-                      </div>
 
-                      
-                      <div className="mb-3 col-lg-6">
+             
+<div className="mb-3 col-lg-6">
   <label className="form-label">Age Range</label>
   <div className='d-flex flex-wrap'>
     <div>
@@ -1120,10 +1225,35 @@ const handleDeleteExclusion = (i) => {
 </div>
 
 
+{/* Meals */}
+                      {/* <div className="mb-3 col-lg-4">
+                        <label className="form-label" htmlFor="no_of_meal">
+                        Total Meals
+                        </label>
+                        <input
+                          type="number"
+                          id="no_of_meal"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.no_of_meal || ''}
+                          invalid={validation.touched.no_of_meal && validation.errors.no_of_meal ? true : false}
+                         className="form-control"
+                          placeholder="Enter Number of Meals"
+                          required
+                          min='0'
+                        />
+                        {validation.touched.no_of_meal && validation.errors.no_of_meal ? (
+    <FormFeedback type="invalid">{validation.errors.no_of_meal}</FormFeedback>
+  ) : null}
+                      </div> */}
+
+         
+
+
 
 
                      
-                      {/* <div className="mb-3 col-lg-3">
+                      {/* <div className="mb-3 col-lg-4">
                         <label className="form-label" htmlFor="localGuide">
                          Local Guide
                         </label>
@@ -1140,8 +1270,30 @@ const handleDeleteExclusion = (i) => {
 
 
 
+<div className="mb-3 col-lg-6">
+                        <label className="form-label" htmlFor="company_overview">
+                        Company Overview
+                        </label>
+                        <textarea
+                          type="text"
+                          id="company_overview"
 
-                      <div className="mb-3 col-lg-3">
+                          className="form-control"
+                          placeholder="Enter company Overview "
+                          required
+                          rows={4}
+                          style={{ resize: 'none' }}
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.company_overview || ''}
+                          invalid={validation.touched.company_overview && validation.errors.company_overview ? true : false}
+                       
+                        />{validation.touched.company_overview && validation.errors.company_overview ? (
+                          <FormFeedback type="invalid">{validation.errors.company_overview}</FormFeedback>
+                        ) : null}
+                      </div>
+
+                      <div className="mb-3 col-lg-6">
                         <label className="form-label" htmlFor="thingsToCarry">
                           Things To Carry
                         </label>
@@ -1165,7 +1317,7 @@ const handleDeleteExclusion = (i) => {
                       </div>
 
 
-                      {/* <div className="mb-3 col-lg-3">
+                      {/* <div className="mb-3 col-lg-4">
                         <label className="form-label" htmlFor="itinerary">
                           Detailed Itinerary
                         </label>
@@ -1184,19 +1336,21 @@ const handleDeleteExclusion = (i) => {
                       </div> */}
 
 
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="trip_themes">
     Themes that best describe your Group Trip
   </label>
+  <div className='d-flex align-items-center justify-content-between' >
   <select
     id="trip_themes"
     onChange={validation.handleChange}
     onBlur={validation.handleBlur}
     value={validation.values.trip_themes || []} // Use an array for multiple selections
-    invalid={validation.touched.trip_themes && validation.errors.trip_themes ? true : false}
     className="form-control"
-    required
+    name='trip_themes'
+    
   >
+    <option value="">Select Theme</option>
     <option value="Couple Friendly">Couple Friendly</option>
     <option value="Women Only">Women Only</option>
     <option value="Senior Citizens Only">Senior Citizens Only</option>
@@ -1219,14 +1373,26 @@ const handleDeleteExclusion = (i) => {
     <option value="Wildlife">Wildlife</option>
     <option value="Other">Other</option>
   </select>
-  {validation.touched.trip_themes && validation.errors.trip_themes ? (
-    <FormFeedback type="invalid">{validation.errors.trip_themes}</FormFeedback>
-  ) : null}
+  <button onClick={handleAddTheme} type='button' className='btn btn-success mx-1' >Add</button>
+
+  </div>
+  <div className='d-flex flex-column '>
+    {themes_array.map((data, i) => (
+      <div className='d-flex justify-content-between mx-3' key={i}>
+        <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+          {data}
+          <Badge className='mx-2 bg-transparent'>
+            <i onClick={(e)=>{handleDeleteTheme(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" />
+          </Badge>
+        </h6>
+      </div>
+    ))}
+  </div>
 </div>
 
 
 
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="is_trip_captain">
     Trip Captain
   </label>
@@ -1249,7 +1415,7 @@ const handleDeleteExclusion = (i) => {
 </div>
 
 
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="transportation">
     Transportation
   </label>
@@ -1275,30 +1441,174 @@ const handleDeleteExclusion = (i) => {
   ) : null}
 </div>
 
-<div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="food_options">
   Food Options
   </label>
+  <div className='d-flex align-items-center' >
   <select
     id="food_options"
+    name="food_options"
     onChange={validation.handleChange}
     onBlur={validation.handleBlur}
     value={validation.values.food_options || ''}
-    invalid={validation.touched.food_options && validation.errors.food_options ? true : false}
+    // invalid={validation.touched.food_options && validation.errors.food_options ? true : false}
     className="form-control"
     required
   >
-    <option value="Select Food Option">Select Transportation</option>
+    <option value="Select Food Option">Select Food Options</option>
     <option value="vegetarian">Vegetarian</option>
-    <option value="both">Veg and Non Veg Both</option>
+    <option value="Veg and Non Veg Both">Veg and Non Veg Both</option>
     <option value="jain">Jain</option>
  </select>
-  {validation.touched.food_options && validation.errors.food_options ? (
+ <button onClick={handleAddFoodOptions} type='button' className='btn btn-success mx-1' >Add</button>
+
+  </div>
+  {/* {validation.touched.food_options && validation.errors.food_options ? (
     <FormFeedback type="invalid">{validation.errors.food_options}</FormFeedback>
-  ) : null}
+  ) : null} */}
+  <div className='d-flex flex-column '>
+    {food_options_array.map((data, i) => (
+      <div className='d-flex justify-content-between mx-3' key={i}>
+        <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+          {data}
+          <Badge className='mx-2 bg-transparent'>
+            <i onClick={(e)=>{handleDeleteFoodOptions(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" />
+          </Badge>
+        </h6>
+      </div>
+    ))}
+  </div>
 </div>
 
 
+
+<div className="mb-3 col-lg-4">
+  <label className="form-label" htmlFor="middle_points">
+    Middle Points
+  </label>
+  <div className='d-flex justify-content-between '>
+    <select
+      id="middle_points"
+      className="form-control"
+      onChange={validation.handleChange}
+      onBlur={validation.handleBlur}
+      value={validation.values.middle_points || ''}
+      invalid={validation.touched.middle_points && validation.errors.middle_points ? true : false}
+    >
+      <option value="">Select Middle Points</option>
+      {dummyMiddlePoints.map((data, i) => (
+        <option key={i} value={data}>{data}</option>
+      ))}
+    </select>
+    <button onClick={handleAddMiddlePoints} type='button' className='btn btn-success mx-1' >Add</button>
+  </div>
+  {validation.touched.middle_points && validation.errors.middle_points ? (
+    <FormFeedback type="invalid">{validation.errors.middle_points}</FormFeedback>
+  ) : null}
+
+  <div className='d-flex flex-column '>
+    {middle_points_array.map((data, i) => (
+      <div className='d-flex justify-content-between mx-3' key={i}>
+        <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+          {data}
+          <Badge className='mx-2 bg-transparent'>
+            <i onClick={(e)=>{handleDeleteMiddlePoints(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" />
+          </Badge>
+        </h6>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+<div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="inclusion">
+                        Inclusion
+                        </Label>
+                        <div className='d-flex justify-content-between ' >
+                        <Input
+                          type="text"
+                          id="inclusion"
+                          className="form-control"
+                          placeholder="Enter Inclusion"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.inclusion || ''}
+                          required
+                          rows={4}
+                          style={{ resize: 'none' }}
+                          
+                          // invalid={validation.touched.inclusion && validation.errors.inclusion ? true : false}
+                       
+                        />
+                        <button onClick={handleAddInclusion} type='button' className='btn btn-success mx-1' >Add</button>
+                        </div>
+                         {/* {validation.touched.inclusion && validation.errors.inclusion ? (
+                            <FormFeedback type="invalid">{validation.errors.inclusion}</FormFeedback>
+                          ) : null} */}
+
+
+  <div className='d-flex flex-column ' >
+  {inclusive_array.map((data, i) => (
+   <div className='d-flex justify-content-between mx-3' >
+     <h6 className='my-2 w-100 d-flex align-items-start justify-content-between ' key={i}>
+      {data}
+      <Badge className='mx-2 bg-transparent'>
+        <i onClick={(e)=>{handleDeleteInclusion(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
+        </i>
+      </Badge>
+    </h6>
+   </div>
+  ))}
+  </div>
+
+
+                      </div>
+
+                      <div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="exclusion">
+                        Exclusion
+                        </Label>
+                        <div className='d-flex justify-content-between ' >
+                        <Input
+                          type="text"
+                          id="exclusion"
+                          className="form-control"
+                          placeholder="Enter Exclusion"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.exclusion || ''}
+                          required
+                          rows={4}
+                          style={{ resize: 'none' }}
+                          
+                          // invalid={validation.touched.exclusion && validation.errors.exclusion ? true : false}
+                       
+                        />
+                        <button onClick={handleAddExclusion} type='button' className='btn btn-success mx-1' >Add</button>
+                        </div>
+                         {/* {validation.touched.exclusion && validation.errors.exclusion ? (
+                            <FormFeedback type="invalid">{validation.errors.exclusion}</FormFeedback>
+                          ) : null} */}
+
+
+  <div className='d-flex flex-column ' >
+  {exclusive_array.map((data, i) => (
+   <div className='d-flex justify-content-between mx-3' >
+     <h6 className='my-2 w-100 d-flex align-items-start justify-content-between ' key={i}>
+      {data}
+      <Badge className='mx-2 bg-transparent'>
+        <i onClick={(e)=>{handleDeleteExclusion(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
+        </i>
+      </Badge>
+    </h6>
+   </div>
+  ))}
+  </div>
+
+
+                      </div>
 
                     </div>
 
@@ -1310,13 +1620,16 @@ const handleDeleteExclusion = (i) => {
 </button>
                   </div>
 
-</form>
+</Form>
                  
                 </CardBody>
               </Card>
             </Col>
           </Row>
         </div>
+      </div>
+      <div className=" position-fixed  " style={{top:"0",right:"0",zIndex:"9999"}}>
+     {isOpen &&  <Alert  message={message} type="error" />}
       </div>
     </React.Fragment>
   );
