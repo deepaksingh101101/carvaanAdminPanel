@@ -47,6 +47,17 @@ const postJwtProfile = data => post(url.POST_EDIT_JWT_PROFILE, data)
 
 const postFakeProfile = data => post(url.POST_EDIT_PROFILE, data)
 
+
+
+// Trips page request
+
+const getAllMeals = data => get(url.GET_ALL_MEALS)
+
+
+
+
+
+
 // Register Method
 const postJwtRegister = (url, data) => {
   return axios
@@ -114,4 +125,5 @@ export {
   getAllAdmins,
   patchAdminEdit,
   deleteAdmin,
+  getAllMeals
 }

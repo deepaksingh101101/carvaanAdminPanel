@@ -14,6 +14,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
+import { getAllMeals } from 'helpers/fakebackend_helper';
 
 
 const CreateTripForm = ({ type }) => {
@@ -102,9 +103,16 @@ const dummyMiddlePoints = [
 // const [endPoints, setEndPoints] = useState(initialState)
 // const [startPoints, setStartPoints] = useState(initialState)
 // const [dummyMiddlePoints, setDummyMiddlePoints] = useState(initialState)
+const [mealsOptions, setMealsOptions] = useState([])
 
-const fetchOptions=()=>{
-  
+const fetchOptions=async()=>{
+  try {
+   const res= await getAllMeals();
+    setMealsOptions(res)
+
+  } catch (error) {
+    console.log(error.response)
+  }
 }
 
 useEffect(() => {
@@ -966,9 +974,12 @@ const handleDeleteFoodOptions = (i) => {
     required
   >
     <option value="Select Food Option">Select Food Options</option>
-    <option value="vegetarian">Vegetarian</option>
-    <option value="Veg and Non Veg Both">Veg and Non Veg Both</option>
-    <option value="jain">Jain</option>
+    {
+  mealsOptions.map(option => (
+    <option key={option.type_name} value={option.type_name}>{option.type_name}</option>
+  ))
+}
+
  </select>
  <button onClick={handleAddFoodOptions} type='button' className='btn btn-success mx-1' >Add</button>
 
