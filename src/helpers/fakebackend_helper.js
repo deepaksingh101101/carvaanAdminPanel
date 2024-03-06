@@ -53,6 +53,7 @@ const postFakeProfile = data => post(url.POST_EDIT_PROFILE, data)
 
 const getAllMeals = data => get(url.GET_ALL_MEALS)
 const getAllAgeRange = data => get(url.GET_ALL_AGE_RANGES)
+const getAllTransportationTypes = data => get(url.GET_ALL_TRANSPORTATION)
 
 
 
@@ -127,5 +128,6 @@ export {
   patchAdminEdit,
   deleteAdmin,
   getAllMeals,
-  getAllAgeRange
+  getAllAgeRange,
+  getAllTransportationTypes
 }

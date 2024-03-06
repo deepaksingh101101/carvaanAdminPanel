@@ -14,7 +14,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { getAllAgeRange, getAllMeals } from 'helpers/fakebackend_helper';
+import { getAllAgeRange, getAllMeals, getAllTransportationTypes } from 'helpers/fakebackend_helper';
 
 
 const CreateTripForm = ({ type }) => {
@@ -105,14 +105,16 @@ const dummyMiddlePoints = [
 // const [dummyMiddlePoints, setDummyMiddlePoints] = useState(initialState)
 const [mealsOptions, setMealsOptions] = useState([])
 const [ageRanges, setAgeRanges] = useState([])
+const [transportationTypesState, setTransportationTypesState] = useState([])
 
 const fetchOptions=async()=>{
   try {
    const meals= await getAllMeals();
    const ages= await getAllAgeRange();
-
+    const transportationTypes=await getAllTransportationTypes()
     setMealsOptions(meals)
     setAgeRanges(ages)
+    setTransportationTypesState(transportationTypes)
 
   } catch (error) {
     console.log(error.response)
@@ -756,12 +758,14 @@ const handleDeleteFoodOptions = (i) => {
     required
   >
     <option value="Select Transportation">Select Transportation</option>
-    <option value="volvo">Volvo</option>
-    <option value="traveller">Traveller</option>
-    <option value="train">Train</option>
-    <option value="flight">Train </option>
-    <option value="privatecar">Private Car </option>
-    <option value="ferry">Ferry/Boat/Cruise </option>
+
+{transportationTypesState.map((trans,index)=>(
+<>
+<option value={`${trans.type_name}`}>{trans.type_name}</option>
+</>
+))}
+
+    
   </Input>
   {validation.touched.type_of_transportation && validation.errors.type_of_transportation ? (
     <FormFeedback type="invalid">{validation.errors.type_of_transportation}</FormFeedback>
