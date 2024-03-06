@@ -110,7 +110,7 @@ const dummyMiddlePoints = [
       inclusion: tripCreate.inclusion || [], 
       room_occupancy: tripCreate.room_occupancy || "",
       age_range: tripCreate.age_range || [],
-      things_to_carry:tripCreate.things_to_carry || [],
+      things_to_carry:tripCreate.things_to_carry || "",
       themes: tripCreate.themes|| [],
       is_trip_captain: tripCreate.is_trip_captain || "",
       type_of_transportation: tripCreate.type_of_transportation || "",
@@ -443,54 +443,31 @@ const handleDeleteExclusion = (i) => {
   //   navigate('/tripDetails');
   // };
 
+  const [selectedBanners, setSelectedBanners] = useState([]);
 
-  // const [selectedBanner, setSelectedBanner] = useState(null);
+  const handleBannerDelete = (index) => {
+    const updatedBanners = [...selectedBanners];
+    updatedBanners.splice(index, 1);
+    setSelectedBanners(updatedBanners);
+  }
+  
 
-  // function handleAcceptedBanner(file) {
-  //   Object.assign(file, {
-  //     preview: URL.createObjectURL(file),
-  //     formattedSize: formatBytes(file.size),
-  //   });
-  //   setSelectedBanner(file);
-  // }
- 
-  // function handleAcceptedTripImage1(file) {
-  //   Object.assign(file, {
-  //     preview: URL.createObjectURL(file),
-  //     formattedSize: formatBytes(file.size),
-  //   });
-  //   setTripImage1(file);
-  // }
-  // function handleAcceptedTripImage2(file) {
-  //   Object.assign(file, {
-  //     preview: URL.createObjectURL(file),
-  //     formattedSize: formatBytes(file.size),
-  //   });
-  //   setTripImage2(file);
-  // }
-  // function handleAcceptedTripImage3(file) {
-  //   Object.assign(file, {
-  //     preview: URL.createObjectURL(file),
-  //     formattedSize: formatBytes(file.size),
-  //   });
-  //   setTripImage3(file);
-  // }
+  function handleAcceptedBanners(acceptedBanners) {
+    const updatedBanners = acceptedBanners.map(file => ({
+      ...file,
+      preview: URL.createObjectURL(file),
+      // formattedSize: formatBytes(file.size),
+    }));
+    setSelectedBanners([...selectedBanners, ...updatedBanners]);
+  }
 
   // function formatBytes(bytes, decimals = 2) {
   //   if (bytes === 0) return "0 Bytes";
   //   const k = 1024;
   //   const dm = decimals < 0 ? 0 : decimals;
   //   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
   //   const i = Math.floor(Math.log(bytes) / Math.log(k));
   //   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-  // }
-
-  // function handleFileInputChange(event) {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     handleAcceptedBanner(file);
-  //   }
   // }
 
 
@@ -517,20 +494,21 @@ const handleDeleteExclusion = (i) => {
                     <div data-repeater-item className="row w-100">
 
 
-{/* 
-<div className="mb-3 col-lg-4">
+
+
+ <div className="mb-3 col-lg-12">
       <label className="form-label" htmlFor="tripBanner">
-        Banner Picture 
+        Banner Picture
       </label>{" "}
       <div className="mb-5">
         <Form>
-          <Dropzone  //onChange={handleFileInputChange}
-            onDrop={acceptedBanner => {
-              handleAcceptedBanner(acceptedBanner[0]); // Only first file is considered
+          <Dropzone
+            onDrop={acceptedBanners => {
+              handleAcceptedBanners(acceptedBanners);
             }}
           >
             {({ getRootProps, getInputProps }) => (
-              <div  className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
+              <div className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
                 <input {...getInputProps()} />
                 <div className="mb-3">
                   <i className="mdi mdi-cloud-upload display-6  text-muted"></i>
@@ -540,11 +518,12 @@ const handleDeleteExclusion = (i) => {
             )}
           </Dropzone>
           <div className="dropzone-previews mt-3" id="file-previews">
-            {selectedBanner && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
+          <Row className="align-items-center ">
+
+            {selectedBanners.map((selectedBanner, index) => (
+              <Card key={index} className="mt-1 col-1  mx-3  mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+                <div className="py-2 d-flex  align-items-center">
+                    <Col className="col-3">
                       <img
                         data-dz-thumbnail=""
                         height="80"
@@ -553,175 +532,27 @@ const handleDeleteExclusion = (i) => {
                         src={selectedBanner.preview}
                       />
                     </Col>
-                    <Col>
+                    {/* <Col>
                       <Link to="#" className="text-muted font-weight-bold">
                         {selectedBanner.name}
                       </Link>
                       <p className="mb-0">
                         <strong>{selectedBanner.formattedSize}</strong>
                       </p>
+                    </Col> */}
+                    <Col className=' ms-5 pe-2 col-3' >
+                     <i onClick={()=>handleBannerDelete(index)} className='  fas fa-trash-alt text-danger' role="button" ></i>
                     </Col>
-                  </Row>
                 </div>
               </Card>
-            )}
+              
+            ))}
+            </Row>
           </div>
         </Form>
-  </div>
-</div>
-<div className="mb-3 col-lg-4">
-      <label className="form-label" htmlFor="tripImage1">
-        Trip Image 1 
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-          <Dropzone  //onChange={handleFileInputChange}
-            onDrop={acceptedTripImage1 => {
-              handleAcceptedTripImage1(acceptedTripImage1[0]); // Only first file is considered
-            }}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <div  className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
-                <input {...getInputProps()} />
-                <div className="mb-3">
-                  <i className="mdi mdi-cloud-upload display-6  text-muted"></i>
-                </div>
-                <h6>Drop files here or click to upload.</h6>
-              </div>
-            )}
-          </Dropzone>
-          <div className="dropzone-previews mt-3" id="file-previews">
-            {tripImage1 && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
-                      <img
-                        data-dz-thumbnail=""
-                        height="80"
-                        className="avatar-sm rounded bg-light"
-                        alt={tripImage1.name}
-                        src={tripImage1.preview}
-                      />
-                    </Col>
-                    <Col>
-                      <Link to="#" className="text-muted font-weight-bold">
-                        {tripImage1.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{tripImage1.formattedSize}</strong>
-                      </p>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            )}
-          </div>
-        </Form>
-  </div>
-</div>
-<div className="mb-3 col-lg-4">
-      <label className="form-label" htmlFor="tripImage2">
-        Trip Image 2 
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-          <Dropzone  //onChange={handleFileInputChange}
-            onDrop={acceptedTripImage2 => {
-              handleAcceptedTripImage2(acceptedTripImage2[0]); // Only first file is considered
-            }}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <div  className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
-                <input {...getInputProps()} />
-                <div className="mb-3">
-                  <i className="mdi mdi-cloud-upload display-6  text-muted"></i>
-                </div>
-                <h6>Drop files here or click to upload.</h6>
-              </div>
-            )}
-          </Dropzone>
-          <div className="dropzone-previews mt-3" id="file-previews">
-            {tripImage2 && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
-                      <img
-                        data-dz-thumbnail=""
-                        height="80"
-                        className="avatar-sm rounded bg-light"
-                        alt={tripImage2.name}
-                        src={tripImage2.preview}
-                      />
-                    </Col>
-                    <Col>
-                      <Link to="#" className="text-muted font-weight-bold">
-                        {tripImage2.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{tripImage2.formattedSize}</strong>
-                      </p>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            )}
-          </div>
-        </Form>
-  </div>
-</div>
-<div className="mb-3 col-lg-4">
-      <label className="form-label" htmlFor="tripImage3">
-        Trip Image 1 
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-          <Dropzone  //onChange={handleFileInputChange}
-            onDrop={acceptedTripImage3 => {
-              handleAcceptedTripImage3(acceptedTripImage3[0]); // Only first file is considered
-            }}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <div  className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
-                <input {...getInputProps()} />
-                <div className="mb-3">
-                  <i className="mdi mdi-cloud-upload display-6  text-muted"></i>
-                </div>
-                <h6>Drop files here or click to upload.</h6>
-              </div>
-            )}
-          </Dropzone>
-          <div className="dropzone-previews mt-3" id="file-previews">
-            {tripImage3 && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
-                      <img
-                        data-dz-thumbnail=""
-                        height="80"
-                        className="avatar-sm rounded bg-light"
-                        alt={tripImage3.name}
-                        src={tripImage3.preview}
-                      />
-                    </Col>
-                    <Col>
-                      <Link to="#" className="text-muted font-weight-bold">
-                        {tripImage3.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{tripImage3.formattedSize}</strong>
-                      </p>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            )}
-          </div>
-        </Form>
-  </div>
-</div> */}
+      </div>
+    </div>
+
 
 <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="company_name">
@@ -965,14 +796,15 @@ const handleDeleteExclusion = (i) => {
                       </div> */}
 
 <div className="mb-3 col-lg-4">
-                        <label className="form-label" htmlFor="price_per_person">
+                        <Label className="form-label" htmlFor="price_per_person">
                         Price Per Person
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="number"
                           id="price_per_person"  
                            className="form-control"
                           required
+                          name='price_per_person'
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.price_per_person || ''}
@@ -987,19 +819,21 @@ const handleDeleteExclusion = (i) => {
                      
 
                       
-
+{/* 
 <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="total_seats">
+  <Label className="form-label" htmlFor="total_seats">
     Total Number Of Seats
-  </label>{" "}
-  <input
+  </Label>{" "}
+  <Input
     type="number"
     className="form-control"
+    name='total_seats'
     onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.total_seats || ''}
                           invalid={validation.touched.total_seats && validation.errors.total_seats ? true : false}
                         id="total_seats"
+                        
     required
     placeholder='Total Seats'
     min="1"  // Add this line to set the minimum value
@@ -1007,7 +841,7 @@ const handleDeleteExclusion = (i) => {
    {validation.touched.total_seats && validation.errors.total_seats ? (
                             <FormFeedback type="invalid">{validation.errors.total_seats}</FormFeedback>
                           ) : null}
-</div>
+</div> */}
 
 
 
@@ -1061,11 +895,12 @@ const handleDeleteExclusion = (i) => {
 
 
                       <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="room_occupancy">
+  <Label className="form-label" htmlFor="room_occupancy">
     Room Occupancy
-  </label>
+  </Label>
   <select
     id="room_occupancy"
+    name='room_occupancy'
     onChange={validation.handleChange}
     onBlur={validation.handleBlur}
     value={validation.values.room_occupancy || ''}
@@ -1083,6 +918,59 @@ const handleDeleteExclusion = (i) => {
     <FormFeedback type="invalid">{validation.errors.room_occupancy}</FormFeedback>
   ) : null}
 </div>
+
+<div className="mb-3 col-lg-4">
+  <label className="form-label" htmlFor="is_trip_captain">
+    Trip Captain
+  </label>
+  <Input
+  type="select"
+    id="room_occupancy"
+    onChange={validation.handleChange}
+    onBlur={validation.handleBlur}
+    value={validation.values.is_trip_captain || ''}
+    invalid={validation.touched.is_trip_captain && validation.errors.is_trip_captain ? true : false}
+    className="form-control"
+    name='is_trip_captain'
+    required
+  >
+    <option value="">Is Trip Captain Required</option>
+    <option value="yes">yes</option>
+    <option value="no">no</option>
+  </Input>
+  {validation.touched.is_trip_captain && validation.errors.is_trip_captain ? (
+    <FormFeedback type="invalid">{validation.errors.is_trip_captain}</FormFeedback>
+  ) : null}
+</div>
+
+<div className="mb-3 col-lg-4">
+  <label className="form-label" htmlFor="type_of_transportation">
+    Transportation
+  </label>
+  <Input 
+  type='select'
+    id="type_of_transportation"
+    name='type_of_transportation'
+    onChange={validation.handleChange}
+    onBlur={validation.handleBlur}
+    value={validation.values.type_of_transportation || ''}
+    invalid={validation.touched.type_of_transportation && validation.errors.type_of_transportation ? true : false}
+    className="form-control"
+    required
+  >
+    <option value="Select Transportation">Select Transportation</option>
+    <option value="volvo">Volvo</option>
+    <option value="traveller">Traveller</option>
+    <option value="train">Train</option>
+    <option value="flight">Train </option>
+    <option value="privatecar">Private Car </option>
+    <option value="ferry">Ferry/Boat/Cruise </option>
+  </Input>
+  {validation.touched.type_of_transportation && validation.errors.type_of_transportation ? (
+    <FormFeedback type="invalid">{validation.errors.type_of_transportation}</FormFeedback>
+  ) : null}
+</div>
+
 
 
                       {/* <div className="mb-3 col-lg-4">
@@ -1136,7 +1024,103 @@ const handleDeleteExclusion = (i) => {
 
 
              
+
+
+
+{/* Meals */}
+                      {/* <div className="mb-3 col-lg-4">
+                        <label className="form-label" htmlFor="no_of_meal">
+                        Total Meals
+                        </label>
+                        <input
+                          type="number"
+                          id="no_of_meal"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.no_of_meal || ''}
+                          invalid={validation.touched.no_of_meal && validation.errors.no_of_meal ? true : false}
+                         className="form-control"
+                          placeholder="Enter Number of Meals"
+                          required
+                          min='0'
+                        />
+                        {validation.touched.no_of_meal && validation.errors.no_of_meal ? (
+    <FormFeedback type="invalid">{validation.errors.no_of_meal}</FormFeedback>
+  ) : null}
+                      </div> */}
+
+         
+
+
+
+
+                     
+                      {/* <div className="mb-3 col-lg-4">
+                        <label className="form-label" htmlFor="localGuide">
+                         Local Guide
+                        </label>
+                        <input
+                          type="text"
+                          id="localGuide"
+                          value={localGuide}
+                          onChange={(e) => setLocalGuide(e.target.value)}
+                          className="form-control"
+                          placeholder="Enter localGuide "
+                          required
+                        />
+                      </div> */}
+
+
+
 <div className="mb-3 col-lg-6">
+                        <label className="form-label" htmlFor="company_overview">
+                        Company Overview
+                        </label>
+                        <Input
+                          type="textarea"
+                          id="company_overview"
+                          name='company_overview'
+                          className="form-control"
+                          placeholder="Enter company Overview "
+                          required
+                          rows={4}
+                          style={{ resize: 'none' }}
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.company_overview || ''}
+                          invalid={validation.touched.company_overview && validation.errors.company_overview ? true : false}
+                       
+                        />{validation.touched.company_overview && validation.errors.company_overview ? (
+                          <FormFeedback type="invalid">{validation.errors.company_overview}</FormFeedback>
+                        ) : null}
+                      </div>
+
+                      <div className="mb-3 col-lg-6">
+                        <label className="form-label" htmlFor="thingsToCarry">
+                          Things To Carry
+                        </label>
+                        <Input
+                          type="textarea"
+                          id="things_to_carry"
+                          name='things_to_carry'
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.things_to_carry || ''}
+                          invalid={validation.touched.things_to_carry && validation.errors.things_to_carry ? true : false}
+                         className="form-control"
+                          placeholder="Enter Things To Carry "
+                          required
+                          rows={4}
+                          style={{ resize: 'none' }}
+
+                        />
+                        {validation.touched.things_to_carry && validation.errors.things_to_carry ? (
+                            <FormFeedback type="invalid">{validation.errors.things_to_carry}</FormFeedback>
+                          ) : null}
+                      </div>
+
+
+                      <div className="mb-3 col-lg-12">
   <label className="form-label">Age Range</label>
   <div className='d-flex flex-wrap'>
     <div>
@@ -1225,98 +1209,6 @@ const handleDeleteExclusion = (i) => {
 </div>
 
 
-{/* Meals */}
-                      {/* <div className="mb-3 col-lg-4">
-                        <label className="form-label" htmlFor="no_of_meal">
-                        Total Meals
-                        </label>
-                        <input
-                          type="number"
-                          id="no_of_meal"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.no_of_meal || ''}
-                          invalid={validation.touched.no_of_meal && validation.errors.no_of_meal ? true : false}
-                         className="form-control"
-                          placeholder="Enter Number of Meals"
-                          required
-                          min='0'
-                        />
-                        {validation.touched.no_of_meal && validation.errors.no_of_meal ? (
-    <FormFeedback type="invalid">{validation.errors.no_of_meal}</FormFeedback>
-  ) : null}
-                      </div> */}
-
-         
-
-
-
-
-                     
-                      {/* <div className="mb-3 col-lg-4">
-                        <label className="form-label" htmlFor="localGuide">
-                         Local Guide
-                        </label>
-                        <input
-                          type="text"
-                          id="localGuide"
-                          value={localGuide}
-                          onChange={(e) => setLocalGuide(e.target.value)}
-                          className="form-control"
-                          placeholder="Enter localGuide "
-                          required
-                        />
-                      </div> */}
-
-
-
-<div className="mb-3 col-lg-6">
-                        <label className="form-label" htmlFor="company_overview">
-                        Company Overview
-                        </label>
-                        <textarea
-                          type="text"
-                          id="company_overview"
-
-                          className="form-control"
-                          placeholder="Enter company Overview "
-                          required
-                          rows={4}
-                          style={{ resize: 'none' }}
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.company_overview || ''}
-                          invalid={validation.touched.company_overview && validation.errors.company_overview ? true : false}
-                       
-                        />{validation.touched.company_overview && validation.errors.company_overview ? (
-                          <FormFeedback type="invalid">{validation.errors.company_overview}</FormFeedback>
-                        ) : null}
-                      </div>
-
-                      <div className="mb-3 col-lg-6">
-                        <label className="form-label" htmlFor="thingsToCarry">
-                          Things To Carry
-                        </label>
-                        <textarea
-                          type="text"
-                          id="things_to_carry"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.things_to_carry || ''}
-                          invalid={validation.touched.things_to_carry && validation.errors.things_to_carry ? true : false}
-                         className="form-control"
-                          placeholder="Enter Things To Carry "
-                          required
-                          rows={4}
-                          style={{ resize: 'none' }}
-
-                        />
-                        {validation.touched.things_to_carry && validation.errors.things_to_carry ? (
-                            <FormFeedback type="invalid">{validation.errors.things_to_carry}</FormFeedback>
-                          ) : null}
-                      </div>
-
-
                       {/* <div className="mb-3 col-lg-4">
                         <label className="form-label" htmlFor="itinerary">
                           Detailed Itinerary
@@ -1392,54 +1284,10 @@ const handleDeleteExclusion = (i) => {
 
 
 
-<div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="is_trip_captain">
-    Trip Captain
-  </label>
-  <select
-    id="room_occupancy"
-    onChange={validation.handleChange}
-    onBlur={validation.handleBlur}
-    value={validation.values.is_trip_captain || ''}
-    invalid={validation.touched.is_trip_captain && validation.errors.is_trip_captain ? true : false}
-    className="form-control"
-    required
-  >
-    <option value="">Is Trip Captain Required</option>
-    <option value="yes">yes</option>
-    <option value="no">no</option>
-  </select>
-  {validation.touched.is_trip_captain && validation.errors.is_trip_captain ? (
-    <FormFeedback type="invalid">{validation.errors.is_trip_captain}</FormFeedback>
-  ) : null}
-</div>
 
 
-<div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="transportation">
-    Transportation
-  </label>
-  <select
-    id="transportation"
-    onChange={validation.handleChange}
-    onBlur={validation.handleBlur}
-    value={validation.values.transportation || ''}
-    invalid={validation.touched.transportation && validation.errors.transportation ? true : false}
-    className="form-control"
-    required
-  >
-    <option value="Select Transportation">Select Transportation</option>
-    <option value="volvo">Volvo</option>
-    <option value="traveller">Traveller</option>
-    <option value="train">Train</option>
-    <option value="flight">Train </option>
-    <option value="privatecar">Private Car </option>
-    <option value="ferry">Ferry/Boat/Cruise </option>
-  </select>
-  {validation.touched.transportation && validation.errors.transportation ? (
-    <FormFeedback type="invalid">{validation.errors.transportation}</FormFeedback>
-  ) : null}
-</div>
+
+
 
 <div className="mb-3 col-lg-4">
   <label className="form-label" htmlFor="food_options">
