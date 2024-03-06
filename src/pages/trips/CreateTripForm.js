@@ -14,49 +14,49 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { getAllMeals } from 'helpers/fakebackend_helper';
+import { getAllAgeRange, getAllMeals } from 'helpers/fakebackend_helper';
 
 
 const CreateTripForm = ({ type }) => {
   const dispatch = useDispatch();
   const { sno } = useParams();
 
-  let { tripData } = useSelector((state) => state.TripReducers);
-  const trip = tripData.find((trip) => trip.sno == sno);
+  // let { tripData } = useSelector((state) => state.TripReducers);
+  // const trip = tripData.find((trip) => trip.sno == sno);
 
-  const [tripImage1, setTripImage1] = useState(null);
-  const [tripImage2, setTripImage2] = useState(null);
-  const [tripImage3, setTripImage3] = useState(null);
-  const [headline, setHeadline] = useState('');
-  const [itinerary, setItinerary] = useState('');
-//   const [detailedPdf, setDetailedPdf] = useState('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [duration, setDuration] = useState('');
-  const [inclusion, setInclusion] = useState('');
-  const [exclusion, setExclusion] = useState('');
-  const [totalSeats, setTotalSeats] = useState('');
-  const [price, setPrice] = useState('');
-  const [accommodation, setAccommodation] = useState('');
-  const [transportation, setTransportation] = useState('');
-  const [totalBreakfast, setTotalBreakfast] = useState('');
-  const [totalLunch, setTotalLunch] = useState('');
-  const [totalDinner, setTotalDinner] = useState('');
-  const [sightSeeing, setSightSeeing] = useState('');
-  const [localGuide, setLocalGuide] = useState('');
-  const [thingsToCarry, setThingsToCarry] = useState('');
-  const [tripBanner, setTripBanner] = useState(null);
+  // const [tripImage1, setTripImage1] = useState(null);
+  // const [tripImage2, setTripImage2] = useState(null);
+  // const [tripImage3, setTripImage3] = useState(null);
+  // const [headline, setHeadline] = useState('');
+  // const [itinerary, setItinerary] = useState('');
+  // const [detailedPdf, setDetailedPdf] = useState('');
+  // const [from, setFrom] = useState('');
+  // const [to, setTo] = useState('');
+  // const [startDate, setStartDate] = useState('');
+  // const [endDate, setEndDate] = useState('');
+  // const [startTime, setStartTime] = useState('');
+  // const [endTime, setEndTime] = useState('');
+  // const [duration, setDuration] = useState('');
+  // const [inclusion, setInclusion] = useState('');
+  // const [exclusion, setExclusion] = useState('');
+  // const [totalSeats, setTotalSeats] = useState('');
+  // const [price, setPrice] = useState('');
+  // const [accommodation, setAccommodation] = useState('');
+  // const [transportation, setTransportation] = useState('');
+  // const [totalBreakfast, setTotalBreakfast] = useState('');
+  // const [totalLunch, setTotalLunch] = useState('');
+  // const [totalDinner, setTotalDinner] = useState('');
+  // const [sightSeeing, setSightSeeing] = useState('');
+  // const [localGuide, setLocalGuide] = useState('');
+  // const [thingsToCarry, setThingsToCarry] = useState('');
+  // const [tripBanner, setTripBanner] = useState(null);
 
   const navigate = useNavigate();
 
   
-  const [middlePointsSize, setMiddlePointsSize] = useState(8)
-  const [top_facilities_size, setTop_facilities_size] = useState(6)
-  const [packing_guide_size, setPacking_guide_size] = useState(8)
+  // const [middlePointsSize, setMiddlePointsSize] = useState(8)
+  // const [top_facilities_size, setTop_facilities_size] = useState(6)
+  // const [packing_guide_size, setPacking_guide_size] = useState(8)
   
   
   
@@ -104,11 +104,15 @@ const dummyMiddlePoints = [
 // const [startPoints, setStartPoints] = useState(initialState)
 // const [dummyMiddlePoints, setDummyMiddlePoints] = useState(initialState)
 const [mealsOptions, setMealsOptions] = useState([])
+const [ageRanges, setAgeRanges] = useState([])
 
 const fetchOptions=async()=>{
   try {
-   const res= await getAllMeals();
-    setMealsOptions(res)
+   const meals= await getAllMeals();
+   const ages= await getAllAgeRange();
+
+    setMealsOptions(meals)
+    setAgeRanges(ages)
 
   } catch (error) {
     console.log(error.response)
@@ -136,12 +140,12 @@ fetchOptions()
       end_date:tripCreate.end_date || "",
       price_per_person:tripCreate.price_per_person || "",
       company_overview: tripCreate.company_overview || "",
-      exclusion: tripCreate.exclusion || [],
-      inclusion: tripCreate.inclusion || [], 
+      exclusion: tripCreate.exclusion || "",
+      inclusion: tripCreate.inclusion || "", 
       room_occupancy: tripCreate.room_occupancy || "",
       age_range: tripCreate.age_range || [],
       things_to_carry:tripCreate.things_to_carry || "",
-      themes: tripCreate.themes|| [],
+      trip_themes: tripCreate.trip_themes|| [],
       is_trip_captain: tripCreate.is_trip_captain || "",
       type_of_transportation: tripCreate.type_of_transportation || "",
       food_options: tripCreate.food_options|| [],
@@ -153,7 +157,6 @@ fetchOptions()
       trip_title: Yup.string().required("Please Enter Trip Title"),
       start_point: Yup.string().required("Please Enter Start Point"),
       end_point: Yup.string().required("Please Enter End Point"),
-      middle_points: Yup.string(),
       seats_left: Yup.number().required("Please Enter Remaining Seats"),
       duration: Yup.string().required("Please Enter No of Days"),
       start_date: Yup.date().required("Please Enter Start Date"),
@@ -163,18 +166,27 @@ fetchOptions()
       exclusion: Yup.string().required("Please Enter Exclusion"),
       inclusion: Yup.string().required("Please Enter Inclusion"),
       room_occupancy: Yup.string().required("Please Enter Room Occupancy"),
-      age_range: Yup.string().required("Please Enter Age Range"),
+      // age_range: Yup.string().required("Please Enter Age Range"),
       things_to_carry: Yup.string().required("Please Enter Things to Carry"),
-      themes: Yup.string(),
       is_trip_captain: Yup.string().required("Please Select This Field"),
       type_of_transportation: Yup.string().required("Please Select This Field"),
       food_options: Yup.string().required("Please Select This Field"),
-      itinerary: Yup.string().required("Please Select This Field"),
+      // itinerary: Yup.string().required("Please Select This Field"),
 
 
     }),
     onSubmit: async (values) => {
-      console.log(values)
+      const tripData={
+        ...values,
+        trip_themes:themes_array,
+        food_options:food_options_array,
+        middle_points:middle_points_array,
+        inclusion:inclusive_array,
+        exclusion:exclusive_array,
+        
+
+      }
+      console.log(tripData)
     }
 
   })
@@ -254,7 +266,7 @@ if(inclusive_array.length<8){
     inclusive_array.push(
       validation.values.inclusion
      )
-     validation.setFieldValue('inclusion', ""); 
+     validation.setFieldValue('inclusion', ); 
   }
   else{
     setMessage("This Inclusion already included")
@@ -328,7 +340,7 @@ if(food_options_array.length<=10){
     food_options_array.push(
       validation.values.food_options
      )
-     validation.setFieldValue('food_options', ""); 
+     validation.setFieldValue('food_options',validation.values.food_options ); 
   }
   else{
     setMessage("This Food already included")
@@ -418,7 +430,9 @@ const handleDeleteFoodOptions = (i) => {
                   
                   <div data-repeater-list="group-a">
                     <div data-repeater-item className="row w-100">
- <div className="mb-3 col-lg-12">
+
+{/* Images */}
+ {/* <div className="mb-3 col-lg-12">
       <label className="form-label" htmlFor="tripBanner">
         Banner Picture
       </label>{" "}
@@ -465,8 +479,7 @@ const handleDeleteFoodOptions = (i) => {
           </div>
         </Form>
       </div>
-    </div>
-
+    </div> */}
 
 <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="company_name">
@@ -495,7 +508,7 @@ const handleDeleteFoodOptions = (i) => {
       ) : null}
     </div>
 
-                      <div className="mb-3 col-lg-4">
+ <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="trip_title">
                         Trip Title
                         </Label>
@@ -514,15 +527,9 @@ const handleDeleteFoodOptions = (i) => {
                         {validation.touched.trip_title && validation.errors.trip_title ? (
                             <FormFeedback type="invalid">{validation.errors.trip_title}</FormFeedback>
                           ) : null}
-                      </div>
+     </div>
 
-                      
-
-
-                      
-
-
-                      <div className="mb-3 col-lg-4">
+   <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="start_point">
         Start Point
       </Label>
@@ -549,8 +556,6 @@ const handleDeleteFoodOptions = (i) => {
         <FormFeedback type="invalid">{validation.errors.start_point}</FormFeedback>
       ) : null}
     </div>
-
-
 
     <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="end_point">
@@ -580,7 +585,7 @@ const handleDeleteFoodOptions = (i) => {
       ) : null}
     </div>
 
-                      <div className="mb-3 col-lg-4">
+    <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="seats_left">
                           Seats Left
                         </Label>
@@ -601,9 +606,9 @@ const handleDeleteFoodOptions = (i) => {
                          {validation.touched.seats_left && validation.errors.seats_left ? (
                             <FormFeedback type="invalid">{validation.errors.seats_left}</FormFeedback>
                           ) : null}
-                      </div>
+      </div>
 
-                       <div className="mb-3 col-lg-4">
+   <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="duration">
                         Duration
                         </Label>
@@ -622,9 +627,9 @@ const handleDeleteFoodOptions = (i) => {
                         {validation.touched.duration && validation.errors.duration ? (
                             <FormFeedback type="invalid">{validation.errors.duration}</FormFeedback>
                           ) : null}
-                      </div>
+     </div>
 
-                      <div className="mb-3 col-lg-4">
+ <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="start_date">
                           Start Date
                         </Label>
@@ -642,9 +647,9 @@ const handleDeleteFoodOptions = (i) => {
                         {validation.touched.start_date && validation.errors.start_date ? (
                             <FormFeedback type="invalid">{validation.errors.start_date}</FormFeedback>
                           ) : null}
-                      </div>
+   </div>
 
-                      <div className="mb-3 col-lg-4">
+ <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="end_date">
                           End Date
                         </Label>
@@ -663,7 +668,7 @@ const handleDeleteFoodOptions = (i) => {
                         {validation.touched.start_date && validation.errors.end_date ? (
                             <FormFeedback type="invalid">{validation.errors.end_date}</FormFeedback>
                           ) : null}
-                      </div>
+   </div>
 
 <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="price_per_person">
@@ -684,9 +689,9 @@ const handleDeleteFoodOptions = (i) => {
                         {validation.touched.price_per_person && validation.errors.price_per_person ? (
                             <FormFeedback type="invalid">{validation.errors.price_per_person}</FormFeedback>
                           ) : null}
-                      </div>
+  </div>
 
-                      <div className="mb-3 col-lg-4">
+<div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="room_occupancy">
     Room Occupancy
   </Label>
@@ -712,12 +717,12 @@ const handleDeleteFoodOptions = (i) => {
 </div>
 
 <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="is_trip_captain">
+  <Label className="form-label" htmlFor="is_trip_captain">
     Trip Captain
-  </label>
+  </Label>
   <Input
   type="select"
-    id="room_occupancy"
+    id="is_trip_captain"
     onChange={validation.handleChange}
     onBlur={validation.handleBlur}
     value={validation.values.is_trip_captain || ''}
@@ -736,9 +741,9 @@ const handleDeleteFoodOptions = (i) => {
 </div>
 
 <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="type_of_transportation">
+  <Label className="form-label" htmlFor="type_of_transportation">
     Transportation
-  </label>
+  </Label>
   <Input 
   type='select'
     id="type_of_transportation"
@@ -764,9 +769,9 @@ const handleDeleteFoodOptions = (i) => {
 </div>
 
 <div className="mb-3 col-lg-6">
-                        <label className="form-label" htmlFor="company_overview">
+                        <Label className="form-label" htmlFor="company_overview">
                         Company Overview
-                        </label>
+                        </Label>
                         <Input
                           type="textarea"
                           id="company_overview"
@@ -784,9 +789,9 @@ const handleDeleteFoodOptions = (i) => {
                         />{validation.touched.company_overview && validation.errors.company_overview ? (
                           <FormFeedback type="invalid">{validation.errors.company_overview}</FormFeedback>
                         ) : null}
-                      </div>
+ </div>
 
-                      <div className="mb-3 col-lg-6">
+ <div className="mb-3 col-lg-6">
                         <label className="form-label" htmlFor="thingsToCarry">
                           Things To Carry
                         </label>
@@ -808,10 +813,9 @@ const handleDeleteFoodOptions = (i) => {
                         {validation.touched.things_to_carry && validation.errors.things_to_carry ? (
                             <FormFeedback type="invalid">{validation.errors.things_to_carry}</FormFeedback>
                           ) : null}
-                      </div>
+  </div>
 
-
-                      <div className="mb-3 col-lg-12">
+   {/* <div className="mb-3 col-lg-12">
   <label className="form-label">Age Range</label>
   <div className='d-flex flex-wrap'>
     <div>
@@ -897,21 +901,44 @@ const handleDeleteFoodOptions = (i) => {
   {validation.touched.age_range && validation.errors.age_range ? (
     <FormFeedback type="invalid">{validation.errors.age_range}</FormFeedback>
   ) : null}
-</div>
+</div> */}
 
-
-
+{/* <div className="mb-3 col-lg-12">
+  <label className="form-label">Age Range</label>
+  <div className='d-flex flex-wrap'>
+    {ageRanges.map((range) => (
+      <div key={range.id}>
+        <label htmlFor={`age${range.id}`} className='ms-3' style={{minWidth:"50px"}}>
+          {range.display_name}
+        </label>
+        <Input
+          id={`age${range.id}`}
+          type="checkbox"
+          name={`age_range`}
+          value={range.value}
+          onChange={validation.handleChange}
+          onBlur={validation.handleBlur}
+          className="form-check-input"
+        />
+      </div>
+    ))}
+  </div>
+  {validation.touched.age_range && validation.errors.age_range ? (
+    <FormFeedback type="invalid">{validation.errors.age_range}</FormFeedback>
+  ) : null}
+</div> */}
 
 <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="trip_themes">
+  <Label className="form-label" htmlFor="trip_themes">
     Themes that best describe your Group Trip
-  </label>
+  </Label>
   <div className='d-flex align-items-center justify-content-between' >
-  <select
+  <Input
+  type='select'
     id="trip_themes"
     onChange={validation.handleChange}
     onBlur={validation.handleBlur}
-    value={validation.values.trip_themes || []} // Use an array for multiple selections
+    value={validation.values.trip_themes || []} 
     className="form-control"
     name='trip_themes'
     
@@ -938,7 +965,7 @@ const handleDeleteFoodOptions = (i) => {
     <option value="Offbeat Location">Offbeat Location</option>
     <option value="Wildlife">Wildlife</option>
     <option value="Other">Other</option>
-  </select>
+  </Input>
   <button onClick={handleAddTheme} type='button' className='btn btn-success mx-1' >Add</button>
 
   </div>
@@ -956,37 +983,32 @@ const handleDeleteFoodOptions = (i) => {
   </div>
 </div>
 
-
-
 <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="food_options">
+  <Label className="form-label" htmlFor="food_options">
   Food Options
-  </label>
+  </Label>
   <div className='d-flex align-items-center' >
-  <select
+  <Input
+     type='select'
     id="food_options"
     name="food_options"
     onChange={validation.handleChange}
     onBlur={validation.handleBlur}
     value={validation.values.food_options || ''}
-    // invalid={validation.touched.food_options && validation.errors.food_options ? true : false}
     className="form-control"
     required
   >
-    <option value="Select Food Option">Select Food Options</option>
+    <option value="">Select Food Options</option>
     {
   mealsOptions.map(option => (
     <option key={option.type_name} value={option.type_name}>{option.type_name}</option>
   ))
 }
 
- </select>
+ </Input>
  <button onClick={handleAddFoodOptions} type='button' className='btn btn-success mx-1' >Add</button>
 
   </div>
-  {/* {validation.touched.food_options && validation.errors.food_options ? (
-    <FormFeedback type="invalid">{validation.errors.food_options}</FormFeedback>
-  ) : null} */}
   <div className='d-flex flex-column '>
     {food_options_array.map((data, i) => (
       <div className='d-flex justify-content-between mx-3' key={i}>
@@ -1001,31 +1023,27 @@ const handleDeleteFoodOptions = (i) => {
   </div>
 </div>
 
-
-
 <div className="mb-3 col-lg-4">
-  <label className="form-label" htmlFor="middle_points">
+  <Label className="form-label" htmlFor="middle_points">
     Middle Points
-  </label>
+  </Label>
   <div className='d-flex justify-content-between '>
-    <select
+    <Input
+    type='select'
       id="middle_points"
       className="form-control"
       onChange={validation.handleChange}
       onBlur={validation.handleBlur}
       value={validation.values.middle_points || ''}
-      invalid={validation.touched.middle_points && validation.errors.middle_points ? true : false}
     >
       <option value="">Select Middle Points</option>
       {dummyMiddlePoints.map((data, i) => (
         <option key={i} value={data}>{data}</option>
       ))}
-    </select>
+    </Input>
     <button onClick={handleAddMiddlePoints} type='button' className='btn btn-success mx-1' >Add</button>
   </div>
-  {validation.touched.middle_points && validation.errors.middle_points ? (
-    <FormFeedback type="invalid">{validation.errors.middle_points}</FormFeedback>
-  ) : null}
+ 
 
   <div className='d-flex flex-column '>
     {middle_points_array.map((data, i) => (
@@ -1041,7 +1059,6 @@ const handleDeleteFoodOptions = (i) => {
   </div>
 </div>
 
-
 <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="inclusion">
                         Inclusion
@@ -1050,24 +1067,27 @@ const handleDeleteFoodOptions = (i) => {
                         <Input
                           type="text"
                           id="inclusion"
+                          name="inclusion"
                           className="form-control"
                           placeholder="Enter Inclusion"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.inclusion || ''}
-                          required
+                          // required={inclusive_array.length>0?false:true}
+                          required={false}
                           rows={4}
                           style={{ resize: 'none' }}
-                          
-                          // invalid={validation.touched.inclusion && validation.errors.inclusion ? true : false}
+                          // invalid={
+                          //   validation.touched.inclusion && validation.errors.inclusion ? true : false
+                          // }
                        
                         />
+                        
                         <button onClick={handleAddInclusion} type='button' className='btn btn-success mx-1' >Add</button>
                         </div>
-                         {/* {validation.touched.inclusion && validation.errors.inclusion ? (
-                            <FormFeedback type="invalid">{validation.errors.inclusion}</FormFeedback>
-                          ) : null} */}
-
+                        {/* {validation.touched.inclusion && validation.errors.inclusion ? (
+                          <FormFeedback type="invalid">{validation.errors.inclusion}</FormFeedback>
+                        ) : null} */}
 
   <div className='d-flex flex-column ' >
   {inclusive_array.map((data, i) => (
@@ -1084,9 +1104,9 @@ const handleDeleteFoodOptions = (i) => {
   </div>
 
 
-                      </div>
+ </div>
 
-                      <div className="mb-3 col-lg-4">
+<div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="exclusion">
                         Exclusion
                         </Label>
@@ -1094,23 +1114,27 @@ const handleDeleteFoodOptions = (i) => {
                         <Input
                           type="text"
                           id="exclusion"
+                          name="exclusion"
                           className="form-control"
                           placeholder="Enter Exclusion"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.exclusion || ''}
-                          required
+                          // invalid={
+                          //   validation.touched.exclusion && validation.errors.exclusion ? true : false
+                          // }
+                          // required={exclusive_array.length>0?false:true}
+                          required={false}
                           rows={4}
                           style={{ resize: 'none' }}
                           
-                          // invalid={validation.touched.exclusion && validation.errors.exclusion ? true : false}
                        
                         />
                         <button onClick={handleAddExclusion} type='button' className='btn btn-success mx-1' >Add</button>
                         </div>
-                         {/* {validation.touched.exclusion && validation.errors.exclusion ? (
-                            <FormFeedback type="invalid">{validation.errors.exclusion}</FormFeedback>
-                          ) : null} */}
+                        {/* {validation.touched.inclusion && validation.errors.inclusion ? (
+                          <FormFeedback type="invalid">{validation.errors.inclusion}</FormFeedback>
+                        ) : null} */}
 
 
   <div className='d-flex flex-column ' >
@@ -1128,7 +1152,7 @@ const handleDeleteFoodOptions = (i) => {
   </div>
 
 
-                      </div>
+</div>
 
                       <button  type='submit' className="mt-1 btn btn-success">
   {type === 'Edit' ? 'Update Trip' : 'Create Trip'}

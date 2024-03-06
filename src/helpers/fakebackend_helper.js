@@ -52,6 +52,7 @@ const postFakeProfile = data => post(url.POST_EDIT_PROFILE, data)
 // Trips page request
 
 const getAllMeals = data => get(url.GET_ALL_MEALS)
+const getAllAgeRange = data => get(url.GET_ALL_AGE_RANGES)
 
 
 
@@ -125,5 +126,6 @@ export {
   getAllAdmins,
   patchAdminEdit,
   deleteAdmin,
-  getAllMeals
+  getAllMeals,
+  getAllAgeRange
 }
