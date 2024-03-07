@@ -402,13 +402,15 @@ const handleDeleteFoodOptions = (i) => {
   }
   
 
-  function handleAcceptedBanners(acceptedBanners) {
+   function  handleAcceptedBanners (acceptedBanners) {
     const updatedBanners = acceptedBanners.map(file => ({
       ...file,
       preview: URL.createObjectURL(file),
     }));
-    setSelectedBanners([...selectedBanners, ...updatedBanners]);
+    setSelectedBanners(prevSelectedBanners => [...prevSelectedBanners, ...updatedBanners])
+    console.log(selectedBanners)
   }
+  
 
 
   return (
@@ -434,7 +436,7 @@ const handleDeleteFoodOptions = (i) => {
                     <div data-repeater-item className="row w-100">
 
 {/* Images */}
- {/* <div className="mb-3 col-lg-12">
+ <div className="mb-3 col-lg-12">
       <label className="form-label" htmlFor="tripBanner">
         Banner Picture
       </label>{" "}
@@ -481,7 +483,7 @@ const handleDeleteFoodOptions = (i) => {
           </div>
         </Form>
       </div>
-    </div> */}
+    </div>
 
 <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="company_name">
