@@ -46,6 +46,7 @@ const EditAdminDetailForm = ({ type }) => {
             validation.setFieldValue("email",foundAdmin.email)
             validation.setFieldValue("is_super_admin",foundAdmin.is_super_admin)
           }
+         
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -247,11 +248,11 @@ const EditAdminDetailForm = ({ type }) => {
                               className="mb-0 ms-3"
                               check={is_super_admin}
                               style={{
-                                color: is_super_admin ? 'green' : 'red',
+                                color: validation.values.is_super_admin ? 'green' : 'red',
                                 display: 'inline-block',
                               }}
                             >
-                              {is_super_admin ? 'SuperAdmin' : 'Admin'}
+                              {validation.values.is_super_admin ? 'SuperAdmin' : 'Admin'}
                             </Label>
                           </FormGroup>
                         </div>

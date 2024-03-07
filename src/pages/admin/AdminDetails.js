@@ -9,6 +9,8 @@ import { deleteAdmin, getAllAdmins } from 'helpers/fakebackend_helper';
 import Loader from 'components/loader/Loader';
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
+import DataTable from 'react-data-table-component';
+
 
 const AdminDetails = () => {
   const dispatch = useDispatch();
@@ -74,8 +76,8 @@ const AdminDetails = () => {
         <i className="ti-trash"></i>
       </button>
         <Link to={`/editAdmin/${row.id}`} >
-      <button className="btn btn-info mx-2" >
-        <i className="ti-pencil-alt"></i>
+      <button   className="btn btn-info  mx-2" >
+        <i className="fas fa-edit"></i>
       </button>
       </Link>
     </div>
@@ -83,57 +85,99 @@ const AdminDetails = () => {
 
   const { adminData } = useSelector((state) => state.AdminReducers);
 
-  const data = {
-    columns: [
-      {
-        label: 'SNo',
-        field: 'sno',
-        sort: 'asc',
-        width: 150,
-      },
-      {
-        label: 'Name',
-        field: 'name',
-        sort: 'asc',
-        width: 150,
-      },
-      {
-        label: 'Email',
-        field: 'email',
-        sort: 'asc',
-        width: 270,
-      },
-      {
-        label: 'Is SuperAdmin',
-        field: 'is_super_admin',
-        sort: 'asc',
-        width: 200,
-      },
-      {
-        label: 'Created By',
-        field: 'created_by',
-        sort: 'asc',
-        width: 200,
-      },
-      {
-        label: 'Action',
-        field: 'action',
-        sort: 'asc',
-        width: 200,
-      },
-    ],
-    rows: adminData.map((row, index) => ({
-      ...row,
-      is_super_admin: row.is_super_admin ? 'Yes' : 'No', // Convert boolean to string representation
-      created_by: row.created_by ? row.created_by.name : 'Unknown', // Check if created_by exists
-      sno: index + 1, // Assigning serial numbers
-      id:row.id,
-      action: generateActionButtons(row),
+  // const data = {
+  //   columns: [
+  //     {
+  //       label: 'SNo',
+  //       field: 'sno',
+  //       sort: 'asc',
+  //       width: 150,
+  //     },
+  //     {
+  //       label: 'Name',
+  //       field: 'name',
+  //       sort: 'asc',
+  //       width: 150,
+  //     },
+  //     {
+  //       label: 'Email',
+  //       field: 'email',
+  //       sort: 'asc',
+  //       width: 270,
+  //     },
+  //     {
+  //       label: 'Is SuperAdmin',
+  //       field: 'is_super_admin',
+  //       sort: 'asc',
+  //       width: 200,
+  //     },
+  //     {
+  //       label: 'Created By',
+  //       field: 'created_by',
+  //       sort: 'asc',
+  //       width: 200,
+  //     },
+  //     {
+  //       label: 'Action',
+  //       field: 'action',
+  //       sort: 'asc',
+  //       width: 200,
+  //     },
+  //   ],
+  //   rows: adminData.map((row, index) => ({
+  //     ...row,
+  //     is_super_admin: row.is_super_admin ? 'Yes' : 'No', // Convert boolean to string representation
+  //     created_by: row.created_by ? row.created_by.name : 'Unknown', // Check if created_by exists
+  //     sno: index + 1, // Assigning serial numbers
+  //     id:row.id,
+  //     action: generateActionButtons(row),
       
-    }
+  //   }
     
-    )),
-  };
+  //   )),
+  // };
+
+  const columns = [
+    {
+      name: 'sno',
+      selector: row => row.sno,
+      sortable: true,
+    },
+    {
+      name: 'name',
+      selector: row => row.name,
+      sortable: true,
+    },
+    {
+      name: 'email',
+      selector: row => row.email,
+      sortable: true,
+    },
+    {
+      name: 'Is SuperAdmin',
+      selector: row => row.is_super_admin,
+      sortable: true,
+    },
+    {
+      name: 'Created By',
+      selector: row => row.created_by,
+      sortable: true,
+    },
+    {
+      name: 'Actions',
+      selector: row => row.actions,
+      sortable: true,
+    },
+  ];
+  
+  const data = adminData.map((row, index) => ({
+        ...row,
+        is_super_admin: row.is_super_admin ? 'Yes' : 'No', // Convert boolean to string representation
+        created_by: row.created_by ? row.created_by.name : 'Unknown', // Check if created_by exists
+        sno: index + 1, // Assigning serial numbers
+        id:row.id,
+        actions: generateActionButtons(row),
+  }))
 
   return (
     <React.Fragment>
@@ -163,7 +207,12 @@ const AdminDetails = () => {
                   {!loader && 
                   
                   <div style={{minHeight:"80vh"}}  >
-                  <MDBDataTable responsive bordered data={data} /> 
+                  {/* <MDBDataTable responsive bordered data={data} />  */}
+                  <DataTable
+			            columns={columns}
+			           data={data}
+                 pagination
+		              />
                   </div>
                   
                   }
