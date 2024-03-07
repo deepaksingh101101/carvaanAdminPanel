@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, CardBody, CardTitle, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { MDBDataTable, Car } from 'mdbreact';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,13 +14,11 @@ import DataTable from 'react-data-table-component';
 const AdminDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [loader, setLoader] = useState(true)
-
-  const [message, setMessage] = useState("Something went's wrong")
-
-
+  const [loader, setLoader] = useState(true);
+  const [message, setMessage] = useState("Something went wrong");
+  const [tempAdmin, setTempAdmin] = useState([]); // Temporary state to store admin data
+const [allAdminsAction, setAllAdminsAction] = useState("All Admins")
   const isOpen = useSelector(state => state.alertReducer.isOpen);
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
@@ -30,40 +27,33 @@ const AdminDetails = () => {
     try {
       let adminData = await getAllAdmins();
       dispatch(setAdminData(adminData));
-      setLoader(false)
+      setTempAdmin(adminData); // Set admin data to tempAdmin
+      setLoader(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setLoader(false)
+      setLoader(false);
     }
   };
 
   useEffect(() => {
-    setLoader(true)
+    setLoader(true);
     fetchData();
   }, []);
 
   const handleRemoveAdmin = async (id) => {
-
-   try {
-    let res= await deleteAdmin(id)
-   dispatch(popAdmin(id));
-   console.log(res)
-   } catch (error) {
-    setMessage(error.response.data.message?error.response.data.message:"Something's went's wrong")
-  
-    dispatch(SomethingAlertTrue())
-    setTimeout(() => {
-      dispatch(SomethingAlertFalse());
-      setMessage("Something went's wrong")
-    }, 2000);
-   }
-    
+    try {
+      let res = await deleteAdmin(id);
+      dispatch(popAdmin(id));
+      console.log(res);
+    } catch (error) {
+      setMessage(error.response.data.message ? error.response.data.message : "Something went wrong");
+      dispatch(SomethingAlertTrue());
+      setTimeout(() => {
+        dispatch(SomethingAlertFalse());
+        setMessage("Something went wrong");
+      }, 2000);
+    }
   };
-
-  // const handleEdit = (id) => {
-
-  //   navigate(`/editAdmin/${id}`);
-  // };
 
   const generateActionButtons = (row) => (
     <div>
@@ -75,67 +65,33 @@ const AdminDetails = () => {
       <button className="btn btn-danger mx-2" onClick={() => handleRemoveAdmin(row.id)}>
         <i className="ti-trash"></i>
       </button>
-        <Link to={`/editAdmin/${row.id}`} >
-      <button   className="btn btn-info  mx-2" >
-        <i className="fas fa-edit"></i>
-      </button>
+      <Link to={`/editAdmin/${row.id}`}>
+        <button className="btn btn-info mx-2">
+          <i className="fas fa-edit"></i>
+        </button>
       </Link>
     </div>
   );
 
   const { adminData } = useSelector((state) => state.AdminReducers);
 
-  // const data = {
-  //   columns: [
-  //     {
-  //       label: 'SNo',
-  //       field: 'sno',
-  //       sort: 'asc',
-  //       width: 150,
-  //     },
-  //     {
-  //       label: 'Name',
-  //       field: 'name',
-  //       sort: 'asc',
-  //       width: 150,
-  //     },
-  //     {
-  //       label: 'Email',
-  //       field: 'email',
-  //       sort: 'asc',
-  //       width: 270,
-  //     },
-  //     {
-  //       label: 'Is SuperAdmin',
-  //       field: 'is_super_admin',
-  //       sort: 'asc',
-  //       width: 200,
-  //     },
-  //     {
-  //       label: 'Created By',
-  //       field: 'created_by',
-  //       sort: 'asc',
-  //       width: 200,
-  //     },
-  //     {
-  //       label: 'Action',
-  //       field: 'action',
-  //       sort: 'asc',
-  //       width: 200,
-  //     },
-  //   ],
-  //   rows: adminData.map((row, index) => ({
-  //     ...row,
-  //     is_super_admin: row.is_super_admin ? 'Yes' : 'No', // Convert boolean to string representation
-  //     created_by: row.created_by ? row.created_by.name : 'Unknown', // Check if created_by exists
-  //     sno: index + 1, // Assigning serial numbers
-  //     id:row.id,
-  //     action: generateActionButtons(row),
-      
-  //   }
-    
-  //   )),
-  // };
+  const allAdmins = () => {
+    // No filter needed, show all admins
+    setTempAdmin(adminData)
+    setAllAdminsAction("All Admins")
+  };
+  
+  const superAdmins = () => {
+    // Filter admins to show only super admins
+     setTempAdmin(adminData.filter(admin => admin.is_super_admin));
+     setAllAdminsAction("Super Admins")
+  };
+  
+  const onlyAdmins = () => {
+    // Filter admins to show only non-super admins
+    setTempAdmin(adminData.filter(admin => !admin.is_super_admin));
+    setAllAdminsAction("Admins")
+  };
 
   const columns = [
     {
@@ -167,17 +123,17 @@ const AdminDetails = () => {
       name: 'Actions',
       selector: row => row.actions,
       sortable: true,
+      width: "auto"
     },
   ];
   
-  const data = adminData.map((row, index) => ({
-        ...row,
-        is_super_admin: row.is_super_admin ? 'Yes' : 'No', // Convert boolean to string representation
-        created_by: row.created_by ? row.created_by.name : 'Unknown', // Check if created_by exists
-        sno: index + 1, // Assigning serial numbers
-        id:row.id,
-        actions: generateActionButtons(row),
-  }))
+  const data = tempAdmin.map((row, index) => ({
+    ...row,
+    is_super_admin: row.is_super_admin ? 'Yes' : 'No',
+    created_by: row.created_by ? row.created_by.name : 'Unknown',
+    sno: index + 1,
+    actions: generateActionButtons(row),
+  }));
 
   return (
     <React.Fragment>
@@ -188,45 +144,39 @@ const AdminDetails = () => {
             <Col className="col-12">
               <Card style={{minHeight:"80vh"}} >
                 <CardBody style={{minHeight:"80vh"}}>
-                  <div  className='d-flex justify-content-between'>
+                  <div className='d-flex justify-content-between'>
                     <CardTitle className="h4">Admin Details</CardTitle>
                     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className=' '>
                       <DropdownToggle className='' style={{ paddingLeft: "45px", paddingRight: "45px" }} caret>
-                        All Admins
+                      {allAdminsAction}
                       </DropdownToggle>
                       <DropdownMenu>
                         <DropdownItem header>Actions</DropdownItem>
-                        <DropdownItem onClick={() => allAdmins}>All Admins</DropdownItem>
-                        <DropdownItem onClick={() => superAdmins}>Super Admins</DropdownItem>
-                        <DropdownItem onClick={() => onlyAdmins}>Admins</DropdownItem>
+                        <DropdownItem onClick={() => allAdmins()}>All Admins</DropdownItem>
+                        <DropdownItem onClick={() => superAdmins()}>Super Admins</DropdownItem>
+                        <DropdownItem onClick={() => onlyAdmins()}>Admins</DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
                   </div>
                   {loader && <Loader/>}
-
                   {!loader && 
-                  
-                  <div style={{minHeight:"80vh"}}  >
-                  {/* <MDBDataTable responsive bordered data={data} />  */}
-                  <DataTable
-			            columns={columns}
-			           data={data}
-                 pagination
-		              />
-                  </div>
-                  
+                    <div style={{minHeight:"80vh"}}  >
+                      <DataTable
+                        columns={columns}
+                        data={data}
+                        pagination
+                        responsive
+                      />
+                    </div>
                   }
-                  
-
                 </CardBody>
               </Card>
             </Col>
           </Row>
-         
         </div>
       </div>
-      <div  className=" position-fixed  " style={{top:"0px",right:"0",zIndex:"9999"}}>
-     {  <Alert message={message} type="error" />}
+      <div className=" position-fixed  " style={{top:"0px",right:"0",zIndex:"9999"}}>
+        <Alert message={message} type="error" />
       </div>
     </React.Fragment>
   );
