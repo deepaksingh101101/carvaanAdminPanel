@@ -9,12 +9,6 @@ import {
   Container,
 } from "reactstrap";
 
-// Carousel
-import Slide from "./CarouselTypes/slide";
-import Slidewithcontrol from "./CarouselTypes/slidewithcontrol";
-import Slidewithindicator from "./CarouselTypes/slidewithindicator";
-import Slidewithcaption from "./CarouselTypes/slidewithcaption";
-import Slidewithfade from "./CarouselTypes/slidewithfade";
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";

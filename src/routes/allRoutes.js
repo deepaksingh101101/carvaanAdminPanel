@@ -69,10 +69,7 @@ import IconIon from "../pages/Icons/IconIon";
 import ThemifyIcon from "../pages/Icons/IconThemify";
 import IconFontawesome from "../pages/Icons/IconFontawesome";
 
-//Tables
-import BasicTables from "../pages/Tables/BasicTables";
-import DatatableTables from "../pages/Tables/DatatableTables";
-import ResponsiveTables from "../pages/Tables/ResponsiveTables";
+
 
 // Forms
 
@@ -235,11 +232,7 @@ const userRoutes = [
   { path: "/icons-themify", component: <ThemifyIcon /> },
   { path: "/icons-typicons", component: <TypiconsIcon /> },
 
-  // Tables
-  { path: "/tables-basic", component: <BasicTables /> },
-  { path: "/tables-datatable", component: <DatatableTables /> },
-  { path: "/tables-responsive", component: <ResponsiveTables /> },
-  
+
   // Maps
 
   // Forms
