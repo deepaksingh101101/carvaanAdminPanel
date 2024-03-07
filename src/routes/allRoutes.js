@@ -73,24 +73,7 @@ import IconFontawesome from "../pages/Icons/IconFontawesome";
 
 // Forms
 
-//Ui
-import UiAlert from "../pages/Ui/UiAlert";
-import UiButtons from "../pages/Ui/UiButtons";
-import UiCards from "../pages/Ui/UiCards";
-import UiCarousel from "../pages/Ui/UiCarousel";
-import UiColors from "../pages/Ui/UiColors";
-import UiDropdown from "../pages/Ui/UiDropdown";
-import UiGeneral from "../pages/Ui/UiGeneral";
-import UiGrid from "../pages/Ui/UiGrid";
-import UiImages from "../pages/Ui/UiImages";
-import UiModal from "../pages/Ui/UiModal";
-import UiProgressbar from "../pages/Ui/UiProgressbar";
-import UiTabsAccordions from "../pages/Ui/UiTabsAccordions";
-import UiTypography from "../pages/Ui/UiTypography";
-import UiVideo from "../pages/Ui/UiVideo";
-import UiSessionTimeout from "../pages/Ui/UiSessionTimeout";
-import UiUtilities from "pages/Ui/UiUtilities";
-import UiOffcanvas from "pages/Ui/UiOffcanvas";
+
 
 //Pages
 import PagesStarter from "../pages/Utility/pages-starter";
@@ -238,23 +221,7 @@ const userRoutes = [
   // Forms
 
   // Ui
-  { path: "/ui-alerts", component: <UiAlert /> },
-  { path: "/ui-buttons", component: <UiButtons /> },
-  { path: "/ui-cards", component: <UiCards /> },
-  { path: "/ui-carousel", component: <UiCarousel /> },
-  { path: "/ui-colors", component: <UiColors /> },
-  { path: "/ui-dropdowns", component: <UiDropdown /> },
-  { path: "/ui-general", component: <UiGeneral /> },
-  { path: "/ui-grid", component: <UiGrid /> },
-  { path: "/ui-images", component: <UiImages /> },
-  { path: "/ui-modals", component: <UiModal /> },
-  { path: "/ui-progressbars", component: <UiProgressbar /> },
-  { path: "/ui-tabs-accordions", component: <UiTabsAccordions /> },
-  { path: "/ui-typography", component: <UiTypography /> },
-  { path: "/ui-video", component: <UiVideo /> },
-  { path: "/ui-session-timeout", component: <UiSessionTimeout /> },
-  { path: "/ui-utilities", component: <UiUtilities /> },
-  { path: "/ui-offcanvas", component: <UiOffcanvas /> },
+ 
 
   //Utility
   { path: "/pages-starter", component: <PagesStarter /> },

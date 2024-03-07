@@ -44,6 +44,7 @@ const [allAdminsAction, setAllAdminsAction] = useState("All Admins")
     try {
       let res = await deleteAdmin(id);
       dispatch(popAdmin(id));
+       setTempAdmin((tempAdmin) => tempAdmin.filter(admin => admin.id !== id));
       console.log(res);
     } catch (error) {
       setMessage(error.response.data.message ? error.response.data.message : "Something went wrong");
