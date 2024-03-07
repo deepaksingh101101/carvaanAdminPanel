@@ -438,7 +438,7 @@ const handleDeleteFoodOptions = (i) => {
 {/* Images */}
  <div className="mb-3 col-lg-12">
       <label className="form-label" htmlFor="tripBanner">
-        Banner Picture
+        Banner Picture*
       </label>{" "}
       <div className="mb-5">
         <Form>
@@ -487,7 +487,7 @@ const handleDeleteFoodOptions = (i) => {
 
 <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="company_name">
-        Company Name
+        Company Name*
       </Label>
       <Input
         type="select"
@@ -514,7 +514,7 @@ const handleDeleteFoodOptions = (i) => {
 
  <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="trip_title">
-                        Trip Title
+                        Trip Title*
                         </Label>
                         <Input
                           type="text"
@@ -535,7 +535,7 @@ const handleDeleteFoodOptions = (i) => {
 
    <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="start_point">
-        Start Point
+        Start Point*
       </Label>
       <Input
         type="select"
@@ -563,7 +563,7 @@ const handleDeleteFoodOptions = (i) => {
 
     <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="end_point">
-        End Point
+        End Point*
       </Label>
       <Input
         type="select"
@@ -591,7 +591,7 @@ const handleDeleteFoodOptions = (i) => {
 
     <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="seats_left">
-                          Seats Left
+                          Seats Left*
                         </Label>
                         <Input
                           type="number"
@@ -614,7 +614,7 @@ const handleDeleteFoodOptions = (i) => {
 
    <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="duration">
-                        Duration
+                        Duration*
                         </Label>
                         <Input
                           type="text"
@@ -635,7 +635,7 @@ const handleDeleteFoodOptions = (i) => {
 
  <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="start_date">
-                          Start Date
+                          Start Date*
                         </Label>
                         <Input
                           type="date"
@@ -655,7 +655,7 @@ const handleDeleteFoodOptions = (i) => {
 
  <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="end_date">
-                          End Date
+                          End Date*
                         </Label>
                         <Input
                           type="date"
@@ -676,7 +676,7 @@ const handleDeleteFoodOptions = (i) => {
 
 <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="price_per_person">
-                        Price Per Person
+                        Price Per Person*
                         </Label>
                         <Input
                           type="number"
@@ -722,7 +722,7 @@ const handleDeleteFoodOptions = (i) => {
 
 <div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="is_trip_captain">
-    Trip Captain
+    Trip Captain*
   </Label>
   <Input
   type="select"
@@ -746,7 +746,7 @@ const handleDeleteFoodOptions = (i) => {
 
 <div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="type_of_transportation">
-    Transportation
+    Transportation*
   </Label>
   <Input 
   type='select'
@@ -776,7 +776,7 @@ const handleDeleteFoodOptions = (i) => {
 
 <div className="mb-3 col-lg-6">
                         <Label className="form-label" htmlFor="company_overview">
-                        Company Overview
+                        Company Overview*
                         </Label>
                         <Input
                           type="textarea"
@@ -799,7 +799,7 @@ const handleDeleteFoodOptions = (i) => {
 
  <div className="mb-3 col-lg-6">
                         <label className="form-label" htmlFor="thingsToCarry">
-                          Things To Carry
+                          Things To Carry*
                         </label>
                         <Input
                           type="textarea"
@@ -936,7 +936,7 @@ const handleDeleteFoodOptions = (i) => {
 
 <div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="trip_themes">
-    Themes that best describe your Group Trip
+    Themes that best describe your Group Trip(optional)
   </Label>
   <div className='d-flex align-items-center justify-content-between' >
   <Input
@@ -991,7 +991,7 @@ const handleDeleteFoodOptions = (i) => {
 
 <div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="food_options">
-  Food Options
+  Food Options*
   </Label>
   <div className='d-flex align-items-center' >
   <Input
