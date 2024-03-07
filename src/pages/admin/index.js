@@ -31,13 +31,6 @@ import user6 from "../../assets/images/users/user-6.jpg";
 import smimg1 from "../../assets/images/small/img-1.jpg";
 import smimg2 from "../../assets/images/small/img-2.jpg";
 
-// Charts
-import LineAreaChart from "../AllCharts/apex/lineareachart";
-import RadialChart from "../AllCharts/apex/apexdonut";
-import Apexdonut from "../AllCharts/apex/apexdonut1";
-import SparkLine from "../AllCharts/sparkline/sparkline";
-import SparkLine1 from "../AllCharts/sparkline/sparkline1";
-import Salesdonut from "../AllCharts/apex/salesdonut";
 
 import "chartist/dist/scss/chartist.scss";
 
@@ -205,11 +198,6 @@ const Dashboard = props => {
                 <CardBody>
                   <h4 className="card-title mb-4">Monthly Earning</h4>
                   <Row>
-                    <Col lg={7}>
-                      <div>
-                        <LineAreaChart />
-                      </div>
-                    </Col>
                     <Col lg={5}>
                       <Row>
                         <Col md={6}>

@@ -56,12 +56,7 @@ import TwostepVerification2 from "../pages/AuthenticationInner/auth-two-step-ver
 
 // Dashboard
 import Dashboard from "../pages/Dashboard/index";
-// Charts
-import ChartApex from "../pages/Charts/Apexcharts";
-import ChartistChart from "../pages/Charts/ChartistChart";
-import ChartjsChart from "../pages/Charts/ChartjsChart";
-import EChart from "../pages/Charts/EChart";
-import SparklineChart from "../pages/Charts/SparklineChart";
+
 
 // Maps
 
@@ -97,8 +92,6 @@ import UiTabsAccordions from "../pages/Ui/UiTabsAccordions";
 import UiTypography from "../pages/Ui/UiTypography";
 import UiVideo from "../pages/Ui/UiVideo";
 import UiSessionTimeout from "../pages/Ui/UiSessionTimeout";
-import UiRating from "../pages/Ui/UiRating";
-import UiRangeSlider from "../pages/Ui/UiRangeSlider";
 import UiUtilities from "pages/Ui/UiUtilities";
 import UiOffcanvas from "pages/Ui/UiOffcanvas";
 
@@ -112,7 +105,6 @@ import PagesFaqs from "../pages/Utility/pages-faqs";
 import PagesPricing from "../pages/Utility/pages-pricing";
 import Pages404 from "../pages/Utility/pages-404";
 import Pages500 from "../pages/Utility/pages-500";
-import PagesGallery from "../pages/Utility/PagesGallery";
 import PagesDirectory from "../pages/Utility/PagesDirectory";
 import PagesProfile from "pages/Utility/pages-profile";
 import EditAdminDetail from "pages/admin/EditAdminDetail";
@@ -235,13 +227,6 @@ const userRoutes = [
   
 
 
-  //Charts
-  { path: "/apex-charts", component: <ChartApex /> },
-  { path: "/chartist-charts", component: <ChartistChart /> },
-  { path: "/chartjs-charts", component: <ChartjsChart /> },
-  { path: "/e-charts", component: <EChart /> },
-  { path: "/sparkline-charts", component: <SparklineChart /> },
-
   // Icons
   { path: "/icons-dripicons", component: <IconDripicons /> },
   { path: "/icons-materialdesign", component: <IconMaterialdesign /> },
@@ -275,8 +260,6 @@ const userRoutes = [
   { path: "/ui-typography", component: <UiTypography /> },
   { path: "/ui-video", component: <UiVideo /> },
   { path: "/ui-session-timeout", component: <UiSessionTimeout /> },
-  { path: "/ui-rating", component: <UiRating /> },
-  { path: "/ui-rangeslider", component: <UiRangeSlider /> },
   { path: "/ui-utilities", component: <UiUtilities /> },
   { path: "/ui-offcanvas", component: <UiOffcanvas /> },
 
@@ -287,7 +270,6 @@ const userRoutes = [
   { path: "/pages-directory", component: <PagesDirectory /> },
   { path: "/pages-faqs", component: <PagesFaqs /> },
   { path: "/pages-pricing", component: <PagesPricing /> },
-  { path: "/pages-gallery", component: <PagesGallery /> },
   { path: "/pages-profile", component: <PagesProfile /> },
 
   // this route should be at the end of all other routes
