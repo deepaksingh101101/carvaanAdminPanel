@@ -595,18 +595,28 @@ const handleDeleteFoodOptions = (i) => {
                         <Label className="form-label" htmlFor="duration">
                         Duration*
                         </Label>
-                        <Input
+                      <div className="d-flex align-items-center justify-content-between " >
+                      <Input
                           type="text"
                           id="duration"  
                           name="duration"  
-                           className="form-control"
+                           className="form-control w-100"
                           required
+                          placeholder="Enter Duration In Days"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
                           value={validation.values.duration || ''}
                           invalid={validation.touched.duration && validation.errors.duration ? true : false}
                        
                         />
+<div className={`d-flex ${validation.values.duration ? 'w-100 ms-4' : ''}`}>
+                        <b>
+  {validation.values.duration ? `${validation.values.duration} Day${validation.values.duration > 1 ? 's ' : ''}` : ""}
+  {validation.values.duration ? `${validation.values.duration - 1} Night${(validation.values.duration - 1) > 1 ? 's' : ''}` : ""}
+</b>
+
+                        </div>
+                      </div>
                         {validation.touched.duration && validation.errors.duration ? (
                             <FormFeedback type="invalid">{validation.errors.duration}</FormFeedback>
                           ) : null}
