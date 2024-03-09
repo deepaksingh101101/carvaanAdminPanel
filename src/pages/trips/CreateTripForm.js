@@ -461,7 +461,7 @@ const handleDeleteFoodOptions = (i) => {
 
 
   async function handleAcceptedBanners(acceptedBanners) {
-    console.log(acceptedBanners)
+    // console.log(acceptedBanners)
     const formData = new FormData();
     formData.append(`files`,acceptedBanners );
     const res =await uploadTripImage(formData)
@@ -516,7 +516,7 @@ const images=[e.target.files[0]]
 formData.append(`files`,images );
 const res =await uploadTripImage(formData)
 }
-console.log(file)
+
 
   return (
     <React.Fragment>
