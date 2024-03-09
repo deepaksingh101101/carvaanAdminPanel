@@ -57,6 +57,8 @@ const getAllTransportationTypes = data => get(url.GET_ALL_TRANSPORTATION)
 const get_All_Travel_Agents = data => get(url.GET_ALL_TRAVEL_AGENTS)
 const uploadTripImage = data => post(url.POST_TRIP_IMAGE,data,{headers:{ "Content-Type": "multipart/form-data","Accept":"*/*" }})
 
+const getAllPoints = data => get(url.GET_ALL_POINTS)
+const getAllThemes = data => get(url.GET_ALL_THEMES)
 
 
 
@@ -134,4 +136,6 @@ export {
   getAllTransportationTypes,
   get_All_Travel_Agents,
   uploadTripImage,
+  getAllPoints,
+  getAllThemes,
 }

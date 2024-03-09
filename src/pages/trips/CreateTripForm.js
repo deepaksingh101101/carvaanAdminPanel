@@ -19,10 +19,10 @@ import { FieldArray } from 'formik';
 
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { getAllAgeRange, getAllMeals, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage } from 'helpers/fakebackend_helper';
+import { getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage } from 'helpers/fakebackend_helper';
+import { duration } from 'moment';
 
 const FileUploader = ({handleFile}) => {
-  // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
   
   // Programatically click the hidden file input element
@@ -71,12 +71,7 @@ const [packing_guide_array, setPacking_guide_array] = useState([])
 
 const [message, setMessage] = useState("Something went's wrong")
 const isOpen = useSelector(state => state.alertReducer.isOpen);
-const companyOptions = [
-  "Company A",
-  "Company B",
-  "Company C",
-  "Company D",
-];
+
 const startPoints = [
   "Point A",
   "Point B",
@@ -107,19 +102,25 @@ const [mealsOptions, setMealsOptions] = useState([])
 const [ageRanges, setAgeRanges] = useState([])
 const [transportationTypesState, setTransportationTypesState] = useState([])
 const [travelAgents, setTravelAgents] = useState([])
-const [ image, setImage] =  useState([])
+// const [ image, setImage] =  useState([])
+const [points, setPoints]=useState([])
+const [themes, setThemes]=useState([])
 
 const fetchOptions=async()=>{
   try {
    const meals= await getAllMeals();
    const ages= await getAllAgeRange();
    const agents=await get_All_Travel_Agents()
-
-    const transportationTypes=await getAllTransportationTypes()
+   const points=await getAllPoints();
+   const theme=await getAllThemes();
+  const transportationTypes=await getAllTransportationTypes()
+  
+  setPoints(points)
     setMealsOptions(meals)
     setAgeRanges(ages)
     setTransportationTypesState(transportationTypes)
     setTravelAgents(agents)
+    setThemes(theme)
 
   } catch (error) {
     console.log(error.response)
@@ -184,7 +185,7 @@ const photos = [
       room_occupancy: Yup.string().required("Please Enter Room Occupancy"),
       // age_range: Yup.string().required("Please Enter Age Range"),
       // things_to_carry: Yup.string().required("Please Enter Things to Carry"),
-      is_trip_captain: Yup.string().required("Please Select This Field"),
+      is_trip_captain: Yup.boolean().required("Please Select This Field"),
       type_of_transportation: Yup.string().required("Please Select This Field"),
       food_options: Yup.string(),
       itinerary: Yup.string(),
@@ -195,15 +196,31 @@ const photos = [
     onSubmit: async (values) => {
       
       const tripData={
-        ...values,
         title:values.trip_title,
-        trip_themes:themes_array,
-        food_options:food_options_array,
-        middle_points:middle_points_array,
-        inclusion:inclusive_array,
-        exclusion:exclusive_array,
-        
-
+        starting_point_id:values.start_point,
+        middle_points_id:middle_points_array,
+        ending_point_id:values.end_point,
+        theme_ids:themes_array,
+        trip_captain_required:values.is_trip_captain,
+        day_wise_itenary:itinerary_array,
+        description:values.description,
+        // images:images,
+        is_active:true,
+        start_date:values.start_date,
+        duration:values.duration,
+        price:values.price_per_person,
+        travel_agent_id:values.company_name,
+        pick_up_location:values.pickup_location,
+        drop_location:values.drop_location,
+        inclusives:inclusive_array,
+        exclusives:exclusive_array,
+        // accomodation_type_id:1,
+        seats_left:values.seats_left,
+        flight_inclusive:false,
+        age_range_ids:values.age_range,
+        transportation_type_id:values.type_of_transportation,
+        meal_type_id:food_options_array,
+        packing_guide:packing_guide_array,
       }
       console.log(tripData)
     }
@@ -213,31 +230,38 @@ const photos = [
 
 
 
-// add middle points
-  const handleAddMiddlePoints=(e)=>{
-   e.preventDefault(validation.values.middle_points.length);
-   console.log()
-if(validation.values.middle_points.length==0){
 
-}
-else {
-  const middlePoint = validation.values.middle_points;
-  
-  if (!middle_points_array.includes(middlePoint)) {
-    middle_points_array.push(middlePoint);
-    validation.setFieldValue('middle_points', ""); 
+const handleAddMiddlePoints = (e) => {
+  if (validation.values.middle_points.length === 0) {
+    // Handle case where there are no middle points
   } else {
-    setMessage("This middle points already included")
-    dispatch(SomethingAlertTrue());
+    const middlePointId = validation.values.middle_points; // Assuming this is the ID
+   
+    
+    // Find the point that matches the ID
+
+    // Proceed if a matching point is found
+    if (middlePointId) {
+      // const middlePointName = matchingPoint.name;
+
+      if (!middle_points_array.includes(middlePointId)) {
+        middle_points_array.push(middlePointId);
+        validation.setFieldValue('middle_points', ""); 
+      } else {
+        setMessage("This middle point is already included");
+        dispatch(SomethingAlertTrue());
         setTimeout(() => {
           dispatch(SomethingAlertFalse());
-          setMessage("Something went's wrong")
+          setMessage("Something went wrong");
         }, 2000);
+      }
+    } else {
+      // Handle case where no matching point is found
+      // This could be an invalid ID or the point is not active/available
+    }
   }
-}
+};
 
-   
-  }
 const handleAddExclusion=(e)=>{
   e.preventDefault(validation.values.exclusion.length);
   console.log()
@@ -392,7 +416,7 @@ if(validation.values.itinerary.length<=0){
 
 }
 else{
-  itinerary_array.push(validation.values.itinerary)
+  itinerary_array.push(`Day ${itinerary_array.length+1}: ${validation.values.itinerary}`)
 validation.setFieldValue("itinerary","")
 }
 }
@@ -458,7 +482,7 @@ const handleDeleteFoodOptions = (i) => {
   // console.log(updatedBanners)
   // }
 
-
+  let matchingPoint;
 
   async function handleAcceptedBanners(acceptedBanners) {
     // console.log(acceptedBanners)
@@ -736,9 +760,9 @@ const res =await uploadTripImage(formData)
         invalid={validation.touched.start_point && validation.errors.start_point ? true : false}
       >
         <option value="">Select a start point</option>
-        {startPoints.map((startPoint, index) => (
-          <option key={index} value={startPoint}>
-            {startPoint}
+        {points.map((startPoint, index) => (
+          <option key={index} value={startPoint.id}>
+            {startPoint.name}
           </option>
         ))}
       </Input>
@@ -764,9 +788,9 @@ const res =await uploadTripImage(formData)
         invalid={validation.touched.end_point && validation.errors.end_point ? true : false}
       >
         <option value="">Select an end point</option>
-        {endPoints.map((endPoint, index) => (
-          <option key={index} value={endPoint}>
-            {endPoint}
+        {points.map((endPoint, index) => (
+          <option key={index} value={endPoint.id}>
+            {endPoint.name}
           </option>
         ))}
       </Input>
@@ -932,8 +956,8 @@ const res =await uploadTripImage(formData)
     required
   >
     <option value="">Is Trip Captain Required</option>
-    <option value="yes">yes</option>
-    <option value="no">no</option>
+    <option value="true">yes</option>
+    <option value="false">no</option>
   </Input>
   {validation.touched.is_trip_captain && validation.errors.is_trip_captain ? (
     <FormFeedback type="invalid">{validation.errors.is_trip_captain}</FormFeedback>
@@ -1051,41 +1075,25 @@ const res =await uploadTripImage(formData)
   <div className='d-flex align-items-center justify-content-between' >
   <Input
   type='select'
-    id="trip_themes"
-    onChange={validation.handleChange}
-    onBlur={validation.handleBlur}
-    value={validation.values.trip_themes || []} 
-    className="form-control"
-    name='trip_themes'
-    
-  >
-    <option value="">Select Theme</option>
-    <option value="Couple Friendly">Couple Friendly</option>
-    <option value="Women Only">Women Only</option>
-    <option value="Senior Citizens Only">Senior Citizens Only</option>
-    <option value="Dating Trip">Dating Trip</option>
-    <option value="Disability Friendly">Disability Friendly</option>
-    <option value="Religious">Religious</option>
-    <option value="Party">Party</option>
-    <option value="Mountain">Mountain</option>
-    <option value="Beach">Beach</option>
-    <option value="Forest">Forest</option>
-    <option value="River">River</option>
-    <option value="Desert">Desert</option>
-    <option value="Bachelor/Bachelorette Friendly">Bachelor/Bachelorette Friendly</option>
-    <option value="Solo Traveller Friendly">Solo Traveller Friendly</option>
-    <option value="Corporate Friendly">Corporate Friendly</option>
-    <option value="Adventure">Adventure</option>
-    <option value="Hiking">Hiking</option>
-    <option value="Honeymoon">Honeymoon</option>
-    <option value="Offbeat Location">Offbeat Location</option>
-    <option value="Wildlife">Wildlife</option>
-    <option value="Other">Other</option>
-  </Input>
+  id="trip_themes"
+  onChange={validation.handleChange}
+  onBlur={validation.handleBlur}
+  value={validation.values.trip_themes || []} 
+  className="form-control"
+  name='trip_themes'
+>
+  <option value="">Select Theme</option>
+  {themes.map((theme, index) => (
+    <option key={index} value={theme.id}>{theme.name}</option>
+  ))}
+</Input>
+
   <button onClick={handleAddTheme} type='button' className='btn btn-success mx-1' >Add</button>
 
   </div>
-  <div className='d-flex flex-column '>
+
+
+  {/* <div className='d-flex flex-column '>
     {themes_array.map((data, i) => (
       <div className='d-flex justify-content-between mx-3' key={i}>
         <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
@@ -1096,7 +1104,30 @@ const res =await uploadTripImage(formData)
         </h6>
       </div>
     ))}
-  </div>
+  </div> */}
+
+
+  <div className='d-flex flex-column '>
+  {themes_array.map((data, i) => {
+    // Assuming points is accessible and each point has a unique id
+    const matchingTheme = themes.find(theme => theme.id.toString() === data);
+    
+    return (
+      <div className='d-flex justify-content-between mx-3' key={matchingTheme ? matchingTheme.id : i}>
+        <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+          {matchingTheme ? matchingTheme.name : 'Unknown'}
+          <Badge className='mx-2 bg-transparent'>
+            <i onClick={() => handleDeleteTheme(i)} role="button" className="fas fa-window-close fs-5 text-danger" />
+          </Badge>
+        </h6>
+      </div>
+    );
+  })}
+</div>
+
+
+
+
 </div>
 
 <div className="mb-3 col-lg-4">
@@ -1117,7 +1148,7 @@ const res =await uploadTripImage(formData)
     <option value="">Select Food Options</option>
     {
   mealsOptions.map(option => (
-    <option key={option.type_name} value={option.type_name}>{option.type_name}</option>
+    <option key={option.type_name} value={option.id}>{option.type_name}</option>
   ))
 }
 
@@ -1125,7 +1156,7 @@ const res =await uploadTripImage(formData)
  <button onClick={handleAddFoodOptions} type='button' className='btn btn-success mx-1' >Add</button>
 
   </div>
-  <div className='d-flex flex-column '>
+  {/* <div className='d-flex flex-column '>
     {food_options_array.map((data, i) => (
       <div className='d-flex justify-content-between mx-3' key={i}>
         <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
@@ -1136,7 +1167,25 @@ const res =await uploadTripImage(formData)
         </h6>
       </div>
     ))}
-  </div>
+  </div> */}
+
+  <div className='d-flex flex-column '>
+  {food_options_array.map((data, i) => {
+    // Assuming points is accessible and each point has a unique id
+    const matchingPoint = mealsOptions.find(point => point.id.toString() === data);
+    
+    return (
+      <div className='d-flex justify-content-between mx-3' key={matchingPoint ? matchingPoint.id : i}>
+        <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+          {matchingPoint ? matchingPoint.type_name : 'Unknown'}
+          <Badge className='mx-2 bg-transparent'>
+            <i onClick={() => handleDeleteFoodOptions(i)} role="button" className="fas fa-window-close fs-5 text-danger" />
+          </Badge>
+        </h6>
+      </div>
+    );
+  })}
+</div>
 </div>
 
 <div className="mb-3 col-lg-4">
@@ -1189,26 +1238,35 @@ const res =await uploadTripImage(formData)
       value={validation.values.middle_points || ''}
     >
       <option value="">Select Middle Points</option>
-      {dummyMiddlePoints.map((data, i) => (
-        <option key={i} value={data}>{data}</option>
+      {points.map((data, i) => (
+        <option key={i} value={data.id}>{data.name}</option>
       ))}
     </Input>
     <button onClick={handleAddMiddlePoints} type='button' className='btn btn-success mx-1' >Add</button>
   </div>
  
 
-  <div className='d-flex flex-column '>
-    {middle_points_array.map((data, i) => (
-      <div className='d-flex justify-content-between mx-3' key={i}>
+ <div className='d-flex flex-column '>
+  {middle_points_array.map((data, i) => {
+    // Assuming points is accessible and each point has a unique id
+    const matchingPoint = points.find(point => point.id.toString() === data);
+    
+    return (
+      <div className='d-flex justify-content-between mx-3' key={matchingPoint ? matchingPoint.id : i}>
         <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
-          {data}
+          {matchingPoint ? matchingPoint.name : 'Unknown'}
           <Badge className='mx-2 bg-transparent'>
-            <i onClick={(e)=>{handleDeleteMiddlePoints(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" />
+            <i onClick={() => handleDeleteMiddlePoints(i)} role="button" className="fas fa-window-close fs-5 text-danger" />
           </Badge>
         </h6>
       </div>
-    ))}
-  </div>
+    );
+  })}
+</div>
+
+  
+
+
 </div>
 
 <div className="mb-3 col-lg-4">
@@ -1329,20 +1387,23 @@ const res =await uploadTripImage(formData)
 <button onClick={handleAddItinerary} style={{width:"200px"}} type='button' className='btn my-2 btn-success py-2  mx-1' >Add More </button>
                         </div>
 
-                        <div className='d-flex flex-column ' >
-  {itinerary_array.map((data, i) => (
-   <div className='d-flex justify-content-between mx-3' >
-    <div className="fw-bold" style={{minWidth:"200px"}} ><b   >Day {i+1}</b></div>
-     <h6 className='my-2 w-100 d-flex align-items-start justify-content-between ' key={i}>
-      {data}
-      <Badge className='mx-2 bg-transparent'>
-        <i onClick={(e)=>{handleDeleteItinerary(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
-        </i>
-      </Badge>
-    </h6>
-   </div>
-  ))}
-  </div>
+                        <div className='d-flex flex-column'>
+  {itinerary_array.map((data, i) => {
+    const itineraryData = data.split(":")[1].trim(); // Extracting string after colon and removing leading/trailing whitespaces
+    return (
+      <div className='d-flex justify-content-between mx-3' key={i}>
+        <div className="fw-bold d-flex align-items-center " style={{ minWidth: "200px" }}><b>Day {i + 1}</b></div>
+        <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+          {itineraryData}
+          <Badge className='mx-2 bg-transparent'>
+            <i onClick={(e) => { handleDeleteItinerary(i) }} type="button" button="role" className="fas fa-window-close fs-5 text-danger"></i>
+          </Badge>
+        </h6>
+      </div>
+    );
+  })}
+</div>
+
 
 </div>
 
