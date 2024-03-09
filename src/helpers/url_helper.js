@@ -18,9 +18,11 @@ export const GET_ALL_AGE_RANGES = "/age_ranges"
 export const GET_ALL_TRANSPORTATION = "/transportation_types"
 export const GET_ALL_TRAVEL_AGENTS = "/travel_agents"
 // export const POST_TRIP_IMAGES = "/uploads/images"
+export const POST_TRIP_IMAGE_MULTIPLE = "/uploads/images"
 export const POST_TRIP_IMAGE = "/uploads/images"
 export const GET_ALL_POINTS = "/points"
 export const GET_ALL_THEMES = "/themes"
+export const CREATE_PACKAGE = "/packages"
 
 
 

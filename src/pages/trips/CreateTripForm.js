@@ -19,10 +19,12 @@ import { FieldArray } from 'formik';
 
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage } from 'helpers/fakebackend_helper';
+import { createPackage, getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage, uploadTripImages } from 'helpers/fakebackend_helper';
 import { duration } from 'moment';
 
 const FileUploader = ({handleFile}) => {
+
+
   const hiddenFileInput = useRef(null);
   
   // Programatically click the hidden file input element
@@ -167,7 +169,7 @@ const photos = [
 
     },
     validationSchema: Yup.object({
-      company_name: Yup.string().required("Please Enter The Company Name"),
+      company_name: Yup.number().required("Please Enter The Company Name"),
       trip_title: Yup.string().required("Please Enter Trip Title"),
       start_point: Yup.string().required("Please Enter Start Point"),
       end_point: Yup.string().required("Please Enter End Point"),
@@ -197,32 +199,38 @@ const photos = [
       
       const tripData={
         title:values.trip_title,
-        starting_point_id:values.start_point,
-        middle_points_id:middle_points_array,
-        ending_point_id:values.end_point,
-        theme_ids:themes_array,
-        trip_captain_required:values.is_trip_captain,
+        starting_point_id:parseInt(values.start_point),
+        middle_points_id: middle_points_array.map(Number),
+        ending_point_id:parseInt(values.end_point),
+        theme_ids:themes_array.map(Number),
+        trip_captain_required: Boolean(values.is_trip_captain),
         day_wise_itenary:itinerary_array,
         description:values.description,
         // images:images,
         is_active:true,
         start_date:values.start_date,
-        duration:values.duration,
-        price:values.price_per_person,
-        travel_agent_id:values.company_name,
+        duration:parseInt(values.duration),
+        price:parseInt(values.price_per_person),
+        travel_agent_id:parseInt(values.company_name),
         pick_up_location:values.pickup_location,
         drop_location:values.drop_location,
         inclusives:inclusive_array,
         exclusives:exclusive_array,
         // accomodation_type_id:1,
-        seats_left:values.seats_left,
+        seats_left:parseInt(values.seats_left),
         flight_inclusive:false,
-        age_range_ids:values.age_range,
-        transportation_type_id:values.type_of_transportation,
-        meal_type_id:food_options_array,
+        age_range_ids:values.age_range.map(Number),
+        transportation_type_id:parseInt(values.type_of_transportation),
+        meal_type_id:food_options_array.map(Number),
         packing_guide:packing_guide_array,
       }
       console.log(tripData)
+
+let res =await createPackage(tripData)
+
+      console.log(tripData)
+      console.log(res)
+
     }
 
   })
@@ -466,11 +474,11 @@ const handleDeleteFoodOptions = (i) => {
 // Removed use effect and copied t notepad
   const [selectedBanners, setSelectedBanners] = useState([]);
 
-  const handleBannerDelete = (index) => {
-    const updatedBanners = [...selectedBanners];
-    updatedBanners.splice(index, 1);
-    setSelectedBanners(updatedBanners);
-  }
+  // const handleBannerDelete = (index) => {
+  //   const updatedBanners = [...selectedBanners];
+  //   updatedBanners.splice(index, 1);
+  //   setSelectedBanners(updatedBanners);
+  // }
   
 
   //  async function  handleAcceptedBanners (acceptedBanners) {
@@ -484,36 +492,36 @@ const handleDeleteFoodOptions = (i) => {
 
   let matchingPoint;
 
-  async function handleAcceptedBanners(acceptedBanners) {
-    // console.log(acceptedBanners)
-    const formData = new FormData();
-    formData.append(`files`,acceptedBanners );
-    const res =await uploadTripImage(formData)
+//   async function handleAcceptedBanners(acceptedBanners) {
+//     // console.log(acceptedBanners)
+//     const formData = new FormData();
+//     formData.append(`files`,acceptedBanners );
+//     const res =await uploadTripImage(formData)
 
 
-    // const updatedBanners = acceptedBanners.map(file => ({
-    //     ...file,
-    //     file: URL.createObjectURL(file), 
-    //     originalFile: file, 
-    // }));
+//     // const updatedBanners = acceptedBanners.map(file => ({
+//     //     ...file,
+//     //     file: URL.createObjectURL(file), 
+//     //     originalFile: file, 
+//     // }));
 
-    // await setSelectedBanners(prevSelectedBanners => {
-    //     const newSelectedBanners = [...prevSelectedBanners, ...updatedBanners];
-    //     const formData = new FormData();
-    //     newSelectedBanners.forEach((banner, index) => {
-    //         if (banner.originalFile) {
-    //             formData.append(`files`, banner.originalFile);
-    //         }
-    //     });
+//     // await setSelectedBanners(prevSelectedBanners => {
+//     //     const newSelectedBanners = [...prevSelectedBanners, ...updatedBanners];
+//     //     const formData = new FormData();
+//     //     newSelectedBanners.forEach((banner, index) => {
+//     //         if (banner.originalFile) {
+//     //             formData.append(`files`, banner.originalFile);
+//     //         }
+//     //     });
       
-    //     for (let [key, value] of formData.entries()) {
-    //         console.log(value);
-    //     }console.log(formData)
+//     //     for (let [key, value] of formData.entries()) {
+//     //         console.log(value);
+//     //     }console.log(formData)
 
-    //     let res=  uploadTripImage(formData)
-    //     return newSelectedBanners;
-    // });
-}
+//     //     let res=  uploadTripImage(formData)
+//     //     return newSelectedBanners;
+//     // });
+// }
 
 
 
@@ -521,25 +529,89 @@ const [toggler, setToggler] = useState(false);
 
 
 
-  
-//  const formData=new FormData();
-  //  formData.append('file',updatedBanners)
-    // let res =await uploadTripImage(updatedBanners)
-    // const handleChange = event => {
-    //   const fileUploaded = event.target.files[0];
-    //   handleFile(fileUploaded);
-    // };
+
 
 const [file, setFile] = useState()
-const handleFileChange=async(e)=>{
-  console.log(e.target)
-setFile(e.target.files[0])
+// const handleFileChange=async(e)=>{
+//   console.log(e.target)
+// setFile(e.target.files[0])
+// selectedBanners.push(e.target.files[0])
+// const formData = new FormData();
+// const images=[e.target.files[0]];
+//   for(let im of images){
+//     formData.append("files",im)
+//   }
+//   const res =await uploadTripImages(formData)
+//   console.log(res)
+// }
+// const handleFileChange = async (e) => {
+//   const file = e.target.files[0];
+//   const formData = new FormData();
+//   formData.append("files", file);
 
-const formData = new FormData();
-const images=[e.target.files[0]]
-formData.append(`files`,images );
-const res =await uploadTripImage(formData)
+//   try {
+//     // Assuming uploadTripImages function returns the uploaded image URL
+//     const res = await uploadTripImages(formData);
+//     const uploadedImageUrl = res[0].image_url; // Adjust this based on your response structure
+//     console.log(uploadedImageUrl)
+//     setSelectedBanners([...selectedBanners, { file, image_url: uploadedImageUrl }]);
+//   } catch (error) {
+//     console.error("Error uploading image:", error);
+//   }
+// };
+
+
+
+const handleFileChange = async (e) => {
+  const files = e.target.files;
+  const formData = new FormData();
+
+  // Append each file to the FormData object
+  Array.from(files).forEach((file) => {
+    formData.append("files", file);
+  });
+
+  try {
+    // Assuming uploadTripImages function returns the uploaded image URLs
+    const res = await uploadTripImages(formData);
+    
+    // Assuming res is an array of objects with image_url property
+    const uploadedImageUrls = res.map((item) => item.image_url);
+    
+    // Updating selectedBanners with each uploaded image URL
+    const updatedBanners = uploadedImageUrls.map((imageUrl) => ({ file: null, image_url: imageUrl }));
+    setSelectedBanners([...selectedBanners, ...updatedBanners]);
+  } catch (error) {
+    console.error("Error uploading image:", error);
+  }
+};
+
+
+
+
+
+
+
+
+const handleBannerDelete = (index) => {
+  const updatedBanners = [...selectedBanners];
+  updatedBanners.splice(index, 1);
+  setSelectedBanners(updatedBanners);
+};
+
+
+const [lightboxController, setLightboxController] = useState({
+  toggler: false,
+  slide: 1
+});
+
+function openLightboxOnSlide(number) {
+  setLightboxController({
+    toggler: !lightboxController.toggler,
+    slide: number
+  });
 }
+
 
 
   return (
@@ -570,14 +642,23 @@ const res =await uploadTripImage(formData)
                     {/* <button onClick={() => setToggler(!toggler)}>
 				Toggle Lightbox
 			</button> */}
-			 <FsLightbox
+			 {/* <FsLightbox
 				toggler={toggler}
 				sources={[
 					'https://i.imgur.com/fsyrScY.jpg',
 					'https://www.youtube.com/watch?v=3nQNiWdeH2Q',
 					'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
 				]}
-			/>
+			/> */}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -607,11 +688,12 @@ const res =await uploadTripImage(formData)
             )}
           </Dropzone>  */}
 
-          <input
-          type="file"
-          onChange={handleFileChange}
-          // value={(e)=>{}}
-          />
+<input
+  type="file"
+  onChange={handleFileChange}
+  multiple // Add the multiple attribute to enable selecting multiple files
+/>
+
 
   {/* <Input
   type="file"
@@ -623,7 +705,7 @@ const res =await uploadTripImage(formData)
           <div className="dropzone-previews mt-3" id="file-previews">
           <Row className="align-items-center ">
 
-            {selectedBanners.map((selectedBanner, index) => (
+            {/* {selectedBanners.map((selectedBanner, index) => (
               <Card key={index} className="mt-1 col-1  mx-3  mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
                 <div className="py-2 d-flex  align-items-center">
                     <Col className="col-3">
@@ -642,7 +724,34 @@ const res =await uploadTripImage(formData)
                 </div>
               </Card>
               
-            ))}
+            ))} */}
+
+{selectedBanners.map((selectedBanner, index) => (
+    <Card key={index} className="mt-1 col-1 mx-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+        <div className="py-2 d-flex align-items-center">
+            <Col className="col-3">
+                <img
+                    data-dz-thumbnail=""
+                    height="80"
+                    className="avatar-sm rounded bg-light"
+                    src={selectedBanner.image_url}
+                    onClick={() => openLightboxOnSlide(index+1)} // Open lightbox with the clicked image's index
+                />
+            </Col>
+            <Col className='ms-5 pe-2 col-3'>
+                <i onClick={() => handleBannerDelete(index)} className='fas fa-trash-alt text-danger' role="button"></i>
+            </Col>
+        </div>
+    </Card>
+))}
+
+<FsLightbox
+    toggler={lightboxController.toggler}
+    sources={selectedBanners.map(banner => banner.image_url)}
+    types={selectedBanners.map(banner => 'image')}
+    slide={lightboxController.slide}
+/>
+
             </Row>
           </div>
         </Form>
@@ -666,7 +775,7 @@ const res =await uploadTripImage(formData)
       >
         <option value="">Select a company</option>
         {travelAgents.map((option, index) => (
-          <option key={index} value={option.id}>
+          <option key={index} value={parseInt(option.id)}>
             {option.name}
           </option>
         ))}
