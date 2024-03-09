@@ -56,6 +56,7 @@ const getAllAgeRange = data => get(url.GET_ALL_AGE_RANGES)
 const getAllTransportationTypes = data => get(url.GET_ALL_TRANSPORTATION)
 const get_All_Travel_Agents = data => get(url.GET_ALL_TRAVEL_AGENTS)
 const uploadTripImage = data => post(url.POST_TRIP_IMAGE,data)
+const uploadTripImages = data => post(url.POST_TRIP_IMAGE_MULTIPLE,data)
 
 
 
@@ -134,4 +135,5 @@ export {
   getAllTransportationTypes,
   get_All_Travel_Agents,
   uploadTripImage,
+  uploadTripImages,
 }

@@ -19,6 +19,7 @@ export const GET_ALL_TRANSPORTATION = "/transportation_types"
 export const GET_ALL_TRAVEL_AGENTS = "/travel_agents"
 // export const POST_TRIP_IMAGES = "/uploads/images"
 export const POST_TRIP_IMAGE = "/uploads/image"
+export const POST_TRIP_IMAGE_MULTIPLE = "/uploads/images"
 
 
 

@@ -19,7 +19,7 @@ import { FieldArray } from 'formik';
 
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { getAllAgeRange, getAllMeals, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage } from 'helpers/fakebackend_helper';
+import { getAllAgeRange, getAllMeals, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage, uploadTripImages } from 'helpers/fakebackend_helper';
 
 const FileUploader = ({handleFile}) => {
   // Create a reference to the hidden file input element
@@ -514,10 +514,20 @@ const handleFileChange=async(e)=>{
   const formData = new FormData();
   const image=e.target.files[0];
   console.log({image})
-  formData.append('file',image, image.name );
-  const data  = formData.get('file');
-  console.log({data});
-  const res =await uploadTripImage(formData)
+
+  // for single image upload
+  // formData.append('file',image, image.name );
+  // const data  = formData.get('file');
+  // console.log({data});
+  // const res =await uploadTripImage(formData)
+
+
+  // for multiple images upload
+  const images=[e.target.files[0],e.target.files[0]];
+  for(let im of images){
+    formData.append("files",im)
+  }
+  const res =await uploadTripImages(formData)
 }
 
 
