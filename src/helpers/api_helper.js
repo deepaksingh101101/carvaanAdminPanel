@@ -17,12 +17,11 @@ const axiosApi = axios.create({
 
 axiosApi.interceptors.request.use((config) => {
   let authUser = JSON.parse(localStorage.getItem("authUser"));
-  config.headers.common["source"] = `IS_ADMIN_RELATED`;
-  config.headers.common["ngrok-skip-browser-warning"] = true;
+  config.headers["source"] = `IS_ADMIN_RELATED`;
 
   // console.log({authUser});
   if(authUser){
-    config.headers.common["Authorization"] = `Bearer ${authUser.accessToken}`;
+    config.headers["Authorization"] = `Bearer ${authUser.accessToken}`;
     config.headers.cookies = `token=${authUser.refreshToken}`;
   }
   return config;
@@ -40,9 +39,9 @@ export async function get(url, config = {}) {
   return await axiosApi.get(url, { ...config }).then(response => response.data)
 }
 
-export async function post(url, data, config = {}) {
+export function post(url, data, config = {}) {
   return axiosApi
-    .post(url, { ...data }, { ...config })
+    .post(url, data, { ...config })
     .then(response => response.data)
 }
 

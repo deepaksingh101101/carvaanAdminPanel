@@ -509,12 +509,15 @@ const [toggler, setToggler] = useState(false);
 const [file, setFile] = useState()
 const handleFileChange=async(e)=>{
   console.log(e.target)
-setFile(e.target.files[0])
+  setFile(e.target.files[0])
 
-const formData = new FormData();
-const images=[e.target.files[0]]
-formData.append(`files`,images );
-const res =await uploadTripImage(formData)
+  const formData = new FormData();
+  const image=e.target.files[0];
+  console.log({image})
+  formData.append('file',image, image.name );
+  const data  = formData.get('file');
+  console.log({data});
+  const res =await uploadTripImage(formData)
 }
 
 
