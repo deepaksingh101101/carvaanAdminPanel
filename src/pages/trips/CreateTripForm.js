@@ -21,6 +21,7 @@ import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/action
 import Alert from 'components/alert/Alert';
 import { createPackage, getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage, uploadTripImages } from 'helpers/fakebackend_helper';
 import { duration } from 'moment';
+import Loader from 'components/loader/Loader';
 
 const FileUploader = ({handleFile}) => {
 
@@ -55,6 +56,7 @@ return (
 const CreateTripForm = ({ type }) => {
   const dispatch = useDispatch();
   const { sno } = useParams();
+  const [loader, setLoader] = useState(false);
 
   // let { tripData } = useSelector((state) => state.TripReducers);
   // const trip = tripData.find((trip) => trip.sno == sno);
@@ -134,10 +136,7 @@ fetchOptions()
 }, [])
 
 
-const photos = [
-  { src: work1, width: 800, height: 600 },
-  { src: work2, width: 1600, height: 900 },
-];
+
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -474,56 +473,9 @@ const handleDeleteFoodOptions = (i) => {
 // Removed use effect and copied t notepad
   const [selectedBanners, setSelectedBanners] = useState([]);
 
-  // const handleBannerDelete = (index) => {
-  //   const updatedBanners = [...selectedBanners];
-  //   updatedBanners.splice(index, 1);
-  //   setSelectedBanners(updatedBanners);
-  // }
-  
 
-  //  async function  handleAcceptedBanners (acceptedBanners) {
-  //   const updatedBanners = acceptedBanners.map(file => ({
-  //     ...file,
-  //     file: URL.createObjectURL(file),
-  //   }));
-  // setSelectedBanners(prevSelectedBanners => [...prevSelectedBanners, ...updatedBanners])
-  // console.log(updatedBanners)
-  // }
 
   let matchingPoint;
-
-//   async function handleAcceptedBanners(acceptedBanners) {
-//     // console.log(acceptedBanners)
-//     const formData = new FormData();
-//     formData.append(`files`,acceptedBanners );
-//     const res =await uploadTripImage(formData)
-
-
-//     // const updatedBanners = acceptedBanners.map(file => ({
-//     //     ...file,
-//     //     file: URL.createObjectURL(file), 
-//     //     originalFile: file, 
-//     // }));
-
-//     // await setSelectedBanners(prevSelectedBanners => {
-//     //     const newSelectedBanners = [...prevSelectedBanners, ...updatedBanners];
-//     //     const formData = new FormData();
-//     //     newSelectedBanners.forEach((banner, index) => {
-//     //         if (banner.originalFile) {
-//     //             formData.append(`files`, banner.originalFile);
-//     //         }
-//     //     });
-      
-//     //     for (let [key, value] of formData.entries()) {
-//     //         console.log(value);
-//     //     }console.log(formData)
-
-//     //     let res=  uploadTripImage(formData)
-//     //     return newSelectedBanners;
-//     // });
-// }
-
-
 
 const [toggler, setToggler] = useState(false);
 
@@ -532,37 +484,10 @@ const [toggler, setToggler] = useState(false);
 
 
 const [file, setFile] = useState()
-// const handleFileChange=async(e)=>{
-//   console.log(e.target)
-// setFile(e.target.files[0])
-// selectedBanners.push(e.target.files[0])
-// const formData = new FormData();
-// const images=[e.target.files[0]];
-//   for(let im of images){
-//     formData.append("files",im)
-//   }
-//   const res =await uploadTripImages(formData)
-//   console.log(res)
-// }
-// const handleFileChange = async (e) => {
-//   const file = e.target.files[0];
-//   const formData = new FormData();
-//   formData.append("files", file);
-
-//   try {
-//     // Assuming uploadTripImages function returns the uploaded image URL
-//     const res = await uploadTripImages(formData);
-//     const uploadedImageUrl = res[0].image_url; // Adjust this based on your response structure
-//     console.log(uploadedImageUrl)
-//     setSelectedBanners([...selectedBanners, { file, image_url: uploadedImageUrl }]);
-//   } catch (error) {
-//     console.error("Error uploading image:", error);
-//   }
-// };
-
 
 
 const handleFileChange = async (e) => {
+  setLoader(true)
   const files = e.target.files;
   const formData = new FormData();
 
@@ -575,12 +500,14 @@ const handleFileChange = async (e) => {
     // Assuming uploadTripImages function returns the uploaded image URLs
     const res = await uploadTripImages(formData);
     
+
     // Assuming res is an array of objects with image_url property
     const uploadedImageUrls = res.map((item) => item.image_url);
     
     // Updating selectedBanners with each uploaded image URL
     const updatedBanners = uploadedImageUrls.map((imageUrl) => ({ file: null, image_url: imageUrl }));
     setSelectedBanners([...selectedBanners, ...updatedBanners]);
+    setLoader(false)
   } catch (error) {
     console.error("Error uploading image:", error);
   }
@@ -639,17 +566,7 @@ function openLightboxOnSlide(number) {
 
 
 
-                    {/* <button onClick={() => setToggler(!toggler)}>
-				Toggle Lightbox
-			</button> */}
-			 {/* <FsLightbox
-				toggler={toggler}
-				sources={[
-					'https://i.imgur.com/fsyrScY.jpg',
-					'https://www.youtube.com/watch?v=3nQNiWdeH2Q',
-					'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-				]}
-			/> */}
+        
 
 
 
@@ -664,99 +581,102 @@ function openLightboxOnSlide(number) {
 
 
 {/* Images */}
- <div className="mb-3 col-lg-12">
-      <label className="form-label" htmlFor="tripBanner">
-        Banner Picture*
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-           {/* <Dropzone
-            onDrop={acceptedBanners => {
-              handleAcceptedBanners(acceptedBanners);
-              
-            }}
-            name="files"
-          >
-            {({ getRootProps, getInputProps }) => (
-              <div className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
-                <input  {...getInputProps()} />
-                <div className="mb-3">
-                  <i className="mdi mdi-cloud-upload display-6  text-muted"></i>
-                </div>
-                <h6>Drop files here or click to upload.</h6>
-              </div>
-            )}
-          </Dropzone>  */}
+{loader && <Loader/>}
+ {
+  !loader && <div className="mb-3 col-lg-12">
+  <label className="form-label" htmlFor="tripBanner">
+    Banner Picture*
+  </label>{" "}
+  <div className="mb-5">
+    <Form>
+       {/* <Dropzone
+        onDrop={acceptedBanners => {
+          handleAcceptedBanners(acceptedBanners);
+          
+        }}
+        name="files"
+      >
+        {({ getRootProps, getInputProps }) => (
+          <div className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
+            <input  {...getInputProps()} />
+            <div className="mb-3">
+              <i className="mdi mdi-cloud-upload display-6  text-muted"></i>
+            </div>
+            <h6>Drop files here or click to upload.</h6>
+          </div>
+        )}
+      </Dropzone>  */}
 
 <input
-  type="file"
-  onChange={handleFileChange}
-  multiple // Add the multiple attribute to enable selecting multiple files
+type="file"
+onChange={handleFileChange}
+multiple // Add the multiple attribute to enable selecting multiple files
 />
 
 
-  {/* <Input
-  type="file"
-  name="banner"
-  value={validation.values.image || ''}
-  onChange={handleChange}
-  /> */}
+{/* <Input
+type="file"
+name="banner"
+value={validation.values.image || ''}
+onChange={handleChange}
+/> */}
 
-          <div className="dropzone-previews mt-3" id="file-previews">
-          <Row className="align-items-center ">
+      <div className="dropzone-previews mt-3" id="file-previews">
+      <Row className="align-items-center ">
 
-            {/* {selectedBanners.map((selectedBanner, index) => (
-              <Card key={index} className="mt-1 col-1  mx-3  mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="py-2 d-flex  align-items-center">
-                    <Col className="col-3">
-                      <img
-                        data-dz-thumbnail=""
-                        height="80"
-                        className="avatar-sm rounded bg-light"
-                        alt={selectedBanner.name}
-                        src={selectedBanner.file}
-                        onClick={() => setToggler(!toggler)}
-                      />
-                    </Col>
-                    <Col className=' ms-5 pe-2 col-3' >
-                     <i onClick={()=>handleBannerDelete(index)} className='  fas fa-trash-alt text-danger' role="button" ></i>
-                    </Col>
-                </div>
-              </Card>
-              
-            ))} */}
-
-{selectedBanners.map((selectedBanner, index) => (
-    <Card key={index} className="mt-1 col-1 mx-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-        <div className="py-2 d-flex align-items-center">
-            <Col className="col-3">
-                <img
+        {/* {selectedBanners.map((selectedBanner, index) => (
+          <Card key={index} className="mt-1 col-1  mx-3  mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+            <div className="py-2 d-flex  align-items-center">
+                <Col className="col-3">
+                  <img
                     data-dz-thumbnail=""
                     height="80"
                     className="avatar-sm rounded bg-light"
-                    src={selectedBanner.image_url}
-                    onClick={() => openLightboxOnSlide(index+1)} // Open lightbox with the clicked image's index
-                />
-            </Col>
-            <Col className='ms-5 pe-2 col-3'>
-                <i onClick={() => handleBannerDelete(index)} className='fas fa-trash-alt text-danger' role="button"></i>
-            </Col>
-        </div>
-    </Card>
+                    alt={selectedBanner.name}
+                    src={selectedBanner.file}
+                    onClick={() => setToggler(!toggler)}
+                  />
+                </Col>
+                <Col className=' ms-5 pe-2 col-3' >
+                 <i onClick={()=>handleBannerDelete(index)} className='  fas fa-trash-alt text-danger' role="button" ></i>
+                </Col>
+            </div>
+          </Card>
+          
+        ))} */}
+
+{selectedBanners.map((selectedBanner, index) => (
+<Card key={index} className="mt-1 col-1 mx-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+    <div className="py-2 d-flex align-items-center">
+        <Col className="col-3">
+            <img
+                data-dz-thumbnail=""
+                height="80"
+                className="avatar-sm rounded bg-light"
+                src={selectedBanner.image_url}
+                onClick={() => openLightboxOnSlide(index+1)} // Open lightbox with the clicked image's index
+            />
+        </Col>
+        <Col className='ms-5 pe-2 col-3'>
+            <i onClick={() => handleBannerDelete(index)} className='fas fa-trash-alt text-danger' role="button"></i>
+        </Col>
+    </div>
+</Card>
 ))}
 
 <FsLightbox
-    toggler={lightboxController.toggler}
-    sources={selectedBanners.map(banner => banner.image_url)}
-    types={selectedBanners.map(banner => 'image')}
-    slide={lightboxController.slide}
+toggler={lightboxController.toggler}
+sources={selectedBanners.map(banner => banner.image_url)}
+types={selectedBanners.map(banner => 'image')}
+slide={lightboxController.slide}
 />
 
-            </Row>
-          </div>
-        </Form>
+        </Row>
       </div>
-    </div>
+    </Form>
+  </div>
+</div>
+ }
 
 <div className="mb-3 col-lg-4">
       <Label className="form-label" htmlFor="company_name">
