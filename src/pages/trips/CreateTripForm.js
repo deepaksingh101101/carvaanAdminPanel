@@ -8,6 +8,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { pushTrip, updateTrip } from 'store/auth/user_admin_data/actions';
 import { Link } from "react-router-dom";
 import Dropzone from "react-dropzone";
+import work1 from '../../assets/images/gallery/work-1.jpg';
+import work2 from '../../assets/images/gallery/work-2.jpg';
+import FsLightbox from "fslightbox-react";
 
 // Form validation
 import * as Yup from 'yup';
@@ -16,9 +19,37 @@ import { FieldArray } from 'formik';
 
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { getAllAgeRange, getAllMeals, getAllTransportationTypes, get_All_Travel_Agents } from 'helpers/fakebackend_helper';
+import { getAllAgeRange, getAllMeals, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage } from 'helpers/fakebackend_helper';
 
-
+const FileUploader = ({handleFile}) => {
+  // Create a reference to the hidden file input element
+  const hiddenFileInput = useRef(null);
+  
+  // Programatically click the hidden file input element
+  // when the Button component is clicked
+  const handleClick = event => {
+    hiddenFileInput.current.click();
+  };
+  // Call a function (passed as a prop from the parent component)
+  // to handle the user-selected file 
+  const handleChange = event => {
+    const fileUploaded = event.target.files[0];
+    handleFile(fileUploaded);
+  };
+return (
+    <>
+      <button className="button-upload" onClick={handleClick}>
+        Upload a file
+      </button>
+      <input
+        type="file"
+        onChange={handleChange}
+        ref={hiddenFileInput}
+        style={{display: 'none'}} // Make the file input element invisible
+      />
+    </>
+  );
+}
 const CreateTripForm = ({ type }) => {
   const dispatch = useDispatch();
   const { sno } = useParams();
@@ -76,6 +107,7 @@ const [mealsOptions, setMealsOptions] = useState([])
 const [ageRanges, setAgeRanges] = useState([])
 const [transportationTypesState, setTransportationTypesState] = useState([])
 const [travelAgents, setTravelAgents] = useState([])
+const [ image, setImage] =  useState([])
 
 const fetchOptions=async()=>{
   try {
@@ -99,7 +131,10 @@ fetchOptions()
 }, [])
 
 
-
+const photos = [
+  { src: work1, width: 800, height: 600 },
+  { src: work2, width: 1600, height: 900 },
+];
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -137,8 +172,8 @@ fetchOptions()
       end_point: Yup.string().required("Please Enter End Point"),
       seats_left: Yup.number().required("Please Enter Remaining Seats"),
       duration: Yup.string().required("Please Enter No of Days"),
-      pickup_location: Yup.string().required("Please Enter Pickup Location"),
-      drop_location: Yup.string().required("Please Enter Drop Location"),
+      pickup_location: Yup.string(),
+      drop_location: Yup.string(),
       start_date: Yup.date().required("Please Enter Start Date"),
     
       // end_date: Yup.date().required("Please Enter End Date"),
@@ -414,16 +449,74 @@ const handleDeleteFoodOptions = (i) => {
   }
   
 
-   async function  handleAcceptedBanners (acceptedBanners) {
-    const updatedBanners = acceptedBanners.map(file => ({
-      ...file,
-      preview: URL.createObjectURL(file),
-    }));
-   await setSelectedBanners(prevSelectedBanners => [...prevSelectedBanners, ...updatedBanners])
-    console.log(selectedBanners)
-  }
-  
+  //  async function  handleAcceptedBanners (acceptedBanners) {
+  //   const updatedBanners = acceptedBanners.map(file => ({
+  //     ...file,
+  //     file: URL.createObjectURL(file),
+  //   }));
+  // setSelectedBanners(prevSelectedBanners => [...prevSelectedBanners, ...updatedBanners])
+  // console.log(updatedBanners)
+  // }
 
+
+
+  async function handleAcceptedBanners(acceptedBanners) {
+    console.log(acceptedBanners)
+    const formData = new FormData();
+    formData.append(`files`,acceptedBanners );
+    const res =await uploadTripImage(formData)
+
+
+    // const updatedBanners = acceptedBanners.map(file => ({
+    //     ...file,
+    //     file: URL.createObjectURL(file), 
+    //     originalFile: file, 
+    // }));
+
+    // await setSelectedBanners(prevSelectedBanners => {
+    //     const newSelectedBanners = [...prevSelectedBanners, ...updatedBanners];
+    //     const formData = new FormData();
+    //     newSelectedBanners.forEach((banner, index) => {
+    //         if (banner.originalFile) {
+    //             formData.append(`files`, banner.originalFile);
+    //         }
+    //     });
+      
+    //     for (let [key, value] of formData.entries()) {
+    //         console.log(value);
+    //     }console.log(formData)
+
+    //     let res=  uploadTripImage(formData)
+    //     return newSelectedBanners;
+    // });
+}
+
+
+
+const [toggler, setToggler] = useState(false);
+
+
+
+  
+//  const formData=new FormData();
+  //  formData.append('file',updatedBanners)
+    // let res =await uploadTripImage(updatedBanners)
+    // const handleChange = event => {
+    //   const fileUploaded = event.target.files[0];
+    //   handleFile(fileUploaded);
+    // };
+
+const [file, setFile] = useState()
+const handleFileChange=async(e)=>{
+  console.log(e.target)
+setFile(e.target.files[0])
+
+const formData = new FormData();
+const images=[e.target.files[0]]
+formData.append(`files`,images );
+const res =await uploadTripImage(formData)
+}
+console.log(file)
 
   return (
     <React.Fragment>
@@ -450,8 +543,17 @@ const handleDeleteFoodOptions = (i) => {
 
 
 
-
-
+                    {/* <button onClick={() => setToggler(!toggler)}>
+				Toggle Lightbox
+			</button> */}
+			 <FsLightbox
+				toggler={toggler}
+				sources={[
+					'https://i.imgur.com/fsyrScY.jpg',
+					'https://www.youtube.com/watch?v=3nQNiWdeH2Q',
+					'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+				]}
+			/>
 
 
 
@@ -463,21 +565,37 @@ const handleDeleteFoodOptions = (i) => {
       </label>{" "}
       <div className="mb-5">
         <Form>
-          <Dropzone
+           {/* <Dropzone
             onDrop={acceptedBanners => {
               handleAcceptedBanners(acceptedBanners);
+              
             }}
+            name="files"
           >
             {({ getRootProps, getInputProps }) => (
               <div className="dropzone  d-flex flex-column justify-content-center align-items-center" {...getRootProps()}>
-                <input {...getInputProps()} />
+                <input  {...getInputProps()} />
                 <div className="mb-3">
                   <i className="mdi mdi-cloud-upload display-6  text-muted"></i>
                 </div>
                 <h6>Drop files here or click to upload.</h6>
               </div>
             )}
-          </Dropzone>
+          </Dropzone>  */}
+
+          <input
+          type="file"
+          onChange={handleFileChange}
+          // value={(e)=>{}}
+          />
+
+  {/* <Input
+  type="file"
+  name="banner"
+  value={validation.values.image || ''}
+  onChange={handleChange}
+  /> */}
+
           <div className="dropzone-previews mt-3" id="file-previews">
           <Row className="align-items-center ">
 
@@ -490,7 +608,8 @@ const handleDeleteFoodOptions = (i) => {
                         height="80"
                         className="avatar-sm rounded bg-light"
                         alt={selectedBanner.name}
-                        src={selectedBanner.preview}
+                        src={selectedBanner.file}
+                        onClick={() => setToggler(!toggler)}
                       />
                     </Col>
                     <Col className=' ms-5 pe-2 col-3' >
@@ -557,7 +676,7 @@ const handleDeleteFoodOptions = (i) => {
 
      <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="pickup_location">
-                        Pickup Location*
+                        Pickup Location (optional)
                         
                         </Label>
                         <Input
@@ -570,16 +689,16 @@ const handleDeleteFoodOptions = (i) => {
                           onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
                             value={validation.values.pickup_location || ''}
-                            invalid={validation.touched.pickup_location && validation.errors.pickup_location ? true : false}
+                            // invalid={validation.touched.pickup_location && validation.errors.pickup_location ? true : false}
                         />
-                        {validation.touched.pickup_location && validation.errors.pickup_location ? (
+                        {/* {validation.touched.pickup_location && validation.errors.pickup_location ? (
                             <FormFeedback type="invalid">{validation.errors.pickup_location}</FormFeedback>
-                          ) : null}
+                          ) : null} */}
      </div>
 
      <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="pickup_location">
-                        Drop Location*
+                        Drop Location (optional)
                         
                         </Label>
                         <Input
@@ -592,11 +711,11 @@ const handleDeleteFoodOptions = (i) => {
                           onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
                             value={validation.values.drop_location || ''}
-                            invalid={validation.touched.drop_location && validation.errors.drop_location ? true : false}
+                            // invalid={validation.touched.drop_location && validation.errors.drop_location ? true : false}
                         />
-                        {validation.touched.drop_location && validation.errors.drop_location ? (
+                        {/* {validation.touched.drop_location && validation.errors.drop_location ? (
                             <FormFeedback type="invalid">{validation.errors.drop_location}</FormFeedback>
-                          ) : null}
+                          ) : null} */}
      </div>
 
 
@@ -699,8 +818,8 @@ const handleDeleteFoodOptions = (i) => {
                         />
 <div className={`d-flex ${validation.values.duration ? 'w-100 ms-4' : ''}`}>
                         <b>
-  {validation.values.duration ? `${validation.values.duration} Day${validation.values.duration > 1 ? 's ' : ''}` : ""}
-  {validation.values.duration ? `${validation.values.duration - 1} Night${(validation.values.duration - 1) > 1 ? 's' : ''}` : ""}
+  {validation.values.duration ? `${validation.values.duration} Day${validation.values.duration > 1 ? 's ' : ' '}` : ""}
+  {validation.values.duration ? `${validation.values.duration - 1}  Night${(validation.values.duration - 1) > 1 ? 's' : ''}` : ""}
 </b>
 
                         </div>

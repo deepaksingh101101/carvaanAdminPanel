@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Row, Col, Card, CardBody, CardTitle } from 'reactstrap';
-import { MDBDataTable } from 'mdbreact';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,7 +102,7 @@ navigate(`/editCoupons/${sno}`)
               <Card>
                 <CardBody>
                   <CardTitle className="h4">Coupons Details</CardTitle>
-                  <MDBDataTable responsive bordered data={data} />
+                  {/* <MDBDataTable responsive bordered data={data} /> */}
                 </CardBody>
               </Card>
             </Col>

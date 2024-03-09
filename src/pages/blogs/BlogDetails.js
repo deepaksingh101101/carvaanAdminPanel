@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col, Card, CardBody, CardTitle } from 'reactstrap';
-import { MDBDataTable } from 'mdbreact';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -97,7 +96,7 @@ navigate(`/editBlog/${sno}`)
               <Card>
                 <CardBody>
                   <CardTitle className="h4">Blog Details</CardTitle>
-                  <MDBDataTable responsive bordered data={data} />
+                  {/* <MDBDataTable responsive bordered data={data} /> */}
                 </CardBody>
               </Card>
             </Col>

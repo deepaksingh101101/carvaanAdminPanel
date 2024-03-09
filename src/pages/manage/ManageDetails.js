@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col, Card, CardBody, CardTitle } from "reactstrap";
-import { MDBDataTable } from "mdbreact";
+// import { MDBDataTable } from "mdbreact";
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Link, useNavigate } from 'react-router-dom';
@@ -109,7 +109,7 @@ const ManageDetails = () => {
               <Card>
                 <CardBody>
                   <CardTitle className="h4">Booking Details</CardTitle>
-                  <MDBDataTable responsive bordered data={data} />
+                  {/* <MDBDataTable responsive bordered data={data} /> */}
                 </CardBody>
               </Card>
             </Col>
