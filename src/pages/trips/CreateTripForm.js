@@ -623,7 +623,7 @@ function openLightboxOnSlide(number) {
         )}
       </Dropzone>  */}
 
-<input
+<Input
 type="file"
 onChange={handleFileChange}
 multiple // Add the multiple attribute to enable selecting multiple files
