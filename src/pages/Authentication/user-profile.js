@@ -17,6 +17,7 @@ import avatar from "../../assets/images/users/user-4.jpg";
 // actions
 import { editProfile, resetProfileFlag } from "../../store/actions";
 import CustomerProfileCard from 'pages/customers/CustomerProfileCard';
+import { getAllAdmins } from 'helpers/fakebackend_helper';
 
 const UserProfile = props => {
   const dispatch = useDispatch();
@@ -46,6 +47,23 @@ const UserProfile = props => {
     }
   }, [props.success]);
 
+  const [admin ,setAdmin]=useState('')
+
+  useEffect(() => {
+    const fetchData = async () => {
+     
+      try {
+        let adminData = await getAllAdmins(); // Fetch admin data
+        const foundAdmin = adminData.find((admin) => admin.id == JSON.parse(localStorage.getItem('authUser')).admin.id); // Find admin by id
+        setAdmin(foundAdmin);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData(); // Call the fetchData function
+  }, []); // Add id as a dependency for useEffect
+
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -62,6 +80,7 @@ const UserProfile = props => {
       dispatch(editProfile(values));
     }
   });
+  
 
   document.title = "Profile | Carvaan - React Admin & Dashboard Template";
   // const admin={
@@ -75,7 +94,9 @@ const UserProfile = props => {
   // const admin=localStorage.getItem("authUser").admin;
 
 
-const admin=JSON.parse(localStorage.getItem("authUser")).admin
+// const admin=JSON.parse(localStorage.getItem("authUser")).admin
+
+
   // Pass this in place af admin when user logged in
   const { user } = useSelector(state => ({
     user: state.Account.user,

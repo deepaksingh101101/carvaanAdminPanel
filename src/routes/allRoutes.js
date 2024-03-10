@@ -157,8 +157,8 @@ const userRoutes = [
   // Trips
   { path: "/tripDetails", component: <TripDetails /> },
   { path: "/createTrip", component: <CreateTrip /> },
-  { path: "/editTrip/:sno", component: <EditTrip /> },
-  { path: "/viewTrip/:sno", component: <ViewTrip /> },
+  { path: "/editTrip/:id", component: <EditTrip /> },
+  { path: "/viewTrip/:id", component: <ViewTrip /> },
 
   // Carvaan Special
   { path: "/carvaanDetails", component: <CarvaanSpecialDetails /> },
