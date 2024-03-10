@@ -76,17 +76,8 @@ import IconFontawesome from "../pages/Icons/IconFontawesome";
 
 
 //Pages
-import PagesStarter from "../pages/Utility/pages-starter";
-import PagesMaintenance from "../pages/Utility/pages-maintenance";
-import PagesComingsoon from "../pages/Utility/pages-comingsoon";
-import PagesTimeline from "../pages/Utility/pages-timeline";
-import PagesInvoice from "../pages/Utility/PagesInvoice";
-import PagesFaqs from "../pages/Utility/pages-faqs";
-import PagesPricing from "../pages/Utility/pages-pricing";
 import Pages404 from "../pages/Utility/pages-404";
 import Pages500 from "../pages/Utility/pages-500";
-import PagesDirectory from "../pages/Utility/PagesDirectory";
-import PagesProfile from "pages/Utility/pages-profile";
 import EditAdminDetail from "pages/admin/EditAdminDetail";
 import EditCustomer from "pages/customers/EditCustomer";
 import EditOrder from "pages/orders/EditOrder";
@@ -224,13 +215,13 @@ const userRoutes = [
  
 
   //Utility
-  { path: "/pages-starter", component: <PagesStarter /> },
-  { path: "/pages-timeline", component: <PagesTimeline /> },
-  { path: "/pages-invoice", component: <PagesInvoice /> },
-  { path: "/pages-directory", component: <PagesDirectory /> },
-  { path: "/pages-faqs", component: <PagesFaqs /> },
-  { path: "/pages-pricing", component: <PagesPricing /> },
-  { path: "/pages-profile", component: <PagesProfile /> },
+  // { path: "/pages-starter", component: <PagesStarter /> },
+  // { path: "/pages-timeline", component: <PagesTimeline /> },
+  // { path: "/pages-invoice", component: <PagesInvoice /> },
+  // { path: "/pages-directory", component: <PagesDirectory /> },
+  // { path: "/pages-faqs", component: <PagesFaqs /> },
+  // { path: "/pages-pricing", component: <PagesPricing /> },
+  // { path: "/pages-profile", component: <PagesProfile /> },
 
   // this route should be at the end of all other routes
   { path: "/", component: <Dashboard /> },
@@ -242,8 +233,6 @@ const authRoutes = [
   { path: "/forgot-password", component: <ForgetPwd /> },
   { path: "/register", component: <Register /> },
 
-  { path: "/pages-maintenance", component: <PagesMaintenance /> },
-  { path: "/pages-comingsoon", component: <PagesComingsoon /> },
   { path: "*", component: <Pages404 /> },
   { path: "/pages-500", component: <Pages500 /> },
   // Authentication Inner
