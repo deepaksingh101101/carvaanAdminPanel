@@ -1,5 +1,5 @@
 // AdminReducers.js
-const { SET_ADMIN_DATA, PUSH_ADMIN, POP_ADMIN, UPDATE_ADMIN, SET_CUSTOMER_DATA, PUSH_CUSTOMER, POP_CUSTOMER, UPDATE_CUSTOMER, SET_ORDER_DATA, PUSH_ORDER, POP_ORDER, UPDATE_ORDER, SET_TRIP_DATA, PUSH_TRIP, POP_TRIP, UPDATE_TRIP, SET_COUPONS_DATA, PUSH_COUPONS, POP_COUPONS, UPDATE_COUPONS, SET_CARVAAN_DATA, PUSH_CARVAAN, POP_CARVAAN, UPDATE_CARVAAN, SET_MANAGE_DATA, PUSH_MANAGE, POP_MANAGE, UPDATE_MANAGE, ADD_BLOG_POST, SET_FAQ_DATA, PUSH_FAQ, POP_FAQ, UPDATE_FAQ } = require('./actionTypes');
+const { SET_ADMIN_DATA, PUSH_ADMIN, POP_ADMIN, UPDATE_ADMIN, SET_CUSTOMER_DATA, PUSH_CUSTOMER, POP_CUSTOMER, UPDATE_CUSTOMER, SET_ORDER_DATA, PUSH_ORDER, POP_ORDER, UPDATE_ORDER, SET_TRIP_DATA, PUSH_TRIP, POP_TRIP, UPDATE_TRIP, SET_COUPONS_DATA, PUSH_COUPONS, POP_COUPONS, UPDATE_COUPONS, SET_CARVAAN_DATA, PUSH_CARVAAN, POP_CARVAAN, UPDATE_CARVAAN, SET_MANAGE_DATA, PUSH_MANAGE, POP_MANAGE, UPDATE_MANAGE, ADD_BLOG_POST, SET_FAQ_DATA, PUSH_FAQ, POP_FAQ, UPDATE_FAQ, STORE_MEALS, STORE_AGE, STORE_AGENTS, STORE_THEME, STORE_TRANSPORTATION } = require('./actionTypes');
 
 
 export const AdminReducers = (state ={
@@ -269,6 +269,76 @@ export const FaqReducers = (state ={
 
       return { ...state, faqData: updatedFaqData };
 
+    default:
+      return state;
+  }
+};
+
+
+// Trip Options
+
+export const MealsReducers = (state ={
+  mealsData: [], 
+}, action) => {
+  switch (action.type) {
+    case STORE_MEALS:
+      return { ...state, mealsData: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const AgesReducers = (state ={
+  agesData: [], 
+}, action) => {
+  switch (action.type) {
+    case STORE_AGE:
+      return { ...state, agesData: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const AgentsReducers = (state ={
+  agentsData: [], 
+}, action) => {
+  switch (action.type) {
+    case STORE_AGENTS:
+      return { ...state, agentsData: action.payload };
+    default:
+      return state;
+  }
+};
+
+
+export const PointsReducers = (state ={
+  pointsData: [], 
+}, action) => {
+  switch (action.type) {
+    case STORE_AGE:
+      return { ...state, pointsData: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const ThemeReducers = (state ={
+  themeData: [], 
+}, action) => {
+  switch (action.type) {
+    case STORE_THEME:
+      return { ...state, themeData: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const TransReducers = (state ={
+  transData: [], 
+}, action) => {
+  switch (action.type){
+    case STORE_TRANSPORTATION:
+      return { ...state, transData: action.payload};
     default:
       return state;
   }

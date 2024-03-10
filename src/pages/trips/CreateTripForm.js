@@ -1,11 +1,11 @@
 // CreateCustomerForm.js
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import {FormFeedback,Badge, Row, Col, Card, CardBody, CardTitle ,Container , Form,Label, Input} from 'reactstrap';
+import {FormFeedback,FormGroup,Badge, Row, Col, Card, CardBody, CardTitle ,Container , Form,Label, Input} from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { pushTrip, updateTrip } from 'store/auth/user_admin_data/actions';
+import { pushTrip, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation, updateTrip } from 'store/auth/user_admin_data/actions';
 import { Link } from "react-router-dom";
 import Dropzone from "react-dropzone";
 import work1 from '../../assets/images/gallery/work-1.jpg';
@@ -117,7 +117,7 @@ const fetchOptions=async()=>{
    const agents=await get_All_Travel_Agents()
    const points=await getAllPoints();
    const theme=await getAllThemes();
-  const transportationTypes=await getAllTransportationTypes()
+    const transportationTypes=await getAllTransportationTypes()
   
   setPoints(points)
     setMealsOptions(meals)
@@ -125,6 +125,18 @@ const fetchOptions=async()=>{
     setTransportationTypesState(transportationTypes)
     setTravelAgents(agents)
     setThemes(theme)
+
+
+    dispatch(storeMeals(meals))
+    dispatch(storeAge(ages))
+    dispatch(storeAgents(agents))
+    dispatch(storePoints(points))
+    dispatch(storeTransportation(transportationTypes))
+    dispatch(storeTheme(theme))
+
+
+
+
 
   } catch (error) {
     console.log(error.response)
@@ -165,6 +177,7 @@ fetchOptions()
       food_options: tripCreate.food_options|| "",
       itinerary:tripCreate.itinerary||"",
       packing_guide:tripCreate.packing_guide||"",
+      flight_inclusive:tripCreate.flight_inclusive||false
 
     },
     validationSchema: Yup.object({
@@ -177,6 +190,7 @@ fetchOptions()
       pickup_location: Yup.string(),
       drop_location: Yup.string(),
       start_date: Yup.date().required("Please Enter Start Date"),
+      flight_inclusive: Yup.boolean().required("Please Enter this fields"),
     
       // end_date: Yup.date().required("Please Enter End Date"),
       price_per_person: Yup.number().required("Please Enter Price Per Person"),
@@ -215,13 +229,15 @@ fetchOptions()
         drop_location:values.drop_location,
         inclusives:inclusive_array,
         exclusives:exclusive_array,
-        // accomodation_type_id:1,
+        accomodation_type_id:1,
         seats_left:parseInt(values.seats_left),
-        flight_inclusive:false,
+        flight_inclusive: values.flight_inclusive === 'true'        ,
         age_range_ids:values.age_range.map(Number),
         transportation_type_id:parseInt(values.type_of_transportation),
         meal_type_id:food_options_array.map(Number),
         packing_guide:packing_guide_array,
+        created_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
+        images:selectedBanners,
       }
       console.log(tripData)
 
@@ -1012,7 +1028,7 @@ slide={lightboxController.slide}
 
 {transportationTypesState.map((trans,index)=>(
 <>
-<option value={`${trans.type_name}`}>{trans.type_name}</option>
+<option value={trans.id}>{trans.type_name}</option>
 </>
 ))}
 
@@ -1071,7 +1087,7 @@ slide={lightboxController.slide}
   </div> */}
 
 
-  <div className="mb-3 col-lg-12">
+  <div className="mb-3 col-lg-8">
   <Label>Age Range</Label>
   <div className="d-flex " >
   {ageRanges.map(option => (
@@ -1095,6 +1111,50 @@ slide={lightboxController.slide}
   ))}
   </div>
 </div>
+
+
+
+{validation.values.type_of_transportation=="5" &&
+<div className="mb-3 col-lg-4">
+  <Label className="form-label">Flight Ticket Required*</Label>
+  <FormGroup className='d-flex ' >
+    <div>
+      <Input
+        type="radio"
+        id="flight_inclusive_true"
+        onChange={validation.handleChange}
+        onBlur={validation.handleBlur}
+        className="form-check-input"
+        name='flight_inclusive'
+        value={true} // true boolean value
+        required={validation.values.type_of_transportation=="5"}
+      />
+      <Label htmlFor="flight_inclusive_true" className=" ms-1 form-check-label">Yes</Label>
+    </div>
+    <div>
+      <Input
+        type="radio"
+        id="flight_inclusive_false"
+        onChange={validation.handleChange}
+        onBlur={validation.handleBlur}
+        className="form-check-input ms-3"
+        name='flight_inclusive'
+        value={false} // false boolean value
+        required={validation.values.type_of_transportation=="5"}
+      />
+      <Label htmlFor="flight_inclusive_false" className="ms-1 form-check-label">No</Label>
+    </div>
+  </FormGroup>
+  {validation.touched.flight_inclusive && validation.errors.flight_inclusive ? (
+    <FormFeedback type="invalid">{validation.errors.flight_inclusive}</FormFeedback>
+  ) : null}
+</div>
+}
+
+
+
+
+
 
 
 <div className="mb-3 col-lg-4">

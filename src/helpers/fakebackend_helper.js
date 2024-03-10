@@ -59,7 +59,8 @@ const uploadTripImage = data => post(url.POST_TRIP_IMAGE,data,{headers:{ "Conten
 const uploadTripImages = data => post(url.POST_TRIP_IMAGE_MULTIPLE,data)
 const getAllPoints = data => get(url.GET_ALL_POINTS)
 const getAllThemes = data => get(url.GET_ALL_THEMES)
-const createPackage = data => get(url.CREATE_PACKAGE,data)
+const createPackage = data => post(url.CREATE_PACKAGE,data)
+const getPackage = data => post(url.GET_PACKAGE)
 
 
 
@@ -140,5 +141,6 @@ export {
   getAllPoints,
   getAllThemes,
   createPackage,
-  uploadTripImages
+  uploadTripImages,
+  getPackage
 }

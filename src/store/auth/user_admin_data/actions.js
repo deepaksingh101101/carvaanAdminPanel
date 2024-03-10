@@ -1,5 +1,5 @@
 // actions.js
-const { SET_ADMIN_DATA, PUSH_ADMIN, POP_ADMIN, UPDATE_ADMIN, SET_CUSTOMER_DATA, PUSH_CUSTOMER, POP_CUSTOMER, UPDATE_CUSTOMER, SET_ORDER_DATA, PUSH_ORDER, POP_ORDER, UPDATE_ORDER, SET_TRIP_DATA, PUSH_TRIP, POP_TRIP, UPDATE_TRIP, SET_COUPONS_DATA, PUSH_COUPONS, POP_COUPONS, UPDATE_COUPONS, SET_CARVAAN_DATA, PUSH_CARVAAN, POP_CARVAAN, UPDATE_CARVAAN, SET_MANAGE_DATA, PUSH_MANAGE, POP_MANAGE, UPDATE_MANAGE, ADD_BLOG_POST, SET_FAQ_DATA, PUSH_FAQ, POP_FAQ, UPDATE_FAQ } = require('./actionTypes');
+const { SET_ADMIN_DATA, PUSH_ADMIN, POP_ADMIN, UPDATE_ADMIN, SET_CUSTOMER_DATA, PUSH_CUSTOMER, POP_CUSTOMER, UPDATE_CUSTOMER, SET_ORDER_DATA, PUSH_ORDER, POP_ORDER, UPDATE_ORDER, SET_TRIP_DATA, PUSH_TRIP, POP_TRIP, UPDATE_TRIP, SET_COUPONS_DATA, PUSH_COUPONS, POP_COUPONS, UPDATE_COUPONS, SET_CARVAAN_DATA, PUSH_CARVAAN, POP_CARVAAN, UPDATE_CARVAAN, SET_MANAGE_DATA, PUSH_MANAGE, POP_MANAGE, UPDATE_MANAGE, ADD_BLOG_POST, SET_FAQ_DATA, PUSH_FAQ, POP_FAQ, UPDATE_FAQ, STORE_MEALS, STORE_AGE, STORE_AGENTS, STORE_POINTS, STORE_THEME, STORE_TRANSPORTATION } = require('./actionTypes');
 
 export const setAdminData = (adminData) => ({
   type: SET_ADMIN_DATA,
@@ -188,4 +188,30 @@ export const popFaq = (sno) => ({
 export const updateFaq = (faq) => ({
   type: UPDATE_FAQ,
   payload: faq,
+});
+
+// Store trop options
+export const storeMeals = (meals) => ({
+  type: STORE_MEALS,
+  payload: meals,
+});
+export const storeAge = (age) => ({
+  type: STORE_AGE,
+  payload: age,
+});
+export const storeAgents = (agents) => ({
+  type: STORE_AGENTS,
+  payload: agents,
+});
+export const storePoints = (points) => ({
+  type: STORE_POINTS,
+  payload: points,
+});
+export const storeTheme = (theme) => ({
+  type: STORE_THEME,
+  payload: theme,
+});
+export const storeTransportation = (trans) => ({
+  type: STORE_TRANSPORTATION,
+  payload: trans,
 });

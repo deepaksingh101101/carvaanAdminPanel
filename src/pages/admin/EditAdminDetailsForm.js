@@ -54,8 +54,6 @@ const EditAdminDetailForm = ({ type }) => {
   
       fetchData(); // Call the fetchData function
     }, [id]); // Add id as a dependency for useEffect
-  
-
 
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();

@@ -49,3 +49,13 @@ export const UPDATE_FAQ = 'UPDATE_FAQ';
 
 // Blogs
 export const ADD_BLOG_POST = 'ADD_BLOG_POST';
+
+
+
+// Store Trip Options
+export const STORE_MEALS  = 'STORE_MEALS';
+export const STORE_AGE  = 'STORE_AGE';
+export const STORE_AGENTS  = 'STORE_AGENTS';
+export const STORE_POINTS  = 'STORE_POINTS';
+export const STORE_THEME  = 'STORE_THEME';
+export const STORE_TRANSPORTATION  = 'STORE_TRANSPORTATION';

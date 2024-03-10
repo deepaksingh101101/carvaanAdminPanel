@@ -9,7 +9,7 @@ import Account from "./auth/register/reducer"
 import ForgetPassword from "./auth/forgetpwd/reducer"
 import Profile from "./auth/profile/reducer"
 
-import {AdminReducers} from "./auth/user_admin_data/reducer"
+import {AdminReducers, AgentsReducers, AgesReducers, MealsReducers, PointsReducers, ThemeReducers, TransReducers} from "./auth/user_admin_data/reducer"
 import {CustomerReducers} from "./auth/user_admin_data/reducer.js"
 import {OrderReducers} from "./auth/user_admin_data/reducer.js"
 import {TripReducers} from "./auth/user_admin_data/reducer.js"
@@ -40,6 +40,12 @@ const rootReducer = combineReducers({
   BlogReducers,
   FaqReducers,
   alertReducer,
+  MealsReducers,
+  AgesReducers,
+  AgentsReducers,
+  PointsReducers,
+  ThemeReducers,
+  TransReducers,
 })
 
 export default rootReducer

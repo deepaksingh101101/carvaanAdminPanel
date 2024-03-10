@@ -23,6 +23,7 @@ export const POST_TRIP_IMAGE = "/uploads/images"
 export const GET_ALL_POINTS = "/points"
 export const GET_ALL_THEMES = "/themes"
 export const CREATE_PACKAGE = "/packages"
+export const GET_PACKAGE = "/packages"
 
 
 
