@@ -3,77 +3,93 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, CardBody, CardTitle ,Container , Form, 
 CardImg} from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import {  useSelector } from 'react-redux';
+import {  useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import { getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, getPackage, get_All_Travel_Agents } from 'helpers/fakebackend_helper';
+import { setTripData, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation } from 'store/auth/user_admin_data/actions';
 
 const ViewTrip = () => {
-  const { sno } = useParams();
-
-  let { tripData } = useSelector((state) => state.TripReducers);
-  const trip = tripData.find((trip) => trip.sno == sno);
-
-  const [tripImage1, setTripImage1] = useState(null);
-  const [tripImage2, setTripImage2] = useState(null);
-  const [tripImage3, setTripImage3] = useState(null);
-  const [headline, setHeadline] = useState('');
-  const [itinerary, setItinerary] = useState('');
-//   const [detailedPdf, setDetailedPdf] = useState('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [duration, setDuration] = useState('');
-  const [inclusion, setInclusion] = useState('');
-  const [exclusion, setExclusion] = useState('');
-  const [totalSeats, setTotalSeats] = useState('');
-  const [price, setPrice] = useState('');
-  const [accommodation, setAccommodation] = useState('');
-  const [transportation, setTransportation] = useState('');
-  const [totalBreakfast, setTotalBreakfast] = useState('');
-  const [totalLunch, setTotalLunch] = useState('');
-  const [totalDinner, setTotalDinner] = useState('');
-  const [sightSeeing, setSightSeeing] = useState('');
-  const [localGuide, setLocalGuide] = useState('');
-  const [thingsToCarry, setThingsToCarry] = useState('');
-  const [tripBanner, setTripBanner] = useState(null);
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
  
-  useEffect(() => {
-    // Fetch and set the trip data when type is 'Edit'
-    if (trip) {
-      setTripBanner(trip.tripBanner || '');
-      setTripImage1(trip.tripImage1 || '');
-      setTripImage2(trip.tripImage2 || '');
-      setTripImage3(trip.tripImage3 || '');
-      setHeadline(trip.headline || '');
-      setItinerary(trip.itinerary || '');
-      setFrom(trip.from || '');
-      setTo(trip.to || '');
-      setStartDate(trip.startDate || '');
-      setEndDate(trip.endDate || '');
-      setStartTime(trip.startTime || '');
-      setEndTime(trip.endTime || '');
-      setDuration(trip.duration || '');
-      setTotalSeats(trip.totalSeats || '');
-      setPrice(trip.price || '');
-      setAccommodation(trip.accommodation || '');
-      setTransportation(trip.transportation || '');
-      setTotalBreakfast(trip.totalBreakfast || '');
-      setTotalLunch(trip.totalLunch || '');
-      setTotalDinner(trip.totalDinner || '');
-      setSightSeeing(trip.sightSeeing || '');
-      setLocalGuide(trip.localGuide || '');
-      setThingsToCarry(trip.thingsToCarry || '');
-    //   setDetailedPdf(trip.detailedPdf || '');
-      setInclusion(trip.inclusion || '');
-      setExclusion(trip.exclusion || '');
-      setSelectedBanner(trip.selectedBanner || '');
+  const [mealsOptions, setMealsOptions] = useState([])
+  const [ageRanges, setAgeRanges] = useState([])
+  const [transportationTypesState, setTransportationTypesState] = useState([])
+  // const [travelAgents, setTravelAgents] = useState([])
+  const [points, setPoints]=useState([])
+  const [themes, setThemes]=useState([])
+  const [loader, setLoader] = useState(true);
+  const [message, setMessage] = useState("Something went wrong");
+ const [tempTrip,setTempTrip]=useState([])
+
+  const fetchOptions=async()=>{
+    try {
+     const meals= await getAllMeals();
+     const ages= await getAllAgeRange();
+     const agents=await get_All_Travel_Agents()
+     const points=await getAllPoints();
+     const theme=await getAllThemes();
+    const transportationTypes=await getAllTransportationTypes()
+    const tripData = await getPackage();
       
+    
+    
+    dispatch(setTripData(tripData));
+      dispatch(storeMeals(meals))
+      dispatch(storeAge(ages))
+      dispatch(storeAgents(agents))
+      dispatch(storePoints(points))
+      dispatch(storeTransportation(transportationTypes))
+      dispatch(storeTheme(theme))
+    } catch (error) {
+      console.log(error.response)
     }
-  }, [trip]);
+  }
+  useEffect(() => {
+  fetchOptions()
+  }, [id])
+
+
+  let { tripData } = useSelector((state) => state.TripReducers);
+  const trip = tripData.find((trip) => trip.id == id);
+  
+
+  let { agentsData } = useSelector((state) => state.AgentsReducers);
+
+  // useEffect(() => {
+  //   if (trip) {
+  //     setTripBanner(trip.tripBanner || '');
+  //     setTripImage1(trip.tripImage1 || '');
+  //     setTripImage2(trip.tripImage2 || '');
+  //     setTripImage3(trip.tripImage3 || '');
+  //     setHeadline(trip.headline || '');
+  //     setItinerary(trip.itinerary || '');
+  //     setFrom(trip.from || '');
+  //     setTo(trip.to || '');
+  //     setStartDate(trip.startDate || '');
+  //     setEndDate(trip.endDate || '');
+  //     setStartTime(trip.startTime || '');
+  //     setEndTime(trip.endTime || '');
+  //     setDuration(trip.duration || '');
+  //     setTotalSeats(trip.totalSeats || '');
+  //     setPrice(trip.price || '');
+  //     setAccommodation(trip.accommodation || '');
+  //     setTransportation(trip.transportation || '');
+  //     setTotalBreakfast(trip.totalBreakfast || '');
+  //     setTotalLunch(trip.totalLunch || '');
+  //     setTotalDinner(trip.totalDinner || '');
+  //     setSightSeeing(trip.sightSeeing || '');
+  //     setLocalGuide(trip.localGuide || '');
+  //     setThingsToCarry(trip.thingsToCarry || '');
+  //   //   setDetailedPdf(trip.detailedPdf || '');
+  //     setInclusion(trip.inclusion || '');
+  //     setExclusion(trip.exclusion || '');
+  //     setSelectedBanner(trip.selectedBanner || '');
+      
+  //   }
+  // }, [trip]);
 
 //   const handleAddTripClick = () => {
 //     const newTrip = {
@@ -162,7 +178,11 @@ const ViewTrip = () => {
   //     handleAcceptedBanner(file);
   //   }
   // }
-
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A'; // or any placeholder you prefer
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? 'Invalid date' : date.toISOString().split('T')[0];
+  };
 
   return (
     <React.Fragment>
@@ -172,244 +192,48 @@ const ViewTrip = () => {
 
           <Row>
             <Col className="col-12">
-              <Card>
+              <Card >
                 <CardBody>
                   <CardTitle className="h4">{`View`} Trip</CardTitle>
                   
                   <div data-repeater-list="group-a">
                     <div data-repeater-item className="row w-100">
-
-                    
-
-                    
-
-
-
-
-{/* <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="tripBanner">
-                        Banner Picture 
-                        </label>{" "}
-                        <input
-                          type="file"
-                          className="form-control"
-                          id="tripBanner"
-                        //   value={tripBanner}
-                          required
-                          accept=".png, .jpg, .jpeg"
-                          onChange={(e) => setTripBanner(e.target.value)}
-                        />
-                      </div> */}
-
-
-<div className="mb-3 col-lg-3">
-      <label className="form-label" htmlFor="tripBanner">
-        Banner Picture 
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-         
-          <div className="dropzone-previews mt-3" id="file-previews">
-            {selectedBanner && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
-                      <img
-                       style={{height:"200px",width:"250px"}}
-                        data-dz-thumbnail=""
-                       
-                        className="avatar-sm rounded bg-light"
-                        alt={selectedBanner.name}
-                        src={selectedBanner.preview}
-                      />
-                    </Col>
-                    <Col className="pt-2">
-                      <Link  to="#" className="text-muted font-weight-bold">
-                        {selectedBanner.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{selectedBanner.formattedSize}</strong>
-                      </p>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            )}
-          </div>
-        </Form>
+                    <div className="mb-3 col-lg-12">
+  <label className="form-label" htmlFor="tripBanner">
+    Banner Pictures
+  </label>{" "}
+  <div className="mb-5">
+    <Form>
+      <div className="d-flex dropzone-previews mt-3" id="file-previews">
+        {trip && trip.images.map((image, index) => (
+          <Card key={index} className="mt-1  d-flex justify-content-center align-items-center col-lg-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+            <div className="p-2 d-flex">
+              <Row className=" d-flex align-items-center justify-content-center">
+                <Col className="col-auto d-flex align-items-center justify-content-center">
+                  <img
+                    style={{ height: "200px", width: "250px" }}
+                    data-dz-thumbnail=""
+                    className="avatar-sm rounded bg-light object-fit-cover"
+                    alt={`Banner ${index}`}
+                    src={image}
+                  />
+                </Col>
+              </Row>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </Form>
   </div>
 </div>
 
-
-<div className="mb-3 col-lg-3">
-      <label className="form-label" htmlFor="tripImage1">
-        Trip Image 1 
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-          
-          <div className="dropzone-previews mt-3" id="file-previews">
-            {tripImage1 && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
-                      <img
-                        data-dz-thumbnail=""
-                        style={{height:"200px",width:"250px"}}
-                        className="avatar-sm rounded bg-light"
-                        alt={tripImage1.name}
-                        src={tripImage1.preview}
-                      />
-                    </Col>
-                    <Col className='pt-2'>
-                      <Link to="#" className="text-muted font-weight-bold">
-                        {tripImage1.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{tripImage1.formattedSize}</strong>
-                      </p>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            )}
-          </div>
-        </Form>
-  </div>
-</div>
-
-
-<div className="mb-3 col-lg-3">
-      <label className="form-label" htmlFor="tripImage2">
-        Trip Image 2 
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-         
-          <div className="dropzone-previews mt-3" id="file-previews">
-            {tripImage2 && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
-                      <img
-                        data-dz-thumbnail=""
-                        style={{height:"200px",width:"250px"}}
-                        className="avatar-sm rounded bg-light"
-                        alt={tripImage2.name}
-                        src={tripImage2.preview}
-                      />
-                    </Col>
-                    <Col className='pt-2'>
-                      <Link to="#" className="text-muted font-weight-bold">
-                        {tripImage2.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{tripImage2.formattedSize}</strong>
-                      </p>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            )}
-          </div>
-        </Form>
-  </div>
-</div>
-
-
-
-<div className="mb-3 col-lg-3">
-      <label className="form-label" htmlFor="tripImage3">
-        Trip Image 3 
-      </label>{" "}
-      <div className="mb-5">
-        <Form>
-          
-          <div className="dropzone-previews mt-3" id="file-previews">
-            {tripImage3 && (
-              <Card className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-                <div className="p-2">
-                  <Row className="align-items-center">
-                    <Col className="col-auto">
-                      <img
-                        data-dz-thumbnail=""
-                        style={{height:"200px",width:"250px"}}
-                        className="avatar-sm rounded bg-light"
-                        alt={tripImage3.name}
-                        src={tripImage3.preview}
-                      />
-                    </Col>
-                    <Col className='pt-2'>
-                      <Link to="#" className="text-muted font-weight-bold">
-                        {tripImage3.name}
-                      </Link>
-                      <p className="mb-0">
-                        <strong>{tripImage3.formattedSize}</strong>
-                      </p>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            )}
-          </div>
-        </Form>
-  </div>
-</div>
-
-                      {/* <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="tripImage1">
-                        Trip Image 1
-                        </label>{" "}
-                        <input
-                          type="file"
-                          className="form-control"
-                          id="tripImage1"
-                          required
-                          accept=".png, .jpg, .jpeg"
-                        //   value={tripImage1}
-                          onChange={(e) => setTripImage1(e.target.value)}
-                        />
-                      </div>
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="tripImage2">
-                        Trip Image 2
-                        </label>{" "}
-                        <input
-                          type="file"
-                          className="form-control"
-                          id="tripImage2"
-                          required
-                          accept=".png, .jpg, .jpeg"
-                        //   value={tripImage2}
-                          onChange={(e) => setTripImage2(e.target.value)}
-
-                        />
-                      </div>
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="tripImage3">
-                        Trip Image 3
-                        </label>{" "}
-                        <input
-                          type="file"
-                          className="form-control"
-                          id="tripImage3"
-                          required
-                          accept=".png, .jpg, .jpeg"
-                        //   value={tripImage3}
-                          onChange={(e) => setTripImage3(e.target.value)}
-
-                        />
-                      </div> */}
 
 <div className="mb-3 col-lg-3">
   <label className="form-label" htmlFor="headline">
-    Headline
+    Trip Title
   </label>
   <Card body className="border">
-    <CardTitle className="h4">{trip.headline}</CardTitle>
+    <CardTitle className="h4">{trip?.title}</CardTitle>
   </Card>
 </div>
 
@@ -430,53 +254,45 @@ const ViewTrip = () => {
 
                       <div className="mb-3 col-lg-3">
                         <label className="  form-label" htmlFor="from">
-                          From
+                          Starting Point
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{trip.from}</CardTitle>
+                        <CardTitle className="h4">{trip?.starting_point_id.name}</CardTitle>
   </Card>
 
                       </div>
 
                       <div className="mb-3 col-lg-3">
                         <label className=" form-label" htmlFor="to">
-                          To
+                          Ending Point
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{trip.to}</CardTitle>
+                        <CardTitle className="h4">{trip?.ending_point_id.name}</CardTitle>
   </Card>
 
                       </div>
-
-
-
-
-                     
-                      
-
-                    
 
                        <div className="mb-3 col-lg-3">
                         <label className=" form-label" htmlFor="start_Date">
                           Start Date
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{trip.startDate}</CardTitle>
-  </Card>
+                        <CardTitle className="h4">{formatDate(trip?.start_date)}</CardTitle>
+                        </Card>
 
                       </div>
 
                       <div className="mb-3 col-lg-3">
-                        <label className="  form-label" htmlFor="end_Date">
-                          End Date
+                        <label className="form-label" htmlFor="created_by">
+                          Created By
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{trip.endDate}</CardTitle>
+                        <CardTitle className="h4">{agentsData.find(agent => agent.id === trip.created_by)?.name}</CardTitle>
   </Card>
 
                       </div>
 
-                      <div className="mb-3 col-lg-3">
+                      {/* <div className="mb-3 col-lg-3">
                         <label className=" form-label" htmlFor="start_time">
                           Start Time
                         </label>
@@ -493,14 +309,14 @@ const ViewTrip = () => {
                         <CardTitle className="h4">{trip.endTime}</CardTitle>
   </Card>
 
-                      </div>
+                      </div> */}
 
                       <div className="mb-3 col-lg-3">
                         <label className=" form-label" htmlFor="duration">
-                          Duration
+                          Duration Days
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{trip.duration}</CardTitle>
+                        <CardTitle className="h4">{`${trip?.duration_days} Days ${trip?.duration_days - 1} Night`}</CardTitle>
   </Card>
 
                       </div>
@@ -511,10 +327,10 @@ const ViewTrip = () => {
 
 <div className="mb-3 col-lg-3">
   <label className=" form-label" htmlFor="total_seats">
-    Total Number Of Seats
+    Total Number Of Seats Left
   </label>{" "}
   <Card body className="border">
-  <CardTitle className="h4">{trip.totalSeats}</CardTitle>
+  <CardTitle className="h4">{trip?.seats_left}</CardTitle>
   </Card>
 
 </div>
@@ -525,15 +341,15 @@ const ViewTrip = () => {
 
                       <div className="mb-3 col-lg-3">
                         <label className="form-label" htmlFor="price">
-                          Price
+                          Price Per Person
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{trip.price}</CardTitle>
+                        <CardTitle className="h4">{trip?.price}</CardTitle>
   </Card>
 
                       </div>
 
-                      <div className="mb-3 col-lg-3">
+                      {/* <div className="mb-3 col-lg-3">
   <label className=" form-label" htmlFor="accommodation">
     Accommodation
   </label>
@@ -541,7 +357,7 @@ const ViewTrip = () => {
   <CardTitle className="h4">{trip.accommodation}</CardTitle>
   </Card>
 
-</div>
+</div> */}
 
 
 <div className="mb-3 col-lg-3">
@@ -549,23 +365,91 @@ const ViewTrip = () => {
     Transportation
   </label>
   <Card body className="border">
-  <CardTitle className="h4">{trip.transportation}</CardTitle>
+  <CardTitle className="h4">{trip?.transportation_type_id.type_name}</CardTitle>
   </Card>
 
 </div>
 
 
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="totalBreakfast">
-                        Total Breakfast
-                        </label>
-                        <Card body className="border">
-                        <CardTitle className="h4">{trip.totalBreakfast}</CardTitle>
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="trip_captain_required">
+  Trip Captain Required
+  </label>
+  <Card body className="border">
+  <CardTitle className="h4">{trip?.trip_captain_required===true?"Yes":"NO"}</CardTitle>
   </Card>
 
-                      </div>
+</div>
 
-                      <div className="mb-3 col-lg-3">
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="pick_up_location">
+  Pickup Location
+  </label>
+  <Card body className="border">
+  <CardTitle className="h4">{trip?.pick_up_location}</CardTitle>
+  </Card>
+
+</div>
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="drop_location">
+  Drop Location
+  </label>
+  <Card body className="border">
+  <CardTitle className="h4">{trip?.drop_location}</CardTitle>
+  </Card>
+
+</div>
+
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="is_handpicked">
+  Is HandPicked
+  </label>
+  <Card body className="border">
+  <CardTitle className="h4">{trip?.is_handpicked?"Yes":"No"}</CardTitle>
+  </Card>
+
+</div>
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="meal_type_id">
+  Meal Type
+  </label>
+  <Card body className="border">
+  <CardTitle className="h4">{trip?.meal_type_id.type_name}</CardTitle>
+  </Card>
+
+</div>
+
+
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="flights_inclusive">
+   Flights Inclusive
+  </label>
+  <Card body className="border">
+  <CardTitle className="h4">{trip?.flights_inclusive===true?"Yes":"No"}</CardTitle>
+  </Card>
+
+</div>
+
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="transportation">
+    Created At
+  </label>
+  <Card body className="border">
+  <CardTitle className="h4">{formatDate(trip?.created_at)}</CardTitle>
+  </Card>
+
+</div>
+
+
+                   
+
+                      {/* <div className="mb-3 col-lg-3">
                         <label className="form-label" htmlFor="totalLunch">
                         Total Lunch
                         </label>
@@ -573,9 +457,9 @@ const ViewTrip = () => {
                         <CardTitle className="h4">{trip.totalLunch}</CardTitle>
   </Card>
 
-                      </div>
+                      </div> */}
 
-                      <div className="mb-3 col-lg-3">
+                      {/* <div className="mb-3 col-lg-3">
                         <label className="form-label" htmlFor="totalDinner">
                         Total Dinner
                         </label>
@@ -583,9 +467,9 @@ const ViewTrip = () => {
                         <CardTitle className="h4">{trip.totalDinner}</CardTitle>
   </Card>
 
-                      </div>
+                      </div> */}
                      
-                      <div className="mb-3 col-lg-3">
+                      {/* <div className="mb-3 col-lg-3">
                         <label className="form-label" htmlFor="localGuide">
                          Local Guide
                         </label>
@@ -593,8 +477,10 @@ const ViewTrip = () => {
                         <CardTitle className="h4">{trip.localGuide}</CardTitle>
   </Card>
 
-                      </div>
-                      <div className="mb-3 col-lg-3">
+                      </div> */}
+
+
+                      {/* <div className="mb-3 col-lg-3">
                         <label className="form-label" htmlFor="thingsToCarry">
                           Things To Carry
                         </label>
@@ -602,44 +488,137 @@ const ViewTrip = () => {
                         <CardTitle className="h4">{trip.thingsToCarry}</CardTitle>
   </Card>
 
-                      </div>
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="itinerary">
-                          Detailed Itinerary
+                      </div> */}
+
+
+
+<div className="mb-3 col-lg-12">
+  <label className="form-label" htmlFor="day_wise_itinerary">
+    Day Wise Detailed Itinerary
+  </label>
+  <Card body className="border">
+    {trip?.day_wise_itenary.map((dayDetail, index) => (
+      <div key={index} className='d-flex align-items-center'>
+        <CardTitle className="h4 mb-0">Day {index + 1}</CardTitle>
+        <CardBody className='fs-6'>
+  {dayDetail.split(':').length > 1 ? dayDetail.split(':')[1].trim() : 'N/A'}
+</CardBody>      </div>
+    ))}
+  </Card>
+</div>
+
+
+                      <div className="mb-3 col-lg-12">
+                        <label className="form-label" htmlFor="description">
+                        Description
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{trip.itinerary}</CardTitle>
+                        <CardTitle className="h4">{trip?.description}</CardTitle>
   </Card>
-
                       </div>
-                      <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="sightSeeing">
-                        Sight Seeing
-                        </label>
-                        <Card body className="border">
-                        <CardTitle className="h4">{trip.sightSeeing}</CardTitle>
-  </Card>
 
-                      </div>
-                       <div className="mb-3 col-lg-3">
-                        <label className="form-label" htmlFor="inclusion">
-                          Inclusion
-                        </label>
-                        <Card body className="border">
-                        <CardTitle className="h4">{trip.inclusion}</CardTitle>
-  </Card>
 
-                      </div>
 
                       <div className="mb-3 col-lg-3">
-  <label className="form-label" htmlFor="exclusion">
+  <label className="form-label" htmlFor="inclusives">
+    Inclusion
+  </label>
+  <Card body className="border">
+    {trip?.inclusives && trip.inclusives.map((inclusive, index) => (
+      <div key={index} className='d-flex align-items-center' >
+        <CardTitle className="h4 ms-2 ">{index+1}</CardTitle>
+        <CardTitle className="h4 ms-2 ">{inclusive}</CardTitle>
+      </div>
+    ))}
+  </Card>
+</div>
+
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="exclusives">
     Exclusion
   </label>
   <Card body className="border">
-  <CardTitle className="h4">{trip.exclusion}</CardTitle>
+    {trip?.exclusives && trip.exclusives.map((exclusive, index) => (
+      <div key={index} className='d-flex align-items-center' >
+        <CardTitle className="h4 ms-2 ">{index+1}</CardTitle>
+        <CardTitle className="h4 ms-2 ">{exclusive}</CardTitle>
+      </div>
+    ))}
+  </Card>
+</div>
+
+
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="packing_guide">
+  Packing Guide
+  </label>
+  <Card body className="border">
+    {trip?.packing_guide && trip.packing_guide.map((guide, index) => (
+      <div key={index} className='d-flex align-items-center' >
+        <CardTitle className="h4 ms-2 ">{index+1}</CardTitle>
+        <CardTitle className="h4 ms-2 ">{guide}</CardTitle>
+      </div>
+    ))}
+  </Card>
+</div>
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="themes">
+  Themes
+  </label>
+  <Card body className="border">
+    {trip?.themes && trip.themes.map((theme, index) => (
+      <div key={index} className='d-flex align-items-center' >
+        <CardTitle className="h4 ms-2 ">{index+1}</CardTitle>
+        <CardTitle className="h4 ms-2 ">{theme.name}</CardTitle>
+      </div>
+    ))}
+  </Card>
+</div>
+
+   <div className="mb-3 col-lg-3">
+                        <label className="form-label" htmlFor="accomodation_type_id">
+                        Accomodation Type
+                        </label>
+                        <Card body className="border">
+                        <CardTitle className="h4">{trip?.accomodation_type_id.type_name}</CardTitle>
   </Card>
 
+                      </div>
+
+
+                      <div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="age_ranges">
+  Age Ranges
+  </label>
+  <Card body className="border">
+    {trip?.age_ranges && trip.age_ranges.map((age_range, index) => (
+      <div key={index} className='d-flex align-items-center' >
+        <CardTitle className="h4 ms-2 ">*</CardTitle>
+        <CardTitle className="h4 ms-2 ">{age_range.display_name}</CardTitle>
+      </div>
+    ))}
+  </Card>
 </div>
+
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="middle_points">
+  Middle Points
+  </label>
+  <Card body className="border">
+    {trip?.middle_points && trip.middle_points.map((middle_point, index) => (
+      <div key={index} className='d-flex align-items-center' >
+        <CardTitle className="h4 ms-2 ">{index+1}</CardTitle>
+        <CardTitle className="h4 ms-2 ">{middle_point.name}</CardTitle>
+      </div>
+    ))}
+  </Card>
+</div>
+
+
+
 
 
                     </div>

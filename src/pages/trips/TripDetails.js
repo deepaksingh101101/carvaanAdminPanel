@@ -133,12 +133,12 @@ const TripDetails = () => {
       },
       {
         name:'Trip Title',
-        selector:row=>row.trip_title,
+        selector:row=>row.title,
         sortable:true,
       },
       {
         name:'Company Name',
-        selector:row=>row.company_name,
+        selector:row=>row.travel_agent_id.name,
         sortable:true,
       },
       {

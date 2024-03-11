@@ -60,7 +60,7 @@ const uploadTripImages = data => post(url.POST_TRIP_IMAGE_MULTIPLE,data)
 const getAllPoints = data => get(url.GET_ALL_POINTS)
 const getAllThemes = data => get(url.GET_ALL_THEMES)
 const createPackage = data => post(url.CREATE_PACKAGE,data)
-const getPackage = data => post(url.GET_PACKAGE)
+const getPackage = data => get(url.GET_PACKAGE)
 
 
 

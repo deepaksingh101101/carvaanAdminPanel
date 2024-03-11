@@ -5,7 +5,7 @@ import {FormFeedback,FormGroup,Badge, Row, Col, Card, CardBody, CardTitle ,Conta
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { pushTrip, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation, updateTrip } from 'store/auth/user_admin_data/actions';
+import { pushTrip, storeAccomodation, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation, updateTrip } from 'store/auth/user_admin_data/actions';
 import { Link } from "react-router-dom";
 import Dropzone from "react-dropzone";
 import work1 from '../../assets/images/gallery/work-1.jpg';
@@ -82,6 +82,21 @@ const [travelAgents, setTravelAgents] = useState([])
 const [points, setPoints]=useState([])
 const [themes, setThemes]=useState([])
 
+const accomodations=[
+  {
+    id:1,
+    name:"Camp",
+  },
+  {
+    id:2,
+    name:"Hotel",
+  },
+  {
+    id:3,
+    name:"Dorm",
+  }
+]
+
 const fetchOptions=async()=>{
   try {
    const meals= await getAllMeals();
@@ -105,10 +120,7 @@ const fetchOptions=async()=>{
     dispatch(storePoints(points))
     dispatch(storeTransportation(transportationTypes))
     dispatch(storeTheme(theme))
-
-
-
-
+    dispatch(storeAccomodation(accomodations))
 
   } catch (error) {
     console.log(error.response)
@@ -177,7 +189,7 @@ fetchOptions()
       food_options: Yup.string(),
       itinerary: Yup.string(),
       packing_guide: Yup.string(),
-
+      accomodation_type_id:Yup.number().required("Please Select This Field"),
 
     }),
     onSubmit: async (values) => {
@@ -201,7 +213,7 @@ fetchOptions()
         drop_location:values.drop_location,
         inclusives:inclusive_array,
         exclusives:exclusive_array,
-        accomodation_type_id:1,
+        accomodation_type_id:parseInt(values.accomodation_type_id),
         seats_left:parseInt(values.seats_left),
         flights_inclusive: values.flight_inclusive === 'true'        ,
         age_range_ids:values.age_range.map(Number),
@@ -211,12 +223,19 @@ fetchOptions()
         created_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
         images:selectedBanners,
       }
-      console.log(tripData)
 
-let res =await createPackage(tripData)
 
-      console.log(tripData)
+
+
+    try {
+      let res =await createPackage(tripData)
       console.log(res)
+      if(res.id){
+        navigate('/tripDetails')
+}
+    } catch (error) {
+      // handle error
+    }
 
     }
 
@@ -254,6 +273,24 @@ const handleAddMiddlePoints = (e) => {
       // Handle case where no matching point is found
       // This could be an invalid ID or the point is not active/available
     }
+  }
+};
+
+
+const handleAgeRangeChange = (optionId, isChecked) => {
+  // Convert optionId to string to ensure consistency in data types
+  const optionIdStr = optionId.toString();
+
+  if (isChecked) {
+    // Add the optionId to the array if it's not already present
+    const newAgeRange = validation.values.age_range.includes(optionIdStr) 
+      ? [...validation.values.age_range] 
+      : [...validation.values.age_range, optionIdStr];
+    validation.setFieldValue('age_range', newAgeRange);
+  } else {
+    // Remove the optionId from the array
+    const newAgeRange = validation.values.age_range.filter(id => id !== optionIdStr);
+    validation.setFieldValue('age_range', newAgeRange);
   }
 };
 
@@ -456,8 +493,6 @@ const handleDeleteMiddlePoints = (i) => {
 // Removed use effect and copied t notepad
   const [selectedBanners, setSelectedBanners] = useState([]);
 
-
-
   let matchingPoint;
 
 const [toggler, setToggler] = useState(false);
@@ -470,7 +505,7 @@ const [file, setFile] = useState()
 
 
 const handleFileChange = async (e) => {
-  setLoader(true)
+  setLoader(true);
   const files = e.target.files;
   const formData = new FormData();
 
@@ -482,19 +517,21 @@ const handleFileChange = async (e) => {
   try {
     // Assuming uploadTripImages function returns the uploaded image URLs
     const res = await uploadTripImages(formData);
-    
 
-    // Assuming res is an array of objects with image_url property
+    // Extracting image URLs from the response and storing them in an array of strings
     const uploadedImageUrls = res.map((item) => item.image_url);
-    
-    // Updating selectedBanners with each uploaded image URL
-    const updatedBanners = uploadedImageUrls.map((imageUrl) => ({ file: null, image_url: imageUrl }));
-    setSelectedBanners([...selectedBanners, ...updatedBanners]);
-    setLoader(false)
+
+    // Merging uploaded image URLs with existing image URLs
+    const updatedBanners = [...selectedBanners, ...uploadedImageUrls];
+
+    // Updating selectedBanners state with the array of image URLs
+    setSelectedBanners(updatedBanners);
+    setLoader(false);
   } catch (error) {
     console.error("Error uploading image:", error);
   }
 };
+
 
 
 
@@ -629,30 +666,32 @@ onChange={handleChange}
         ))} */}
 
 {selectedBanners.map((selectedBanner, index) => (
-<Card key={index} className="mt-1 col-1 mx-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+  <Card key={index} className="mt-1 col-1 mx-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
     <div className="py-2 d-flex align-items-center">
-        <Col className="col-3">
-            <img
-                data-dz-thumbnail=""
-                height="80"
-                className="avatar-sm rounded bg-light"
-                src={selectedBanner.image_url}
-                onClick={() => openLightboxOnSlide(index+1)} // Open lightbox with the clicked image's index
-            />
-        </Col>
-        <Col className='ms-5 pe-2 col-3'>
-            <i onClick={() => handleBannerDelete(index)} className='fas fa-trash-alt text-danger' role="button"></i>
-        </Col>
+      <Col className="col-3">
+        <img
+          data-dz-thumbnail=""
+          height="80"
+          className="avatar-sm rounded bg-light"
+          src={selectedBanner} // Access selectedBanner directly instead of selectedBanner[index]
+          onClick={() => openLightboxOnSlide(index + 1)} // Open lightbox with the clicked image's index
+        />
+      </Col>
+      <Col className='ms-5 pe-2 col-3'>
+        <i onClick={() => handleBannerDelete(index)} className='fas fa-trash-alt text-danger' role="button"></i>
+      </Col>
     </div>
-</Card>
+  </Card>
 ))}
 
+
 <FsLightbox
-toggler={lightboxController.toggler}
-sources={selectedBanners.map(banner => banner.image_url)}
-types={selectedBanners.map(banner => 'image')}
-slide={lightboxController.slide}
+  toggler={lightboxController.toggler}
+  sources={selectedBanners.map(banner => banner)}
+  types={selectedBanners.map(banner => 'image')}
+  slide={lightboxController.slide}
 />
+
 
         </Row>
       </div>
@@ -1006,6 +1045,40 @@ slide={lightboxController.slide}
   ) : null}
 </div>
 
+
+
+<div className="mb-3 col-lg-4">
+      <Label className="form-label" htmlFor="accomodation">
+        Accomodation*
+      </Label>
+      <Input
+        type="select"
+        id="accomodation"
+        className="form-control"
+        placeholder="Select Accomodation"
+        required
+        name="accomodation_type_id"
+        onChange={validation.handleChange}
+        onBlur={validation.handleBlur}
+        value={validation.values.accomodation_type_id || ''}
+        invalid={validation.touched.accomodation_type_id && validation.errors.accomodation_type_id ? true : false}
+      >
+        <option value="">Select Accomodation Type</option>
+        {accomodations.map((accomodation, index) => (
+          <option key={index} value={accomodation.id}>
+            {accomodation.name}
+          </option>
+        ))}
+      </Input>
+      {validation.touched.start_point && validation.errors.start_point ? (
+        <FormFeedback type="invalid">{validation.errors.start_point}</FormFeedback>
+      ) : null}
+    </div>
+
+
+
+
+
 <div className="mb-3 col-lg-12">
                         <Label className="form-label" htmlFor="description">
                         Description*
@@ -1065,13 +1138,7 @@ slide={lightboxController.slide}
         name="age_range"
         value={option.id}
         checked={validation.values.age_range.includes(option.id.toString())} // Make sure the comparison is correct
-        onChange={e => {
-          if (e.target.checked) {
-            validation.setFieldValue("age_range", [...validation.values.age_range, option.id.toString()]); // Ensure the value is correctly typed
-          } else {
-            validation.setFieldValue("age_range", validation.values.age_range.filter(id => id !== option.id.toString())); // Ensure the comparison is correct
-          }
-        }}
+        onChange={e => handleAgeRangeChange(option.id, e.target.checked)}
       />
       <label className="mb-0" htmlFor={`age-range-${option.id}`}>{option.display_name}</label> {/* Match the htmlFor with input's id */}
     </div>
