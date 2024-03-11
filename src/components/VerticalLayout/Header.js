@@ -210,9 +210,9 @@ const Header = props => {
       {searchTerm && (
               <Dropdown  isOpen={isDropdownOpen} style={{ position: "absolute", right: "435px", top: "42px"}} className="search-results" innerRef={dropdownRef}>
                 <DropdownMenu className="pt-4" style={{background:"#E0E0EA", borderTopRightRadius:"0",borderTopLeftRadius:"0", width:"223px", border:"0" }}>
-                  {filteredSidebarLinks.map((link, index) => (
+                  {filteredSidebarLinks.map((links, index) => (
                     <DropdownItem key={index} className="search-result-item">
-                      <Link style={{color:"black"}} to={link.link}>{link.name}</Link>
+                      <Link style={{color:"black"}} to={`${links.link}`}>{links.name}</Link>
                     </DropdownItem>
                   ))}
                 </DropdownMenu>

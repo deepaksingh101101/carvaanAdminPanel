@@ -68,7 +68,6 @@ const [middle_points_array, setMiddle_points_array] = useState([])
 const [inclusive_array, setInclusive_array] = useState([])
 const [exclusive_array, setExclusive_array] = useState([])
 const [themes_array, setThemes_array] = useState([])
-const [food_options_array, setFood_options_array] = useState([])
 const [itinerary_array, setItinerary_array] = useState([])
 const [packing_guide_array, setPacking_guide_array] = useState([])
 
@@ -76,37 +75,10 @@ const [packing_guide_array, setPacking_guide_array] = useState([])
 const [message, setMessage] = useState("Something went's wrong")
 const isOpen = useSelector(state => state.alertReducer.isOpen);
 
-const startPoints = [
-  "Point A",
-  "Point B",
-  "Point C",
-  "Point D",
-];
-const endPoints = [
-  "Point A",
-  "Point B",
-  "Point C",
-  "Point D",
-];
-const dummyMiddlePoints = [
-  "Point M1",
-  "Point M2",
-  "Point M3",
-  "Point M4",
-  "Point M5",
-  // Add more dummy middle points as needed
-];
-
-
-// const [companyOptions, setcompanyOptions] = useState(initialState)
-// const [endPoints, setEndPoints] = useState(initialState)
-// const [startPoints, setStartPoints] = useState(initialState)
-// const [dummyMiddlePoints, setDummyMiddlePoints] = useState(initialState)
 const [mealsOptions, setMealsOptions] = useState([])
 const [ageRanges, setAgeRanges] = useState([])
 const [transportationTypesState, setTransportationTypesState] = useState([])
 const [travelAgents, setTravelAgents] = useState([])
-// const [ image, setImage] =  useState([])
 const [points, setPoints]=useState([])
 const [themes, setThemes]=useState([])
 
@@ -222,7 +194,7 @@ fetchOptions()
         // images:images,
         is_active:true,
         start_date:values.start_date,
-        duration:parseInt(values.duration),
+        duration_days:parseInt(values.duration),
         price:parseInt(values.price_per_person),
         travel_agent_id:parseInt(values.company_name),
         pick_up_location:values.pickup_location,
@@ -231,10 +203,10 @@ fetchOptions()
         exclusives:exclusive_array,
         accomodation_type_id:1,
         seats_left:parseInt(values.seats_left),
-        flight_inclusive: values.flight_inclusive === 'true'        ,
+        flights_inclusive: values.flight_inclusive === 'true'        ,
         age_range_ids:values.age_range.map(Number),
         transportation_type_id:parseInt(values.type_of_transportation),
-        meal_type_id:food_options_array.map(Number),
+        meal_type_id:parseInt(values.food_options),
         packing_guide:packing_guide_array,
         created_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
         images:selectedBanners,
@@ -396,43 +368,42 @@ else{
  
 }
  }
- const handleAddFoodOptions=(e)=>{
-  e.preventDefault(validation.values.food_options.length);
-  console.log()
-if(validation.values.food_options.length==0){
-// show a error message  for not filling the field
-}
-else{
+//  const handleAddFoodOptions=(e)=>{
+//   e.preventDefault(validation.values.food_options.length);
+//   console.log()
+// if(validation.values.food_options.length==0){
+// }
+// else{
 
-if(food_options_array.length<=10){
-  if(!food_options_array.includes(validation.values.food_options)){
-    food_options_array.push(
-      validation.values.food_options
-     )
-     validation.setFieldValue('food_options',validation.values.food_options ); 
-  }
-  else{
-    setMessage("This Food already included")
-    dispatch(SomethingAlertTrue());
-    setTimeout(() => {
-      dispatch(SomethingAlertFalse());
-      setMessage("Something went's wrong")
-    }, 2000);
-  }
-}
-else{
-  setMessage("Cannot Exceed more than 50")
-  dispatch(SomethingAlertTrue());
-  setTimeout(() => {
-    dispatch(SomethingAlertFalse());
-    setMessage("Something went's wrong")
-  }, 2000);
-}
+// if(food_options_array.length<=10){
+//   if(!food_options_array.includes(validation.values.food_options)){
+//     food_options_array.push(
+//       validation.values.food_options
+//      )
+//      validation.setFieldValue('food_options',validation.values.food_options ); 
+//   }
+//   else{
+//     setMessage("This Food already included")
+//     dispatch(SomethingAlertTrue());
+//     setTimeout(() => {
+//       dispatch(SomethingAlertFalse());
+//       setMessage("Something went's wrong")
+//     }, 2000);
+//   }
+// }
+// else{
+//   setMessage("Cannot Exceed more than 50")
+//   dispatch(SomethingAlertTrue());
+//   setTimeout(() => {
+//     dispatch(SomethingAlertFalse());
+//     setMessage("Something went's wrong")
+//   }, 2000);
+// }
 
  
  
-}
- }
+// }
+//  }
 
 const handleAddItinerary=()=>{
 if(validation.values.itinerary.length<=0){
@@ -480,11 +451,7 @@ const handleDeleteMiddlePoints = (i) => {
     newArray.splice(i, 1); // Remove one element at index i
     setMiddle_points_array(newArray); // Update the state with the new array
 }
-const handleDeleteFoodOptions = (i) => {
-    const newArray = [...food_options_array]; // Create a copy of the array
-    newArray.splice(i, 1); // Remove one element at index i
-    setFood_options_array(newArray); // Update the state with the new array
-}
+
 
 // Removed use effect and copied t notepad
   const [selectedBanners, setSelectedBanners] = useState([]);
@@ -1242,7 +1209,7 @@ slide={lightboxController.slide}
 }
 
  </Input>
- <button onClick={handleAddFoodOptions} type='button' className='btn btn-success mx-1' >Add</button>
+ {/* <button onClick={handleAddFoodOptions} type='button' className='btn btn-success mx-1' >Add</button> */}
 
   </div>
   {/* <div className='d-flex flex-column '>
@@ -1258,9 +1225,8 @@ slide={lightboxController.slide}
     ))}
   </div> */}
 
-  <div className='d-flex flex-column '>
+  {/* <div className='d-flex flex-column '>
   {food_options_array.map((data, i) => {
-    // Assuming points is accessible and each point has a unique id
     const matchingPoint = mealsOptions.find(point => point.id.toString() === data);
     
     return (
@@ -1274,7 +1240,9 @@ slide={lightboxController.slide}
       </div>
     );
   })}
-</div>
+</div> */}
+
+
 </div>
 
 <div className="mb-3 col-lg-4">
