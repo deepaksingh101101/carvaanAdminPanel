@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import { getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, getPackage, get_All_Travel_Agents } from 'helpers/fakebackend_helper';
 import { setTripData, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation } from 'store/auth/user_admin_data/actions';
+import FsLightbox from "fslightbox-react";
 
 const ViewTrip = () => {
   const { id } = useParams();
@@ -54,6 +55,18 @@ const ViewTrip = () => {
 
   let { tripData } = useSelector((state) => state.TripReducers);
   const trip = tripData.find((trip) => trip.id == id);
+  const [lightboxController, setLightboxController] = useState({
+    toggler: false,
+    slide: 1
+  });
+
+
+  function openLightboxOnSlide(number) {
+    setLightboxController({
+      toggler: !lightboxController.toggler,
+      slide: number
+    });
+  }
   
 
   let { agentsData } = useSelector((state) => state.AgentsReducers);
@@ -216,6 +229,7 @@ const ViewTrip = () => {
                     className="avatar-sm rounded bg-light object-fit-cover"
                     alt={`Banner ${index}`}
                     src={image}
+                    onClick={() => openLightboxOnSlide(index + 1)}
                   />
                 </Col>
               </Row>
@@ -633,6 +647,12 @@ const ViewTrip = () => {
               </Card>
             </Col>
           </Row>
+          <FsLightbox
+  toggler={lightboxController.toggler}
+  sources={trip?.images.map(banner => banner)}
+  types={trip?.images.map(banner => 'image')}
+  slide={lightboxController.slide}
+/>
         </div>
       </div>
     </React.Fragment>
