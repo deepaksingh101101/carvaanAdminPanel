@@ -129,6 +129,7 @@ useEffect(() => {
       validation.setFieldValue("is_trip_captain", foundTrip.trip_captain_required===true?"true":"false");
       validation.setFieldValue("accomodation_type_id", foundTrip.accomodation_type_id.id);
       validation.setFieldValue("description", foundTrip.description);
+      validation.setFieldValue("is_active", foundTrip.is_active);
       validation.setFieldValue("type_of_transportation", foundTrip.transportation_type_id.id);
       validation.setFieldValue("age_range", foundTrip.age_ranges.map(ageRange => ageRange.id.toString()));
       setThemes_array(foundTrip.themes.map(theme => theme.id.toString()));
@@ -214,7 +215,8 @@ fetchOptions()
       itinerary:tripCreate.itinerary||"",
       packing_guide:tripCreate.packing_guide||"",
       flight_inclusive:tripCreate.flight_inclusive||false,
-      accomodation_type_id:tripCreate.accomodation_type_id||""
+      accomodation_type_id:tripCreate.accomodation_type_id||"",
+      is_active:tripCreate.is_active || true,
     },
     validationSchema: Yup.object({
       company_name: Yup.number().required("Please Enter The Company Name"),
@@ -242,6 +244,7 @@ fetchOptions()
       itinerary: Yup.string(),
       packing_guide: Yup.string(),
       accomodation_type_id:Yup.number().required("Please Select This Field"),
+      
 
     }),
     onSubmit: async (values) => {
@@ -287,7 +290,7 @@ const tripData = {
   trip_captain_required: (values.is_trip_captain==="true"?true:false),
   day_wise_itenary: itinerary_array,
   description: values.description,
-  is_active: true,
+  is_active: values.is_active,
   start_date: values.start_date,
   duration_days: parseInt(values.duration),
   price: parseInt(values.price_per_person),
@@ -664,6 +667,12 @@ const handleFileChange = async (e) => {
   }
 };
 
+const [isActive, setIsActive] = useState(true)
+
+const toggleStatus = () => {
+  validation.setFieldValue("is_active",!validation.values.is_active )
+};
+
 const handleBannerDelete = (index) => {
   const updatedBanners = [...selectedBanners];
   updatedBanners.splice(index, 1);
@@ -711,37 +720,7 @@ const trip = tripData.find((trip) => trip.id == id);
 {/* Images */}
 {loader && <Loader/>}
 
-{/* {type==="Edit" &&
-<div className="mb-3 col-lg-12">
-  <label className="form-label" htmlFor="tripBanner">
-    Banner Pictures
-  </label>{" "}
-  <div className="mb-5">
-    <Form>
-      <div className="d-flex dropzone-previews mt-3" id="file-previews">
-        {trip && trip.images.map((image, index) => (
-          <Card key={index} className="mt-1  d-flex justify-content-center align-items-center col-lg-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
-            <div className="p-2 d-flex">
-              <Row className=" d-flex align-items-center justify-content-center">
-                <Col className="col-auto d-flex align-items-center position-relative justify-content-center">
-                  <img
-                    style={{ height: "200px", width: "250px" }}
-                    data-dz-thumbnail=""
-                    className="avatar-sm rounded bg-light object-fit-cover"
-                    alt={`Banner ${index}`}
-                    src={image}
-                  />
-                  <p className='ms-1' ></p><i role="button" className='fas fa-trash-alt text-danger  position-absolute top-0 end-0' ></i>
-                </Col>
-              </Row>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </Form>
-  </div>
-</div>
-} */}
+
 
 
  {
@@ -1239,6 +1218,42 @@ onChange={handleChange}
         <FormFeedback type="invalid">{validation.errors.start_point}</FormFeedback>
       ) : null}
     </div>
+
+
+   {
+    type==="Edit" &&
+    <div className="mb-3 col-lg-3 mt-3 py-3 d-flex flex-column justify-content-start">
+    <label className="form-label" htmlFor="is_active">
+      Is Active
+    </label>
+    <FormGroup switch className="d-flex align-items-center" style={{ height: '-webkit-fill-available' }}>
+    <Input
+type="switch"
+name="is_active"
+role="switch"
+id="is_active"
+onChange={(event) => {
+validation.handleChange(event); // Pass event to handleChange
+toggleStatus();
+}}
+value={validation.values.is_active}
+onBlur={validation.handleBlur}
+checked={validation.values.is_active} // Bind switch value to form state
+/>
+
+      <Label
+        className="mb-0 ms-3"
+        check={isActive}
+        style={{
+          color: validation.values.is_active ? 'green' : 'red',
+          display: 'inline-block',
+        }}
+      >
+        {validation.values.is_active ? 'Active' : 'In Active'}
+      </Label>
+    </FormGroup>
+  </div>
+   }
 
 
 
