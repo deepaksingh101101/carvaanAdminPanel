@@ -64,6 +64,11 @@ const getPackage = data => get(url.GET_PACKAGE)
 
 
 
+const patchPackageEdit = (newData, id) => {
+  const url = `packages/${id}`; // Construct the URL with the id parameter
+  return patch(url, newData);
+};
+
 
 
 // Register Method
@@ -142,5 +147,6 @@ export {
   getAllThemes,
   createPackage,
   uploadTripImages,
-  getPackage
+  getPackage,
+  patchPackageEdit,
 }

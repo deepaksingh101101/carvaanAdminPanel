@@ -19,7 +19,7 @@ import { FieldArray } from 'formik';
 
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { createPackage, getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, getPackage, get_All_Travel_Agents, uploadTripImage, uploadTripImages } from 'helpers/fakebackend_helper';
+import { createPackage, getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, getPackage, get_All_Travel_Agents, patchPackageEdit, uploadTripImage, uploadTripImages } from 'helpers/fakebackend_helper';
 import { duration } from 'moment';
 import Loader from 'components/loader/Loader';
 
@@ -121,7 +121,9 @@ useEffect(() => {
       validation.setFieldValue("end_point", foundTrip.ending_point_id.id);
       validation.setFieldValue("seats_left", foundTrip.seats_left);
       validation.setFieldValue("duration", foundTrip.duration_days);
-      validation.setFieldValue("start_date", new Date("2024-03-11T10:29:59.000Z").toISOString().split('T')[0]);
+      // validation.setFieldValue("start_date", new Date("2024-03-11T10:29:59.000Z").toISOString().split('T')[0]);
+      validation.setFieldValue("start_date", new Date(foundTrip.start_date).toISOString().split('T')[0]);
+
       validation.setFieldValue("price_per_person", foundTrip.price)
       // validation.setFieldValue("_point", foundTrip.drop_location);
       validation.setFieldValue("is_trip_captain", foundTrip.trip_captain_required);
@@ -247,14 +249,13 @@ fetchOptions()
       const tripData={
         title:values.trip_title,
         starting_point_id:parseInt(values.start_point),
-        middle_point_ids: middle_points_array.map(Number),
-        // middle_points: middle_points_array.map(Number),
+        // middle_point_ids: middle_points_array.map(Number),
+        middle_point_ids:middle_points_array.length > 0 ? middle_points_array.map(Number) : null,
         ending_point_id:parseInt(values.end_point),
         theme_ids:themes_array.map(Number),
         trip_captain_required: Boolean(values.is_trip_captain),
         day_wise_itenary:itinerary_array,
         description:values.description,
-        // images:images,
         is_active:true,
         start_date:values.start_date,
         duration_days:parseInt(values.duration),
@@ -277,10 +278,18 @@ fetchOptions()
       }
 
     try {
-      let res =await createPackage(tripData)
-      console.log(res)
-      if(res.id){
-        navigate('/tripDetails')
+      if(type==="Edit"){
+        // let res =await patchPackageEdit(tripData)
+//  if(res.id){
+//         navigate('/tripDetails')
+      }
+      else{
+        let res =await createPackage(tripData)
+        if(res.id){
+          navigate('/tripDetails')
+      }
+      
+     
 }
     } catch (error) {
       // handle error
@@ -323,6 +332,7 @@ const handleAddMiddlePoints = (e) => {
 };
 
 const handleAgeRangeChange = (optionId, isChecked) => {
+  console.log(optionId,isChecked)
   // Convert optionId to string to ensure consistency in data types
   const optionIdStr = optionId.toString();
 
@@ -1249,6 +1259,7 @@ onChange={handleChange}
   </div> */}
 
 
+{
   <div className="mb-3 col-lg-8">
   <Label>Age Range</Label>
   <div className="d-flex " >
@@ -1259,7 +1270,7 @@ onChange={handleChange}
         id={`age-range-${option.id}`} // Ensure the ID is unique and descriptive
         name="age_range"
         value={option.id}
-        checked={validation.values.age_range.includes(option.id.toString())} // Make sure the comparison is correct
+        checked={validation.values.age_range.includes(option.id.toString())} 
         onChange={e => handleAgeRangeChange(option.id, e.target.checked)}
       />
       <label className="mb-0" htmlFor={`age-range-${option.id}`}>{option.display_name}</label> {/* Match the htmlFor with input's id */}
@@ -1267,7 +1278,7 @@ onChange={handleChange}
   ))}
   </div>
 </div>
-
+}
 
 
 {validation.values.type_of_transportation=="5" &&
