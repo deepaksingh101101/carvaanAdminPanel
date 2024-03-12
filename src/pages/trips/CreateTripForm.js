@@ -127,6 +127,7 @@ useEffect(() => {
       validation.setFieldValue("is_trip_captain", foundTrip.trip_captain_required);
       validation.setFieldValue("accomodation_type_id", foundTrip.accomodation_type_id.id);
       validation.setFieldValue("description", foundTrip.description);
+      validation.setFieldValue("type_of_transportation", foundTrip.transportation_type_id.id);
       validation.setFieldValue("age_range", foundTrip.age_ranges.map(ageRange => ageRange.id.toString()));
       setThemes_array(foundTrip.themes.map(theme => theme.id.toString()));
       validation.setFieldValue("food_options", foundTrip.meal_type_id.id);
@@ -136,6 +137,7 @@ useEffect(() => {
         setExclusive_array(foundTrip.exclusives)
         console.log(foundTrip.day_wise_itenary)
         setItinerary_array(foundTrip.day_wise_itenary)
+        setFacilities_array(foundTrip.facilities)
     }
      
     } catch (error) {
@@ -171,6 +173,7 @@ const fetchOptions=async()=>{
     dispatch(storeTransportation(transportationTypes))
     dispatch(storeTheme(theme))
     dispatch(storeAccomodation(accomodations))
+  
 
   } catch (error) {
     console.log(error.response)
@@ -244,7 +247,7 @@ fetchOptions()
       const tripData={
         title:values.trip_title,
         starting_point_id:parseInt(values.start_point),
-        middle_points_ids: middle_points_array.map(Number),
+        middle_point_ids: middle_points_array.map(Number),
         // middle_points: middle_points_array.map(Number),
         ending_point_id:parseInt(values.end_point),
         theme_ids:themes_array.map(Number),
@@ -272,9 +275,6 @@ fetchOptions()
         images:selectedBanners,
         facilities:facilities_array,
       }
-
-console.log(tripData)
-
 
     try {
       let res =await createPackage(tripData)
@@ -639,7 +639,8 @@ function openLightboxOnSlide(number) {
     slide: number
   });
 }
-
+let { tripData } = useSelector((state) => state.TripReducers);
+const trip = tripData.find((trip) => trip.id == id);
 
 
   return (
@@ -666,6 +667,40 @@ function openLightboxOnSlide(number) {
 
 {/* Images */}
 {loader && <Loader/>}
+
+{type==="Edit" &&
+<div className="mb-3 col-lg-12">
+  <label className="form-label" htmlFor="tripBanner">
+    Banner Pictures
+  </label>{" "}
+  <div className="mb-5">
+    <Form>
+      <div className="d-flex dropzone-previews mt-3" id="file-previews">
+        {trip && trip.images.map((image, index) => (
+          <Card key={index} className="mt-1  d-flex justify-content-center align-items-center col-lg-3 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+            <div className="p-2 d-flex">
+              <Row className=" d-flex align-items-center justify-content-center">
+                <Col className="col-auto d-flex align-items-center position-relative justify-content-center">
+                  <img
+                    style={{ height: "200px", width: "250px" }}
+                    data-dz-thumbnail=""
+                    className="avatar-sm rounded bg-light object-fit-cover"
+                    alt={`Banner ${index}`}
+                    src={image}
+                  />
+                  <p className='ms-1' ></p><i role="button" className='fas fa-trash-alt text-danger  position-absolute top-0 end-0' ></i>
+                </Col>
+              </Row>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </Form>
+  </div>
+</div>
+}
+
+
  {
   !loader && <div className="mb-3 col-lg-12">
   <label className="form-label" htmlFor="tripBanner">

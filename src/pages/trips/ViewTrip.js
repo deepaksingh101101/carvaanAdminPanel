@@ -106,6 +106,8 @@ const ViewTrip = () => {
                   
                   <div data-repeater-list="group-a">
                     <div data-repeater-item className="row w-100">
+
+
                     <div className="mb-3 col-lg-12">
   <label className="form-label" htmlFor="tripBanner">
     Banner Pictures
@@ -539,6 +541,19 @@ const ViewTrip = () => {
 </div>
 
 
+<div className="mb-3 col-lg-3">
+  <label className="form-label" htmlFor="facilities">
+  Facilities Included
+  </label>
+  <Card body className="border">
+    {trip?.facilities && trip.facilities.map((facilitie, index) => (
+      <div key={index} className='d-flex align-items-center' >
+        <CardTitle className="h4 ms-2 ">{index+1}</CardTitle>
+        <CardTitle className="h4 ms-2 ">{facilitie}</CardTitle>
+      </div>
+    ))}
+  </Card>
+</div>
 
 
 
