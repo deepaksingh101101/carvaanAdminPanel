@@ -62,6 +62,7 @@ const ViewTrip = () => {
 
   const trip = tripData.find((trip) => trip.id == id);
   const foundAdmin = adminData.find((admin) => admin.id === trip?.created_by);
+  const foundAdmin2 = adminData.find((admin) => admin.id === trip?.updated_by);
 
 
 
@@ -213,6 +214,22 @@ const ViewTrip = () => {
   </Card>
 
                       </div>
+
+
+
+
+
+                      <div className="mb-3 col-lg-3">
+                        <label className="form-label" htmlFor="updated_by">
+                          Updated By
+                        </label>
+                        <Card body className="border">
+                        <CardTitle className="h4">{foundAdmin2?.name}</CardTitle>
+  </Card>
+
+                      </div>
+
+
 
                       {/* <div className="mb-3 col-lg-3">
                         <label className=" form-label" htmlFor="start_time">

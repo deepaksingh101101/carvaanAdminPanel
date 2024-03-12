@@ -280,14 +280,47 @@ fetchOptions()
       //   updated_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
       // }
 
+//       const userId = JSON.parse(localStorage.getItem("authUser")).admin.id;
+// const tripData = {
+//   title: values.trip_title,
+//   starting_point_id: parseInt(values.start_point),
+//   middle_point_ids: middle_points_array.length > 0 ? middle_points_array.map(Number) : null,
+//   ending_point_id: parseInt(values.end_point),
+//   theme_ids: themes_array.length > 0 ? themes_array.map(Number) : null,
+//   trip_captain_required: (values.is_trip_captain==="true"?true:false),
+//   day_wise_itenary: itinerary_array,
+//   description: values.description,
+//   is_active: values.is_active,
+//   start_date: values.start_date,
+//   duration_days: parseInt(values.duration),
+//   price: parseInt(values.price_per_person),
+//   travel_agent_id: parseInt(values.company_name),
+//   pick_up_location: values.pickup_location,
+//   drop_location: values.drop_location,
+//   inclusives: inclusive_array,
+//   exclusives: exclusive_array,
+//   accomodation_type_id: parseInt(values.accomodation_type_id),
+//   seats_left: parseInt(values.seats_left),
+//   flights_inclusive: values.flight_inclusive === 'true',
+//   age_range_ids: values.age_range.map(Number),
+//   transportation_type_id: parseInt(values.type_of_transportation),
+//   meal_type_id: parseInt(values.food_options),
+//   packing_guide: packing_guide_array,
+//   images: selectedBanners,
+//   facilities: facilities_array,
+//   created_by: userId,
+//   updated_by: type === "Edit" ? userId : null,
+// };
+
       const userId = JSON.parse(localStorage.getItem("authUser")).admin.id;
+
 const tripData = {
   title: values.trip_title,
   starting_point_id: parseInt(values.start_point),
   middle_point_ids: middle_points_array.length > 0 ? middle_points_array.map(Number) : null,
   ending_point_id: parseInt(values.end_point),
   theme_ids: themes_array.length > 0 ? themes_array.map(Number) : null,
-  trip_captain_required: (values.is_trip_captain==="true"?true:false),
+  trip_captain_required: values.is_trip_captain === "true",
   day_wise_itenary: itinerary_array,
   description: values.description,
   is_active: values.is_active,
@@ -308,10 +341,17 @@ const tripData = {
   packing_guide: packing_guide_array,
   images: selectedBanners,
   facilities: facilities_array,
-  created_by: userId,
-  updated_by: type === "Edit" ? userId : null,
 };
 
+// Add created_by field if type is not Edit
+if (type !== "Edit") {
+  tripData.created_by = userId;
+}
+
+// Add updated_by field if type is Edit
+if (type === "Edit") {
+  tripData.updated_by = userId;
+}
 
     try {
       if(type==="Edit"){
