@@ -68,7 +68,10 @@ const patchPackageEdit = (newData, id) => {
   const url = `packages/${id}`; // Construct the URL with the id parameter
   return patch(url, newData);
 };
-
+const deleteTrip = (id) => {
+  const url = `packages/${id}`; // Construct the URL with the id parameter
+  return del(url);
+};
 
 
 // Register Method
@@ -149,4 +152,5 @@ export {
   uploadTripImages,
   getPackage,
   patchPackageEdit,
+  deleteTrip,
 }

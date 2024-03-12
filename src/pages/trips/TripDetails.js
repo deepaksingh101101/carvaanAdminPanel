@@ -9,7 +9,7 @@ import Loader from 'components/loader/Loader';
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
 import DataTable from 'react-data-table-component';
-import { getPackage } from 'helpers/fakebackend_helper';
+import { deleteTrip, getPackage } from 'helpers/fakebackend_helper';
 
 const TripDetails = () => {
 
@@ -38,10 +38,9 @@ const TripDetails = () => {
 
   const handleRemoveTrip = async(id) => {
     try {
-      // let res = await deleteTrip(id);
       dispatch(popTrip(id));
        setTempTrip((tempTrip) => tempTrip.filter(trip => trip.id !== id));
-      console.log(res);
+      let res= await deleteTrip(id)
     } catch (error) {
       setMessage(error.response.data.message ? error.response.data.message : "Something went wrong");
       dispatch(SomethingAlertTrue());

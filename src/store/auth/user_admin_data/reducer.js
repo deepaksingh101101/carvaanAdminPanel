@@ -106,7 +106,7 @@ export const TripReducers = (state = {
     case POP_TRIP:
       return {
         ...state,
-        tripData: state.tripData.filter((trip) => trip.sno !== action.payload),
+        tripData: state.tripData.filter((trip) => trip.id !== action.payload),
       };
       case UPDATE_TRIP:
         console.log("Updating inside reducers")

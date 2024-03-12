@@ -78,9 +78,9 @@ export const pushTrip = (trip) => ({
   payload: trip,
 });
 
-export const popTrip = (sno) => ({
+export const popTrip = (id) => ({
   type: POP_TRIP,
-  payload: sno,
+  payload: id,
 });
 
 export const updateTrip = (trip) => ({

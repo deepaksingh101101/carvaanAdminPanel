@@ -55,7 +55,7 @@ class NonAuthLayout extends Component {
     }
     // Assuming you want to set the document title based on path
     let currentPage = this.capitalizeFirstLetter(window.location.pathname.split("/").pop());
-    document.title = currentPage + " | Veltrix - React Admin & Dashboard Template";
+    document.title = currentPage + " |Carvaan";
   }
 
   render() {
