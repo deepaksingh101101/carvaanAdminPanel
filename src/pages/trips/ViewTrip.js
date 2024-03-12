@@ -6,8 +6,8 @@ import Breadcrumbs from '../../components/Common/Breadcrumb';
 import {  useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
-import { getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, getPackage, get_All_Travel_Agents } from 'helpers/fakebackend_helper';
-import { setTripData, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation } from 'store/auth/user_admin_data/actions';
+import { getAllAdmins, getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, getPackage, get_All_Travel_Agents } from 'helpers/fakebackend_helper';
+import { setAdminData, setTripData, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation } from 'store/auth/user_admin_data/actions';
 import FsLightbox from "fslightbox-react";
 
 const ViewTrip = () => {
@@ -34,7 +34,9 @@ const ViewTrip = () => {
      const theme=await getAllThemes();
     const transportationTypes=await getAllTransportationTypes()
     const tripData = await getPackage();
-      
+    let adminData = await getAllAdmins();
+    dispatch(setAdminData(adminData));
+
     
     
     dispatch(setTripData(tripData));
@@ -52,9 +54,18 @@ const ViewTrip = () => {
   fetchOptions()
   }, [id])
 
+  const { adminData } = useSelector((state) => state.AdminReducers);
 
   let { tripData } = useSelector((state) => state.TripReducers);
+
+
+
   const trip = tripData.find((trip) => trip.id == id);
+  const foundAdmin = adminData.find((admin) => admin.id === trip?.created_by);
+
+
+
+
   const [lightboxController, setLightboxController] = useState({
     toggler: false,
     slide: 1
@@ -181,11 +192,22 @@ const ViewTrip = () => {
                       </div>
 
                       <div className="mb-3 col-lg-3">
+                        <label className="form-label" htmlFor="travel_agent">
+                          Travel Agent
+                        </label>
+                        <Card body className="border">
+                        <CardTitle className="h4">{agentsData.find(agent => agent.id == trip.created_by)?.name}</CardTitle>
+  </Card>
+
+                      </div>
+
+
+                      <div className="mb-3 col-lg-3">
                         <label className="form-label" htmlFor="created_by">
                           Created By
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{agentsData.find(agent => agent.id == trip.created_by)?.name}</CardTitle>
+                        <CardTitle className="h4">{foundAdmin?.name}</CardTitle>
   </Card>
 
                       </div>
@@ -399,7 +421,8 @@ const ViewTrip = () => {
       <div key={index} className='d-flex align-items-center'>
         <CardTitle className="h4 mb-0">Day {index + 1}</CardTitle>
         <CardBody className='fs-6'>
-  {dayDetail.split(':').length > 1 ? dayDetail.split(':')[1].trim() : 'N/A'}
+  {/* {dayDetail.split(':').length > 1 ? dayDetail.split(':')[1].trim() : 'N/A'} */}
+  {dayDetail}
 </CardBody>      </div>
     ))}
   </Card>

@@ -57,6 +57,7 @@ const CreateTripForm = ({ type }) => {
   const dispatch = useDispatch();
   const { sno } = useParams();
   const [loader, setLoader] = useState(false);
+  const todayDate = new Date().toISOString().split('T')[0];
 
   // let { tripData } = useSelector((state) => state.TripReducers);
   // const trip = tripData.find((trip) => trip.sno == sno);
@@ -70,6 +71,7 @@ const [exclusive_array, setExclusive_array] = useState([])
 const [themes_array, setThemes_array] = useState([])
 const [itinerary_array, setItinerary_array] = useState([])
 const [packing_guide_array, setPacking_guide_array] = useState([])
+const [facilities_array, setFacilities_array] = useState([])
 
 
 const [message, setMessage] = useState("Something went's wrong")
@@ -194,7 +196,8 @@ fetchOptions()
       description: tripCreate.description || "",
       exclusion: tripCreate.exclusion || "",
       inclusion: tripCreate.inclusion || "", 
-      room_occupancy: tripCreate.room_occupancy || "",
+      facilities: tripCreate.facilities || "", 
+      // room_occupancy: tripCreate.room_occupancy || "",
       pickup_location: tripCreate.pickup_location || "",
       drop_location: tripCreate.pickup_location || "",
       age_range: tripCreate.age_range || [],
@@ -225,7 +228,7 @@ fetchOptions()
       description: Yup.string().required("Please Enter Description "),
       exclusion: Yup.string(),
       inclusion: Yup.string(),
-      room_occupancy: Yup.string().required("Please Enter Room Occupancy"),
+      // room_occupancy: Yup.string().required("Please Enter Room Occupancy"),
       // age_range: Yup.string().required("Please Enter Age Range"),
       // things_to_carry: Yup.string().required("Please Enter Things to Carry"),
       is_trip_captain: Yup.boolean().required("Please Select This Field"),
@@ -241,8 +244,8 @@ fetchOptions()
       const tripData={
         title:values.trip_title,
         starting_point_id:parseInt(values.start_point),
-        // middle_points_id: middle_points_array.map(Number),
-        middle_points: middle_points_array.map(Number),
+        middle_points_ids: middle_points_array.map(Number),
+        // middle_points: middle_points_array.map(Number),
         ending_point_id:parseInt(values.end_point),
         theme_ids:themes_array.map(Number),
         trip_captain_required: Boolean(values.is_trip_captain),
@@ -267,6 +270,7 @@ fetchOptions()
         packing_guide:packing_guide_array,
         created_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
         images:selectedBanners,
+        facilities:facilities_array,
       }
 
 console.log(tripData)
@@ -409,6 +413,46 @@ else{
  
 }
  }
+
+ const handleAddFacilities=(e)=>{
+  e.preventDefault(validation.values.facilities.length);
+  console.log()
+if(validation.values.facilities.length==0){
+// show a error message  for not filling the field
+}
+else{
+
+if(facilities_array.length<20){
+  if(!facilities_array.includes(validation.values.facilities)){
+    facilities_array.push(
+      validation.values.facilities
+     )
+     validation.setFieldValue('facilities', ); 
+  }
+  else{
+    setMessage("This facilities already included")
+    dispatch(SomethingAlertTrue());
+    setTimeout(() => {
+      dispatch(SomethingAlertFalse());
+      setMessage("Something went's wrong")
+    }, 2000);
+  }
+}
+else{
+  setMessage("Cannot Exceed more than 8")
+  dispatch(SomethingAlertTrue());
+  setTimeout(() => {
+    dispatch(SomethingAlertFalse());
+    setMessage("Something went's wrong")
+  }, 2000);
+}
+
+ 
+ 
+}
+ }
+
+
  const handleAddTheme=(e)=>{
   e.preventDefault(validation.values.trip_themes.length);
   console.log()
@@ -488,7 +532,8 @@ if(validation.values.itinerary.length<=0){
 
 }
 else{
-  itinerary_array.push(`Day ${itinerary_array.length+1}: ${validation.values.itinerary}`)
+  // itinerary_array.push(`Day ${itinerary_array.length+1}: ${validation.values.itinerary}`)
+  itinerary_array.push(`${validation.values.itinerary}`)
 validation.setFieldValue("itinerary","")
 }
 }
@@ -524,6 +569,13 @@ const handleDeleteExclusion = (i) => {
   newArray.splice(i, 1); // Remove one element at index i
   setExclusive_array(newArray); // Update the state with the new array
 }
+
+const handleDeleteFacilites = (i) => {
+  const newArray = [...facilities]; // Create a copy of the array
+  newArray.splice(i, 1); // Remove one element at index i
+  setFacilities_array(newArray); // Update the state with the new array
+}
+
 const handleDeleteMiddlePoints = (i) => {
     const newArray = [...middle_points_array]; // Create a copy of the array
     newArray.splice(i, 1); // Remove one element at index i
@@ -825,7 +877,7 @@ onChange={handleChange}
         <option value="">Select a start point</option>
         {points.map((startPoint, index) => (
           <option key={index} value={startPoint.id}>
-            {startPoint.name}
+            {startPoint.name}, {startPoint.country_name}
           </option>
         ))}
       </Input>
@@ -853,7 +905,7 @@ onChange={handleChange}
         <option value="">Select an end point</option>
         {points.map((endPoint, index) => (
           <option key={index} value={endPoint.id}>
-            {endPoint.name}
+            {endPoint.name}, {endPoint.country_name}
           </option>
         ))}
       </Input>
@@ -916,7 +968,7 @@ onChange={handleChange}
                           ) : null}
      </div>
 
- <div className="mb-3 col-lg-4">
+ {/* <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="start_date">
                           Start Date*
                         </Label>
@@ -934,7 +986,30 @@ onChange={handleChange}
                         {validation.touched.start_date && validation.errors.start_date ? (
                             <FormFeedback type="invalid">{validation.errors.start_date}</FormFeedback>
                           ) : null}
-   </div>
+   </div> */}
+<div className="mb-3 col-lg-4">
+  <Label className="form-label" htmlFor="start_date">
+    Start Date*
+  </Label>
+  <Input
+    type="date"
+    id="start_date"
+    name='start_date'
+    onChange={validation.handleChange}
+    onBlur={validation.handleBlur}
+    value={validation.values.start_date || ''}
+    invalid={validation.touched.start_date && validation.errors.start_date ? true : false}
+    className="form-control"
+    required
+    min={todayDate} // Ensure users cannot select a date before today
+  />
+  {validation.touched.start_date && validation.errors.start_date ? (
+    <FormFeedback type="invalid">{validation.errors.start_date}</FormFeedback>
+  ) : null}
+</div>
+
+
+
 
  {/* <div className="mb-3 col-lg-4">
                         <Label className="form-label" htmlFor="end_date">
@@ -978,7 +1053,7 @@ onChange={handleChange}
                           ) : null}
   </div>
 
-<div className="mb-3 col-lg-4">
+{/* <div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="room_occupancy">
     Room Occupancy
   </Label>
@@ -1001,7 +1076,7 @@ onChange={handleChange}
   {validation.touched.room_occupancy && validation.errors.room_occupancy ? (
     <FormFeedback type="invalid">{validation.errors.room_occupancy}</FormFeedback>
   ) : null}
-</div>
+</div> */}
 
 <div className="mb-3 col-lg-4">
   <Label className="form-label" htmlFor="is_trip_captain">
@@ -1375,7 +1450,7 @@ onChange={handleChange}
     >
       <option value="">Select Middle Points</option>
       {points.map((data, i) => (
-        <option key={i} value={data.id}>{data.name}</option>
+        <option key={i} value={data.id}>{data.name}, {data.country_name}</option>
       ))}
     </Input>
     <button onClick={handleAddMiddlePoints} type='button' className='btn btn-success mx-1' >Add</button>
@@ -1390,7 +1465,7 @@ onChange={handleChange}
     return (
       <div className='d-flex justify-content-between mx-3' key={matchingPoint ? matchingPoint.id : i}>
         <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
-          {matchingPoint ? matchingPoint.name : 'Unknown'}
+        {matchingPoint ? `${matchingPoint.name}, ${matchingPoint.country_name}` : 'Unknown'}
           <Badge className='mx-2 bg-transparent'>
             <i onClick={() => handleDeleteMiddlePoints(i)} role="button" className="fas fa-window-close fs-5 text-danger" />
           </Badge>
@@ -1480,6 +1555,49 @@ onChange={handleChange}
       {data}
       <Badge className='mx-2 bg-transparent'>
         <i onClick={(e)=>{handleDeleteExclusion(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
+        </i>
+      </Badge>
+    </h6>
+   </div>
+  ))}
+  </div>
+
+
+</div>
+
+<div className="mb-3 col-lg-4">
+                        <Label className="form-label" htmlFor="facilities">
+                        Facilities
+                        </Label>
+                        <div className='d-flex justify-content-between ' >
+                        <Input
+                          type="text"
+                          id="facilities"
+                          name="facilities"
+                          className="form-control"
+                          placeholder="Enter Facilities"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.facilities || ''}
+                        
+                          required={facilities_array.length>0?false:true}
+                          rows={4}
+                          style={{ resize: 'none' }}
+                          
+                       
+                        />
+                        <button onClick={handleAddFacilities} type='button' className='btn btn-success mx-1' >Add</button>
+                        </div>
+                        
+
+
+  <div className='d-flex flex-column ' >
+  {facilities_array.map((data, i) => (
+   <div className='d-flex justify-content-between mx-3' >
+     <h6 className='my-2 w-100 d-flex align-items-start justify-content-between ' key={i}>
+      {data}
+      <Badge className='mx-2 bg-transparent'>
+        <i onClick={(e)=>{handleDeleteFacilities(i)}} type="button" button="role" className="fas fa-window-close fs-5 text-danger" >
         </i>
       </Badge>
     </h6>
