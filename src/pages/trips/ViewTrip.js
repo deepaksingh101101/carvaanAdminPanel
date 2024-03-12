@@ -71,126 +71,10 @@ const ViewTrip = () => {
 
   let { agentsData } = useSelector((state) => state.AgentsReducers);
 
-  // useEffect(() => {
-  //   if (trip) {
-  //     setTripBanner(trip.tripBanner || '');
-  //     setTripImage1(trip.tripImage1 || '');
-  //     setTripImage2(trip.tripImage2 || '');
-  //     setTripImage3(trip.tripImage3 || '');
-  //     setHeadline(trip.headline || '');
-  //     setItinerary(trip.itinerary || '');
-  //     setFrom(trip.from || '');
-  //     setTo(trip.to || '');
-  //     setStartDate(trip.startDate || '');
-  //     setEndDate(trip.endDate || '');
-  //     setStartTime(trip.startTime || '');
-  //     setEndTime(trip.endTime || '');
-  //     setDuration(trip.duration || '');
-  //     setTotalSeats(trip.totalSeats || '');
-  //     setPrice(trip.price || '');
-  //     setAccommodation(trip.accommodation || '');
-  //     setTransportation(trip.transportation || '');
-  //     setTotalBreakfast(trip.totalBreakfast || '');
-  //     setTotalLunch(trip.totalLunch || '');
-  //     setTotalDinner(trip.totalDinner || '');
-  //     setSightSeeing(trip.sightSeeing || '');
-  //     setLocalGuide(trip.localGuide || '');
-  //     setThingsToCarry(trip.thingsToCarry || '');
-  //   //   setDetailedPdf(trip.detailedPdf || '');
-  //     setInclusion(trip.inclusion || '');
-  //     setExclusion(trip.exclusion || '');
-  //     setSelectedBanner(trip.selectedBanner || '');
-      
-  //   }
-  // }, [trip]);
-
-//   const handleAddTripClick = () => {
-//     const newTrip = {
-//       sno: type === "Edit" ? trip.sno : (tripData.length > 0 ? tripData[tripData.length - 1].sno + 1 : 1),
-//       selectedBanner:selectedBanner,
-//       tripImage1:tripImage1,
-//       tripImage2:tripImage2,
-//       tripImage3:tripImage3,
-//       headline:headline,
-//       itinerary:itinerary,
-//       from:from,
-//       to:to,
-//       startDate:startDate,
-//       endDate:endDate,
-//       startTime:startTime,
-//       endTime:endTime,
-//       duration:duration,
-//       totalSeats:totalSeats,
-//       price:price,
-//       accommodation:accommodation,
-//       transportation:transportation,
-//       totalBreakfast:totalBreakfast,
-//       totalLunch:totalLunch,
-//       totalDinner:totalDinner,
-//       sightSeeing:sightSeeing,
-//       localGuide:localGuide,
-//       thingsToCarry:thingsToCarry,
-//       inclusion:inclusion,
-//       exclusion:exclusion
-//     };
-
-//     if (type === 'Create') {
-//       dispatch(pushTrip(newTrip));
-//     } else {
-//       dispatch(updateTrip(newTrip));
-//     }
-
-//     navigate('/tripDetails');
-//   };
-
+  
   const [selectedBanner, setSelectedBanner] = useState(null);
 
-//   function handleAcceptedBanner(file) {
-//     Object.assign(file, {
-//       preview: URL.createObjectURL(file),
-//       formattedSize: formatBytes(file.size),
-//     });
-//     setSelectedBanner(file);
-//   }
- 
-//   function handleAcceptedTripImage1(file) {
-//     Object.assign(file, {
-//       preview: URL.createObjectURL(file),
-//       formattedSize: formatBytes(file.size),
-//     });
-//     setTripImage1(file);
-//   }
-//   function handleAcceptedTripImage2(file) {
-//     Object.assign(file, {
-//       preview: URL.createObjectURL(file),
-//       formattedSize: formatBytes(file.size),
-//     });
-//     setTripImage2(file);
-//   }
-//   function handleAcceptedTripImage3(file) {
-//     Object.assign(file, {
-//       preview: URL.createObjectURL(file),
-//       formattedSize: formatBytes(file.size),
-//     });
-//     setTripImage3(file);
-//   }
 
-//   function formatBytes(bytes, decimals = 2) {
-//     if (bytes === 0) return "0 Bytes";
-//     const k = 1024;
-//     const dm = decimals < 0 ? 0 : decimals;
-//     const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-//     const i = Math.floor(Math.log(bytes) / Math.log(k));
-//     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-//   }
-
-  // function handleFileInputChange(event) {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     handleAcceptedBanner(file);
-  //   }
-  // }
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A'; // or any placeholder you prefer
     const date = new Date(dateString);
@@ -301,7 +185,7 @@ const ViewTrip = () => {
                           Created By
                         </label>
                         <Card body className="border">
-                        <CardTitle className="h4">{agentsData.find(agent => agent.id === trip.created_by)?.name}</CardTitle>
+                        <CardTitle className="h4">{agentsData.find(agent => agent.id == trip.created_by)?.name}</CardTitle>
   </Card>
 
                       </div>

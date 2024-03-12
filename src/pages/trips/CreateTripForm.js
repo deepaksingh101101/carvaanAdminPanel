@@ -5,7 +5,7 @@ import {FormFeedback,FormGroup,Badge, Row, Col, Card, CardBody, CardTitle ,Conta
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { pushTrip, storeAccomodation, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation, updateTrip } from 'store/auth/user_admin_data/actions';
+import { pushTrip, setTripData, storeAccomodation, storeAge, storeAgents, storeMeals, storePoints, storeTheme, storeTransportation, updateTrip } from 'store/auth/user_admin_data/actions';
 import { Link } from "react-router-dom";
 import Dropzone from "react-dropzone";
 import work1 from '../../assets/images/gallery/work-1.jpg';
@@ -19,7 +19,7 @@ import { FieldArray } from 'formik';
 
 import { SomethingAlertFalse, SomethingAlertTrue } from 'store/components/actions';
 import Alert from 'components/alert/Alert';
-import { createPackage, getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, get_All_Travel_Agents, uploadTripImage, uploadTripImages } from 'helpers/fakebackend_helper';
+import { createPackage, getAllAgeRange, getAllMeals, getAllPoints, getAllThemes, getAllTransportationTypes, getPackage, get_All_Travel_Agents, uploadTripImage, uploadTripImages } from 'helpers/fakebackend_helper';
 import { duration } from 'moment';
 import Loader from 'components/loader/Loader';
 
@@ -96,6 +96,54 @@ const accomodations=[
     name:"Dorm",
   }
 ]
+const [tripState, setTripState] = useState(null)
+
+const { id } = useParams();
+
+
+useEffect(() => {
+  const fetchData = async () => {
+
+    try {
+      if(type==="Edit"){
+      let tripData = await getPackage(); 
+      dispatch(setTripData(tripData))
+      const foundTrip = tripData.find((trip) => trip.id == id); 
+      setTripState(foundTrip);
+      console.log(foundTrip)
+      validation.setFieldValue("company_name", foundTrip.travel_agent_id.id.toString());
+      validation.setFieldValue("trip_title", foundTrip.title);
+      validation.setFieldValue("pickup_location", foundTrip.pick_up_location);
+      validation.setFieldValue("drop_location", foundTrip.drop_location);
+      validation.setFieldValue("start_point", foundTrip.starting_point_id.id);
+      validation.setFieldValue("end_point", foundTrip.ending_point_id.id);
+      validation.setFieldValue("seats_left", foundTrip.seats_left);
+      validation.setFieldValue("duration", foundTrip.duration_days);
+      validation.setFieldValue("start_date", new Date("2024-03-11T10:29:59.000Z").toISOString().split('T')[0]);
+      validation.setFieldValue("price_per_person", foundTrip.price)
+      // validation.setFieldValue("_point", foundTrip.drop_location);
+      validation.setFieldValue("is_trip_captain", foundTrip.trip_captain_required);
+      validation.setFieldValue("accomodation_type_id", foundTrip.accomodation_type_id.id);
+      validation.setFieldValue("description", foundTrip.description);
+      validation.setFieldValue("age_range", foundTrip.age_ranges.map(ageRange => ageRange.id.toString()));
+      setThemes_array(foundTrip.themes.map(theme => theme.id.toString()));
+      validation.setFieldValue("food_options", foundTrip.meal_type_id.id);
+      setPacking_guide_array(foundTrip.packing_guide.map(guide => guide.toString()));
+      setMiddle_points_array(foundTrip.middle_points.map(point => point.id.toString()));
+        setInclusive_array(foundTrip.inclusives)
+        setExclusive_array(foundTrip.exclusives)
+        console.log(foundTrip.day_wise_itenary)
+        setItinerary_array(foundTrip.day_wise_itenary)
+    }
+     
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  fetchData(); // Call the fetchData function
+}, [id]);
+
 
 const fetchOptions=async()=>{
   try {
@@ -130,10 +178,6 @@ const fetchOptions=async()=>{
 useEffect(() => {
 fetchOptions()
 }, [])
-
-
-
-
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -161,8 +205,8 @@ fetchOptions()
       food_options: tripCreate.food_options|| "",
       itinerary:tripCreate.itinerary||"",
       packing_guide:tripCreate.packing_guide||"",
-      flight_inclusive:tripCreate.flight_inclusive||false
-
+      flight_inclusive:tripCreate.flight_inclusive||false,
+      accomodation_type_id:tripCreate.accomodation_type_id||""
     },
     validationSchema: Yup.object({
       company_name: Yup.number().required("Please Enter The Company Name"),
@@ -197,7 +241,8 @@ fetchOptions()
       const tripData={
         title:values.trip_title,
         starting_point_id:parseInt(values.start_point),
-        middle_points_id: middle_points_array.map(Number),
+        // middle_points_id: middle_points_array.map(Number),
+        middle_points: middle_points_array.map(Number),
         ending_point_id:parseInt(values.end_point),
         theme_ids:themes_array.map(Number),
         trip_captain_required: Boolean(values.is_trip_captain),
@@ -224,7 +269,7 @@ fetchOptions()
         images:selectedBanners,
       }
 
-
+console.log(tripData)
 
 
     try {
@@ -241,17 +286,13 @@ fetchOptions()
 
   })
   
-
-
-
-
 const handleAddMiddlePoints = (e) => {
   if (validation.values.middle_points.length === 0) {
     // Handle case where there are no middle points
   } else {
     const middlePointId = validation.values.middle_points; // Assuming this is the ID
    
-    
+    console.log(middlePointId)
     // Find the point that matches the ID
 
     // Proceed if a matching point is found
@@ -260,6 +301,7 @@ const handleAddMiddlePoints = (e) => {
 
       if (!middle_points_array.includes(middlePointId)) {
         middle_points_array.push(middlePointId);
+        console.log(middle_points_array)
         validation.setFieldValue('middle_points', ""); 
       } else {
         setMessage("This middle point is already included");
@@ -275,7 +317,6 @@ const handleAddMiddlePoints = (e) => {
     }
   }
 };
-
 
 const handleAgeRangeChange = (optionId, isChecked) => {
   // Convert optionId to string to ensure consistency in data types
@@ -497,10 +538,6 @@ const handleDeleteMiddlePoints = (i) => {
 
 const [toggler, setToggler] = useState(false);
 
-
-
-
-
 const [file, setFile] = useState()
 
 
@@ -531,14 +568,6 @@ const handleFileChange = async (e) => {
     console.error("Error uploading image:", error);
   }
 };
-
-
-
-
-
-
-
-
 
 const handleBannerDelete = (index) => {
   const updatedBanners = [...selectedBanners];
@@ -582,23 +611,6 @@ function openLightboxOnSlide(number) {
                   
                   <div data-repeater-list="group-a">
                     <div data-repeater-item className="row w-100">
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
 
 {/* Images */}
 {loader && <Loader/>}
@@ -1512,20 +1524,34 @@ onChange={handleChange}
                         </div>
 
                         <div className='d-flex flex-column'>
-  {itinerary_array.map((data, i) => {
-    const itineraryData = data.split(":")[1].trim(); // Extracting string after colon and removing leading/trailing whitespaces
-    return (
-      <div className='d-flex justify-content-between mx-3' key={i}>
-        <div className="fw-bold d-flex align-items-center " style={{ minWidth: "200px" }}><b>Day {i + 1}</b></div>
-        <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
-          {itineraryData}
-          <Badge className='mx-2 bg-transparent'>
-            <i onClick={(e) => { handleDeleteItinerary(i) }} type="button" button="role" className="fas fa-window-close fs-5 text-danger"></i>
-          </Badge>
-        </h6>
+                        {itinerary_array.map((data, i) => {
+  // Check if the string contains a colon
+  const hasColon = data.includes(":");
+  let displayText;
+
+  if (hasColon) {
+    // If there's a colon, extract the text after it and trim whitespace
+    displayText = data.split(":")[1].trim();
+  } else {
+    // If there's no colon, use the entire string
+    displayText = data;
+  }
+
+  return (
+    <div className='d-flex justify-content-between mx-3' key={i}>
+      <div className="fw-bold d-flex align-items-center" style={{ minWidth: "200px" }}>
+        <b>Day {i + 1}</b>
       </div>
-    );
-  })}
+      <h6 className='my-2 w-100 d-flex align-items-start justify-content-between'>
+        {displayText}
+        <Badge className='mx-2 bg-transparent'>
+          <i onClick={() => handleDeleteItinerary(i)} role="button" className="fas fa-window-close fs-5 text-danger"></i>
+        </Badge>
+      </h6>
+    </div>
+  );
+})}
+
 </div>
 
 

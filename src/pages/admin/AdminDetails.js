@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, CardBody, CardTitle, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Row, Col,Input, Card, CardBody, CardTitle, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +22,7 @@ const [allAdminsAction, setAllAdminsAction] = useState("All Admins")
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+const [searchTerm, setSearchTerm] = useState("")
 
   const fetchData = async () => {
     try {
@@ -128,13 +129,31 @@ const [allAdminsAction, setAllAdminsAction] = useState("All Admins")
     },
   ];
   
-  const data = tempAdmin.map((row, index) => ({
+  // const data = tempAdmin.map((row, index) => ({
+  //   ...row,
+  //   is_super_admin: row.is_super_admin ? 'Yes' : 'No',
+  //   created_by: row.created_by ? row.created_by.name : 'Unknown',
+  //   sno: index + 1,
+  //   actions: generateActionButtons(row),
+  // }));
+
+  const filteredData = tempAdmin
+  .filter((admin) => {
+    if (searchTerm === '') return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      admin.name.toLowerCase().includes(term) ||
+      admin.email.toLowerCase().includes(term)
+    );
+  })
+  .map((row, index) => ({
     ...row,
     is_super_admin: row.is_super_admin ? 'Yes' : 'No',
     created_by: row.created_by ? row.created_by.name : 'Unknown',
     sno: index + 1,
     actions: generateActionButtons(row),
   }));
+
 
   return (
     <React.Fragment>
@@ -147,7 +166,18 @@ const [allAdminsAction, setAllAdminsAction] = useState("All Admins")
                 <CardBody style={{minHeight:"80vh"}}>
                   <div className='d-flex justify-content-between'>
                     <CardTitle className="h4">Admin Details</CardTitle>
-                    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className=' '>
+                  <div className='d-flex align-items-center' >
+                  <div className="search-container">
+  <Input
+    type="text"
+    placeholder="Search "
+    className="search-input me-5"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+</div>
+
+                    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className=' ms-4'>
                       <DropdownToggle className='' style={{ paddingLeft: "45px", paddingRight: "45px" }} caret>
                       {allAdminsAction}
                       </DropdownToggle>
@@ -159,15 +189,18 @@ const [allAdminsAction, setAllAdminsAction] = useState("All Admins")
                       </DropdownMenu>
                     </Dropdown>
                   </div>
+
+                  </div>
                   {loader && <Loader/>}
                   {!loader && 
                     <div style={{minHeight:"80vh"}}  >
-                      <DataTable
-                        columns={columns}
-                        data={data}
-                        pagination
-                        responsive
-                      />
+                     <DataTable
+  columns={columns}
+  data={filteredData}
+  pagination
+  responsive
+/>
+
                     </div>
                   }
                 </CardBody>
