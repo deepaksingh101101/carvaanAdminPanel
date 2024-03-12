@@ -123,10 +123,10 @@ useEffect(() => {
       validation.setFieldValue("duration", foundTrip.duration_days);
       // validation.setFieldValue("start_date", new Date("2024-03-11T10:29:59.000Z").toISOString().split('T')[0]);
       validation.setFieldValue("start_date", new Date(foundTrip.start_date).toISOString().split('T')[0]);
-
+      setSelectedBanners(foundTrip.images)
       validation.setFieldValue("price_per_person", foundTrip.price)
       // validation.setFieldValue("_point", foundTrip.drop_location);
-      validation.setFieldValue("is_trip_captain", foundTrip.trip_captain_required);
+      validation.setFieldValue("is_trip_captain", foundTrip.trip_captain_required===true?"true":"false");
       validation.setFieldValue("accomodation_type_id", foundTrip.accomodation_type_id.id);
       validation.setFieldValue("description", foundTrip.description);
       validation.setFieldValue("type_of_transportation", foundTrip.transportation_type_id.id);
@@ -246,52 +246,85 @@ fetchOptions()
     }),
     onSubmit: async (values) => {
       
-      const tripData={
-        title:values.trip_title,
-        starting_point_id:parseInt(values.start_point),
-        // middle_point_ids: middle_points_array.map(Number),
-        middle_point_ids:middle_points_array.length > 0 ? middle_points_array.map(Number) : null,
-        ending_point_id:parseInt(values.end_point),
-        theme_ids:themes_array.map(Number),
-        trip_captain_required: Boolean(values.is_trip_captain),
-        day_wise_itenary:itinerary_array,
-        description:values.description,
-        is_active:true,
-        start_date:values.start_date,
-        duration_days:parseInt(values.duration),
-        price:parseInt(values.price_per_person),
-        travel_agent_id:parseInt(values.company_name),
-        pick_up_location:values.pickup_location,
-        drop_location:values.drop_location,
-        inclusives:inclusive_array,
-        exclusives:exclusive_array,
-        accomodation_type_id:parseInt(values.accomodation_type_id),
-        seats_left:parseInt(values.seats_left),
-        flights_inclusive: values.flight_inclusive === 'true'        ,
-        age_range_ids:values.age_range.map(Number),
-        transportation_type_id:parseInt(values.type_of_transportation),
-        meal_type_id:parseInt(values.food_options),
-        packing_guide:packing_guide_array,
-        created_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
-        images:selectedBanners,
-        facilities:facilities_array,
-      }
+      // const tripData={
+      //   title:values.trip_title,
+      //   starting_point_id:parseInt(values.start_point),
+      //   middle_point_ids:middle_points_array.length > 0 ? middle_points_array.map(Number) : null,
+      //   ending_point_id:parseInt(values.end_point),
+      //   theme_ids:themes_array.length > 0 ? themes_array.map(Number):null,
+      //   trip_captain_required: Boolean(values.is_trip_captain),
+      //   day_wise_itenary:itinerary_array,
+      //   description:values.description,
+      //   is_active:true,
+      //   start_date:values.start_date,
+      //   duration_days:parseInt(values.duration),
+      //   price:parseInt(values.price_per_person),
+      //   travel_agent_id:parseInt(values.company_name),
+      //   pick_up_location:values.pickup_location,
+      //   drop_location:values.drop_location,
+      //   inclusives:inclusive_array,
+      //   exclusives:exclusive_array,
+      //   accomodation_type_id:parseInt(values.accomodation_type_id),
+      //   seats_left:parseInt(values.seats_left),
+      //   flights_inclusive: values.flight_inclusive === 'true'        ,
+      //   age_range_ids:values.age_range.map(Number),
+      //   transportation_type_id:parseInt(values.type_of_transportation),
+      //   meal_type_id:parseInt(values.food_options),
+      //   packing_guide:packing_guide_array,
+      //   images:selectedBanners,
+      //   facilities:facilities_array,
+      //   created_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
+      //   updated_by:JSON.parse(localStorage.getItem("authUser")).admin.id,
+      // }
+
+      const userId = JSON.parse(localStorage.getItem("authUser")).admin.id;
+const tripData = {
+  title: values.trip_title,
+  starting_point_id: parseInt(values.start_point),
+  middle_point_ids: middle_points_array.length > 0 ? middle_points_array.map(Number) : null,
+  ending_point_id: parseInt(values.end_point),
+  theme_ids: themes_array.length > 0 ? themes_array.map(Number) : null,
+  trip_captain_required: (values.is_trip_captain==="true"?true:false),
+  day_wise_itenary: itinerary_array,
+  description: values.description,
+  is_active: true,
+  start_date: values.start_date,
+  duration_days: parseInt(values.duration),
+  price: parseInt(values.price_per_person),
+  travel_agent_id: parseInt(values.company_name),
+  pick_up_location: values.pickup_location,
+  drop_location: values.drop_location,
+  inclusives: inclusive_array,
+  exclusives: exclusive_array,
+  accomodation_type_id: parseInt(values.accomodation_type_id),
+  seats_left: parseInt(values.seats_left),
+  flights_inclusive: values.flight_inclusive === 'true',
+  age_range_ids: values.age_range.map(Number),
+  transportation_type_id: parseInt(values.type_of_transportation),
+  meal_type_id: parseInt(values.food_options),
+  packing_guide: packing_guide_array,
+  images: selectedBanners,
+  facilities: facilities_array,
+  created_by: userId,
+  updated_by: type === "Edit" ? userId : null,
+};
+
 
     try {
       if(type==="Edit"){
-        // let res =await patchPackageEdit(tripData)
-//  if(res.id){
-//         navigate('/tripDetails')
-      }
-      else{
+        let res =await patchPackageEdit(tripData,id)
+              if(res.id){
+                   navigate('/tripDetails')          
+                  }              
+        }
+          else{
         let res =await createPackage(tripData)
         if(res.id){
           navigate('/tripDetails')
-      }
-      
-     
-}
-    } catch (error) {
+              }
+        }
+
+      } catch (error) {
       // handle error
     }
 
@@ -678,7 +711,7 @@ const trip = tripData.find((trip) => trip.id == id);
 {/* Images */}
 {loader && <Loader/>}
 
-{type==="Edit" &&
+{/* {type==="Edit" &&
 <div className="mb-3 col-lg-12">
   <label className="form-label" htmlFor="tripBanner">
     Banner Pictures
@@ -708,7 +741,7 @@ const trip = tripData.find((trip) => trip.id == id);
     </Form>
   </div>
 </div>
-}
+} */}
 
 
  {
@@ -1139,8 +1172,8 @@ onChange={handleChange}
     required
   >
     <option value="">Is Trip Captain Required</option>
-    <option value="true">yes</option>
-    <option value="false">no</option>
+    <option value={true}>yes</option>
+    <option value={false}>no</option>
   </Input>
   {validation.touched.is_trip_captain && validation.errors.is_trip_captain ? (
     <FormFeedback type="invalid">{validation.errors.is_trip_captain}</FormFeedback>
